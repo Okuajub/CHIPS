@@ -1,4 +1,4 @@
-Hello! This is the place where you'll put all the visuals for your Ghost. These images are intended to be replaced. Please do not redistribute them without permission. I have placed my copyright notice in the readme for this Shell. Please remove this in the case you have replaced the images in question.
+Hello! This is the place where you'll put all the visuals for your Ghost. These images are intended to be replaced. Please do not redistribute them without permission.
 
 If you are familiar with SERIKO coding (shell coding), then this will be very easy for you. If not, I'll point you to some helpful resources when it comes to SERIKO.
 

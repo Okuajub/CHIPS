@@ -2,17 +2,19 @@
 # Event Dictionary
 #--
 # Hi! Presumably, if you're here, you're interested in the more intensive parts of Kawari coding. 
-# This file handles, primarily, events from the baseware.
+# This file handles, primarily, events from the baseware. These are SHIORI events.
+# A lot of this is, honestly, fairly boring. Middleware writing is not as unique as creating new features, in my opinion, but it's something that had to be done!
+# If you're going to keep marching on, good luck! ヾ(•ω•`)o
 
 
 #--
-# SHIORI EVENTS
+# SHIORI EVENT HANDLERS
 #--
 # This is the code which interprets events from the baseware! DO NOT DELETE IT! 
-# If you do, your Ghost becomes much like a human in a 'vegetative state'... Appearing alive, but not responding to the outside world at all.
+# If you do, your Ghost becomes much like a human in a 'vegetative state'... Appearing alive, but not responding to the outside world at all.（；´д｀）ゞ
 # So, unless you know what you're doing, leave it alone.
 
-# SHIORI 3.0
+# SHIORI 3.0 Standard
 # These event handlers are derived from OpenKEEPS (a Japanese Kawari template), used with permission under their license.
 
 System.Callback.OnNOTIFY : $(
@@ -44,7 +46,7 @@ System.Callback.OnGET : $(
 		if $(.size ${@ID}) $(
 			.setstr @ans $(.get ${@ID});
 			if $[ ${@ans} != "" ] $(return ${@ans});
-			# If there is a response, return event at this point.
+			# If there is a response, return the event, at this point.
 			# The situation where there is no event description or no response will be processed after this.
 			);
 		if $(.size System.Request.BaseID) $(
@@ -60,7 +62,7 @@ System.Callback.OnGET : $(
 		);
 	) else $(
 		if $(.match_at ${System.Request.ID} "\\") $(
-			# words
+			# definitions
 			.entry compatible.$(.substr ${@ID} 1);
 			return;
 		) else $(
@@ -93,7 +95,6 @@ System.Callback.OnRequest : $(
 	);
 )
 
-
 #--
 # OnTranslate
 #--
@@ -120,12 +121,12 @@ OnTranslate : $(
 # Basic Events
 #--
 
-# This happens on booting.
+# This happens on ALL booting.
 OnInitialize : $(
 	${InitBoot};
 	${SaveLoad};
 )
-
+# This happens on ALL closing.
 OnDestroy : $(
 	SaveData;
 )
@@ -145,16 +146,18 @@ OnFirstBoot : $(
     else ${talk.OnReinstall};
 )
 
+# This happens during the specific event "OnBoot".
 OnBoot : \1\s[10]\0\s[0]${talk.OnBoot}
-
+# This happens during the specific event "OnClose".
 OnClose : \1\s[10]\0\s[0]${talk.OnClose}"\_w[500]\-\e"
 
+# OK, OK. Time to indulge in a little ramble since you made it this far. ( •̀ ω •́ )✧
 # My entire philosophy when writing how events are handled in CHIPS is that the writer should be able to create new responses to events painlessly, without having to mess with the back-end.
 # Many templates have these responses have hard-coded if/elseif/else statements for each string. This is extremely daunting for non-coders and tedious for those who do code often.
 # If they're not coded up-front, they're limited to just the generic response.
 # So, here I set this event up in a way that one simply needs to know the Sakura's name to create a specific response to them. If a specific response doesn't exist, it sends the generic event instead.
 # This means a writer can create as many unique responses as they'd like without having to worry at all about juggling long if/elseif/else chains- *while* still allowing them to be flexible in the response if they do know how to code more!
-# It is handled by the Ghost, and made very easy, up to some extent. I would like to take this approach for as many events as possible.
+# It is handled by the middleware, and made very easy, up to some extent. I would like to take this approach for as many events as possible.
 OnGhostChanging : $(
 	# Reference0 is the Sakura of the Ghost being changed to. Reference 1 is if the change was manual or automatic.
 	setstr @reference0 $(Reference 0);
@@ -189,6 +192,8 @@ OnHourTimeSignal : (
 	$(SaveData)
 	${talk.OnHourTimeSignal}
 )
+
+# These three entries go together. They handle the random talk, in tandem.
 
 talkcounter : 0
 
@@ -250,7 +255,11 @@ OnNotifyShellInfo : (
 #--
 # This code is here to support a program created by Steve Green (AKA steve02081504)
 # CURRENTLY NONFUNCTIONAL - Kosui is a terminal created for Kawari ghosts that works with all of them. Please use it.
-# Please see the documentation for details.
+# Please see the Ghost Terminal documentation for details.
+# 
+# I was creating this code, unwittingly, while a certain bug in my programming was preventing many events from returning responses. As such, it's not been tested.
+# I may revisit this, in time, however at the moment Kosui serves an extremely similar purpose and so I've not gone back to pursue this.
+
 # This code was referenced from Taromati 2
 
 #Has_Event : (
@@ -264,7 +273,7 @@ OnNotifyShellInfo : (
 #	if $[${shioriEcho0} = 'reload'] $(set ReloadFromTerminal 1; ${OnReloadShiori});
 #	if $[${shioriEcho0} = 'errorlog'] $(loglevel error warning; logfile debug.log; load kawarirc.kis; set ShioriEcho.Result "Please check your ghost\master folder for the debug log.");
 #	if $[${shioriEcho0} = 'exit'] $(set ShioriEcho.Status 'End');
-#	${X-SSTP-PassThru-Result};
+#	echo ${X-SSTP-PassThru-Result};
 #
 #)
 

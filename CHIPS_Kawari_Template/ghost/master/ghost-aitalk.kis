@@ -190,7 +190,7 @@ sentence : (
     "\1\s[19]\n\n[half]\f[size,9]Chip's Challenge... Huh!\f[size,default]"
 )
 
-# Oh, also, here's the hour roll-over event. By default it's in military time
+# Oh, also, here's the hour roll-over event. By default it's in military time.
 talk.OnHourTimeSignal : $(setstr @hour $(date %H); setstr @minute $(date %M)) "\0\s[0]It's "${@hour}":"${@minute}"."
 
 # STOP! ! ! Do not write any dialogue past this piece of code! If you do, it won't be called!! 
