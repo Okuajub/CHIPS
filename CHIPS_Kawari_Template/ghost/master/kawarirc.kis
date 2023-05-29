@@ -1,0 +1,29 @@
+#--
+# Kawarirc.kis
+#--
+# This sets the load order for your Ghost. If you're just going into the files and saving over them, you don't need to touch anything in here.
+
+=kis
+
+# Developer Dictionaries
+load dict\dict-functions.kis;
+load dict\dict-event.kis;
+load dict\dict-mouse.kis;
+load dict\dict-resource.kis;
+load dict-savedata.txt;
+
+
+# Ghost Dialogue
+load ghost-bootend.kis;
+load ghost-mouse.kis;
+load ghost-aitalk.kis;
+load ghost-menu.kis;
+
+
+# Logs error/behavior information and event information. (Very useful since we do not have a Tama equivalent for Kawari that shows events firing live.)
+loglevel error warning info baseevents;
+
+# Records said logs in 'kawari.log'.
+logfile kawari.log;
+
+=end

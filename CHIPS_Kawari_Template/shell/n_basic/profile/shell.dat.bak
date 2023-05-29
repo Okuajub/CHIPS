@@ -1,0 +1,22 @@
+Charset,UTF-8
+__system_settings_version__,2
+char0.bind.savearray,0=0
+seriko.scaling.balloonlink,0
+balloon,C:\Users\silve\Desktop\ssp_testingclient_2_6_4\balloon\Cat_in_the_Night\
+Char1.balloon.isleft,1
+scriptbox.left,-1080
+balloon0.offset,18.-47
+Char0.centery,1080
+balloon1.offset,265.-163
+Char0.balloon.isleft,1
+Char.VirtualDesktop,15c6b657-4045-48ae-9182-bad7d0dd86aa
+Char0.center,-657
+scriptbox.top,501
+Char1.centery,1080
+Char1.center,-518
+char1.bind.savearray,51=1 52=0 53=0 54=0 55=0 56=0 57=0
+seriko.scaling.percent.x,100
+seriko.scaling.balloon.percent.x,100
+seriko.scaling.percent.y,100
+seriko.scaling.balloon.percent.y,100
+__system_written_flag_do_not_remove__,written

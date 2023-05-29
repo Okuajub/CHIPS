@@ -1,0 +1,66 @@
+# Call a random word from an entry without duplicates
+# 1st argument : entry name
+# Return values : words in the entry
+# Remarks : occupies the entry "entryname.buffer
+=kis
+function GetWordRandom $(
+    if $[ $(size @arg) != 2] $(return);
+    if $[ $(size $@arg[1].buffer) == 0 ] $(copy $@arg[1] $@arg[1].buffer);
+
+    setstr @pos $(rand $(size $@arg[1].buffer));
+    get $@arg[1].buffer[${@pos}];
+    clear $@arg[1].buffer[${@pos}];
+);
+=end
+
+# make an entry to call the specified entry without duplicating words
+# 1st argument : entry name
+# Return values : none
+# Remarks : "entry name.backup", "entry name.backup.buffer".
+# Occupy an entry
+=kis
+function Nonoverlap $(
+    if $[ $(size $@arg[1].backup) == 0 ] $(copy $@arg[1] $@arg[1].backup);
+    set $@arg[1] "$(GetWordRandom "$@arg[1]".backup)";
+    writeprotect $@arg[1];
+    writeprotect $@arg[1].backup; 
+);
+=end
+
+=kis
+# Simplifies reference syntax.
+# Returns nothing if there is no argument.
+# Gets the first word of System.Request.Reference? entry.
+function Reference $(
+    if $[ $(size @arg) <= 1 ] $(return);
+    get System.Request.Reference$@arg[1][0];
+);
+=end
+
+# The following functions all work together to save data. Based up OpenKEEPS, but heavily simplified.
+
+# Filenames for the user's data.
+usersavefile : dict-savedata.txt
+userbackupfile : dict-bakdata.txt
+
+# The function that writes the save file.
+=kis
+function SaveData $(
+	.xargs savedataParam .save ${usersavefile};                 
+)
+=end
+
+# Variables to be saved. If you add any that need to be kept over boots, please remember to put them here.
+savedataParam (
+	talkinterval, tempUser, userfull, username, birthdate, usergender
+)
+
+# Loads the save file after backing up the user's old data to the backup file.
+SaveLoad : $(
+	logprint "Load at "$(.date %s);
+    .xargs savedataParam .save ${userbackupfile};
+	foreach @i savedataParam $(.inc @entrynum $(.size ${@i}));
+	if $[ ! ${@entrynum} ] $(
+		.load  ${usersavefile};
+	);
+)

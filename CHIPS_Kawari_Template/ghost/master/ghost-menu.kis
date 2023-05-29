@@ -1,0 +1,217 @@
+#--
+# Menus
+#--
+# Most English Ghosts have a double click menu to perform some function, interact with the Ghost, or do something else specific.
+# Every double-click menu is unique! I've left the Sakura's menu pretty simple, but added a little extra to the Kero so you can see what something unique might look like.
+# Now, the SakuraScript tags can get pretty dense here. It's a little easier to parse if you understand that '\![*]\q' starts every menu option. You can change the first phrase in the brackets to whatever you'd like,
+# \n and \n\n[half] are linebreaks. They make visibility in the menu a bit better.
+# If you don't want any menus at all, go back to 'ghost-mouse.kis' and erase the 'MouseDoubleClick0' and 'MouseDoubleClick1' lines. You can then safely erase everything in this file, too.
+
+# You can write any dialogue you want for them to say when you first open the menu here.
+SakuMenuTalk : "\0\s[0]Hm?","\0\s[0]Need something?","\0\s[0]Opening the menu."
+
+OnSakuraMenu : (
+    # Gets the present day
+    $(setstr @weekday $(if $[$(date %w) = 0] "Sun" else if $[$(date %w) = 1] "Mon" else if $[$(date %w) = 2] "Tues" else if $[$(date %w) = 3] "Weds" else if $[$(date %w) = 4] "Thurs" else if $[$(date %w) = 5] "Fri" else if $[$(date %w) = 6] "Sat"))
+    $(setstr @hour $(date %H); setstr @minute $(date %M))
+    # Menu starts. Autoscroll disable is to prevent the menu from getting set to the bottom should the User not having a large enough balloon.
+    \b2${SakuMenuTalk}\w4\_q\![set,autoscroll,disable]
+    \n\n[half]
+    \![*]\q[Say Something,OnAITalk]
+    \n
+    \![*]\q[Repeat Yourself,OnLastTalk]
+    \n\n[half]
+    \![*]\q[Config Menu,OnConfigMenu]
+    \n
+    \![*]\q[Functions Menu,OnFunctionsMenu]
+    \n\n[half]
+    \![*]\q[Quit Menu,OnQuit,0]
+    \n\n
+    #Talkrate Assignment
+    $(setstr @interval ${talkinterval})
+    $(if $[${@interval} > 59] $(setstr @interval $[${@interval} / 60]; setstr @form minutes) else $(setstr @form seconds))
+    # If you want to provide an option for every second or every hour... Change this, I guess?
+    $(if $[${@interval} == 1] $(setstr @form minute))
+    "\f[italic,true]Talkrate:" ${@interval} ${@form}\n\f[italic,default]
+    \![*]\q[30sec,OnAssignTalkRate,30] \![*]\q[1min,OnAssignTalkRate,60] \![*]\q[3min,OnAssignTalkRate,190] \![*]\q[5min,OnAssignTalkRate,300]
+    \n\n[half]
+    \f[italic,true]${@weekday}", %month/%day, "${@hour}":"${@minute}
+)
+
+# You can ignore this one.
+OnLastTalk : ${lastTalk}
+
+# Same as the Sakura Menu Talk - You can write anything you want here without messing up the menu if you want to leave it as is.
+ConfigMenuTalk : "\0\s[0]Configuration, huh?"
+
+OnConfigMenu : (
+    \b2${ConfigMenuTalk}\w4\_q\![set,autoscroll,disable]
+    \n\n[half]
+    \![*]\q[Set Talk Rate,OnChangeTalkRate]
+    \n
+    \![*]\q[Change Name,OnChangeName]
+    \n\n[half]
+    \![*]\q[Change Pronouns,OnConfigMenu]
+    \n\n[half]
+    \![*]\q[Back,OnSakuraMenu]
+)
+
+OnChangeTalkRate : (
+    $(setstr @interval ${talkinterval})
+    $(if $[${@interval} > 59] $(setstr @interval $[${@interval} / 60]; setstr @form minutes) else $(setstr @form seconds))
+    # If you want to provide an option for every second or every hour... Change this, I guess?
+    $(if $[${@interval} == 1] $(setstr @form minute))
+    \b2"The talk rate is currently at every" ${@interval} ${@form}"."\_q\![set,autoscroll,disable]\w6\n\n[half]
+    \![*]\q[30 seconds,OnAssignTalkRate,30]
+    \n
+    \![*]\q[1 Minute,OnAssignTalkRate,60]
+    \n
+    \![*]\q[3 Minutes,OnAssignTalkRate,190]
+    \n
+    \![*]\q[5 Minutes,OnAssignTalkRate,300]
+    \n\n[half]
+    \![*]\q[Back,OnConfigMenu]
+)
+
+OnAssignTalkRate : (
+    $(setstr talkinterval $(Reference 0))
+    "\![raise,OnSakuraMenu]"
+    #$(setstr @interval $(Reference 0))
+    #$(if $[${@interval} > 59] $(setstr @interval $[${@interval} / 60]; setstr @form minutes) else $(setstr @form seconds))
+    #$(if $[${@interval} == 1] $(setstr @form minute))
+    #"\0\s[0]Alright. The talk rate has been set to every "${@interval} ${@form}"."
+)
+
+FunctionMenuTalk : "\0\s[0]Function menu."
+
+OnFunctionsMenu : (
+    \b2${FunctionMenuTalk}\_q\![set,autoscroll,disable]
+    \n\n[half]
+    "Placeholder text for the function menu."
+    \n
+    "A future function, maybe."
+    \n\n[half]
+    \![*]\q[Back,OnSakuraMenu]
+)
+
+# This handles quitting dialogue.
+OnQuit : $(
+    if $[$(Reference 0) == 0] ${SakuraQuit}
+    else ${KeroQuit}
+)
+
+SakuraQuit : "\0\s[0]Mhm.", "\0\s[0]Sure."
+
+KeroQuit : "\1\s[10]Thanks for checking in!", "\1\s[16]Talk to you later!"
+
+KeroMenuTalk : "\1\s[15]What's up?","\1\s[15]What can I do for you, "${username}"?"
+
+OnKeroMenu : (
+    \b2${KeroMenuTalk}\_q\![set,autoscroll,disable]
+    \n\n[half]
+    \![*]\q[Tell me about Yourselves,OnIntroduceSelf]
+    \n
+    \![*]\q[Tell me about Ukagaka,OnIntroduceUkagaka]
+    \n
+    \![*]\q[Tell me about Kawari,OnIntroduceKawari]
+    \n
+    \![*]\q[Tell me about YAYA,OnIntroduceYAYA]
+    \n\n[half]
+    # This debug menu is something you would comment out on a public release.
+    \![*]\q[Debug Menu,OnDebugMenu]
+    \n\n[half]
+    \![*]\q[Quit Menu,OnQuit,1]
+)
+
+OnIntroduceSelf : (
+    "\1\s[10]Well sure! I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
+    "\1\s[15]I'm a computer programmer, and I really like Ukagaka! I also enjoy playing rhythm games and learning Japanese!\w8\w4 "
+    "\1\s[16]The tough guy over there is my romantic partner, Sentinel.\w8\w4\n\n[half]"
+
+    "\0\s[0]Hey. \w8\w8\n\n[half]"
+
+    "\1\s[10]He's more of the outdoorsy type, and tends to take a more reserved role social situations. \w8\w8"
+    "\1\s[15]We met at work, and honestly I didn't even notice that he wasn't an outgoing person. I just kept coming back to talk to him, oblivious.\w8\n\n[half]"
+
+    "\0\s[0]It's not like you were bothering me.\w8\w8\n\n[half]"
+
+    "\1\s[12]Oh, I hope I didn't imply that you were!- Or that I was- I mean...\n\n[half]"
+
+    "\0\s[0]That \w3is something I always liked about you. Heart on your sleeve type."
+
+    "\1\s[11]Well... \w4\s[15]Thanks."
+    \n\n[half]
+    \![*]\q[Back,OnKeroMenu]
+)
+
+OnIntroduceUkagaka : (
+    "\1\s[10]An Ukagaka, also known as a Ghost, is a type of desktop toy intended to keep you company.\w8\w4 "
+    "A lot of Japanese Ukagaka do this by standing there and talking to the user.\w8\w4 "
+    "But English Ghosts tend to be extremely diverse due to the higher barrier to entry to create a Ghost in English.\w4 "
+    "\1\s[15]You can learn more about that in the YAYA explanation in my menu.\w8\w2\n\n[half]"
+
+    "\1\s[10]Ukagaka originate in early 2000s Otaku culture. As such they were often filled with layered in-jokes, unusual dialects, and, of course, were in Japanese. "
+    "This made Ukagaka difficult for non-Japanese speakers to use and develop. Some English users still used the music player Ghost FLELE which didn't require knowing Japanese to operate.\w4\n\n[half]"
+    
+    "But, in the 2010s, English ghosts started to be broken into. Especially after the first thorough English Ghost creation walkthrough was created by Zarla. "
+    "\1\s[10]We, as the CHIPS template, are intended to be used as a kind of template!\w8 "
+    "Although, we're more designed as middleware. Which means that our code handles the more technical stuff, and the User can just focus on writing their unique features.\w8 "
+    "We're called a template because no other English Ghost foundations use a middleware-like structure as far as we know.\w4 "
+    "So distinguishing us from other English Ghost bases would, honestly, probably be "
+    "\f[italic,true]more\f[italic,default] confusing for new users trying to choose a base to work from than just calling us a template like the others.\n\n[half]"
+
+    "\1\s[15]\w8\w8Hopefully that makes sense!"
+    \n\n[half]
+    \![*]\q[Back,OnKeroMenu]
+)
+
+OnIntroduceKawari : (
+    "\1\s[10]Kawari is the programming language that this Ghost is based in.\s[15] Kawari's main focus is to make writing Ghosts easy, and to make Ghost dialogue diverse!\w8 "
+    "\s[10]It achieves this with its unique entry system. Instead of having many different variable types, Kawari has one type of variable, which can hold anything and be called anywhere.\w8 "
+    "This, essentially, makes Kawari function a lot like many, many arrays (and like envelopes, if you're familiar with the term) that can happen at any time.\w2 "
+    "That, in combination with layering these different entries, means that Kawari can turn many different entry calls into one single but varied dialogue, easily! How useful.\w8\w8\n\n[half]"
+
+    "For a little history, Kawari has been around since at least 2001. "
+    "Kawari's 7th phase, the earliest phase recorded that's easily accessible, was worked on in early 2002, too.\w8 "
+    "\1\s[10]Kawari was considered hard to work with in the early Phases, including Phase 7. Issues in its code from multiple successive changes and a lack of coding flexibility were cited as reasons why.\w4 "
+    "The difficulties in creating and maintaining Kawari are a whole story to themselves. Which, you can read about in the Kawari Programming Reference! "
+    "I highly suggest doing so if you think Kawari as a whole is as interesting as I do.\w8\w8\n\n[half]"
+
+    "\1\s[15]Anyway.\w8\w8\1\s[10] Phase 8, an entire overhaul of Kawari, was available sometime in July of 2002 and is the version you're on now! (well, unless it makes a surprise comeback.)\w8 "
+    "Phase 8 attempted to rework the issues Kawari was having. I definitely am glad it's what we have to work with now!\w8 "
+    "\1\s[10]Development on Kawari stopped sometime in 2008. That's the latest year we have recorded for changes and the last year on the license.\w4 "
+    "But, Kawari \f[italic,true]is\f[italic,default] open source! So, if someone wanted to continue it, it's not out of the question. It'd just be a fork of the original.\w6 "
+    "\1\s[15]If you're familiar with C++ and STL, maybe you could give it a look?\w4"
+    \n\n[half]
+    \![*]\q[Back,OnKeroMenu]
+)
+
+OnIntroduceYAYA : (
+    "\1\s[10]YAYA is a continuation of an older Ghost programming language called AYA. Almost all English Ghosts are based in YAYA, and YAYA itself is based in C.\w8 "
+    "It's also still being maintained to this day, and has many contributors to keep it alive.\w4 "
+    "The main thing about making a Ghost in YAYA is that there is no middleware written for YAYA. This means one often has to know at least a little coding to get started.\w8 "
+    "This stops quite a few people from getting into Ghost development. But it also means a lot of our Ghosts over here are more involved than the traditional Ghost!\w8 "
+    "\1\s[0]\s[15]I hope that as you use this template it'll make it easier for you to get into Ghost development than ever before.\w4"
+    \n\n[half]
+    \![*]\q[Back,OnKeroMenu]
+)
+
+OnDebugMenu : (
+    "\1\s[12]Uh oh, something go wrong? This menu's here to handle some functions that help with debugging issues. Alright. Here's the debug options.\n\n[half]"
+    \![*]\q[Force load Save file,OnForceLoadSave]
+    \n
+    \![*]\q[Test Variable,OnTestVariable]
+    \n\n[half]
+    \![*]\q[Quit Menu,OnQuit,1]
+)
+
+OnForceLoadSave : (
+    $(logprint ${SaveLoad})
+    ${SaveLoad}
+    "\1\s[10]Save file has been force loaded."
+)
+
+OnTestVariable : (
+    "\1\s[10]Testing!"
+    # This entry can be used to test code on demand. Very helpful for longer and more complex SakuraScript or KIS.
+)

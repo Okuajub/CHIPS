@@ -1,0 +1,38 @@
+#--
+# Resources
+#--
+
+#--
+# Network Update URL
+#--
+# This is the link you'll use to update your Ghost.
+homeurl: ""
+useorigin1: 1
+
+#--
+# Recommendations (The sites under the Recommendations tab in the right click menu.)
+#--
+# Apparently you can set a banner using the URL. Neat!
+
+resource.sakura.portalsites:$(urllist
+	"Okuajub's Netspace" 
+	"https://okuajub-netspace.neocities.org" 
+	"https://okuajub-netspace.neocities.org/eva_button.png"
+	"-" "-" "-"
+	"Okuajub's Repo"
+	"https://github.com/Okuajub/pcPets/tree/main/Ukagakas"
+	"-"
+)
+
+resource.sakura.recommendsites:$(urllist
+	"Kawari Github"
+	"https://kawari.github.io/"
+	"-" 
+	"SakuraScript Documentation"
+	"https://ukagakadreamteam.github.io/ukadoc/manual/list_sakura_script.html"
+	"-"
+	"SHIORI Event Documentation"
+	"https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event.html"
+	"-"
+)
+

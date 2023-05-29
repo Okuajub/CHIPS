@@ -1,0 +1,1 @@
+Hey there! So, you're looking to get into the coding side of things, are you? Or, maybe you're just here to study the code! Which, is totally fine by me.

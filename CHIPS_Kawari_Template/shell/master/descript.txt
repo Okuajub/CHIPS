@@ -1,0 +1,91 @@
+﻿//--descript.txt
+//This is the descript.txt for your Ghost. It describes important info about the shell to your baseware, so the baseware can recognize it and run it properly.
+//You can find the Ukadoc page for it here: https://ukagakadreamteam.github.io/ukadoc/manual/descript_shell.html
+
+//--General Info
+//If you filled out the descript.txt for your Ghost already, this should look similar. These following lines define information about the shell and it's creator. You don't have to touch the first two lines, and if this is the default shell for your Ghost, you don't have to touch the third either. Just fill in your name and your website.
+
+charset,UTF-8
+type,shell
+
+name,Master
+craftman,Okuajub
+craftmanurl,https://okuajub-netspace.neocities.org
+
+//--Use_self_alpha
+//Originally, Ghosts didn't naturally support transparent PNGs, and instead required a set of PNA files to define transparency per surface. Thankfully, now, shells can use this option to use their own transparency instead of PNA files. You can leave this as it is, unless you want to use PNAs for some reason.
+
+seriko.use_self_alpha,1
+
+//--Alignment
+//This controls whether the characters snap to the top or bottom of the screen, or if they can be freely put anywhere. The master shell for CHIPS has this set to 'bottom' because the characters are cut off at the thighs. But many English ghosts use 'free', which allows them to be placed anywhere. Consider which works best for your shell.
+
+seriko.alignmenttodesktop,bottom
+
+//--Menu Font Color
+//This is the font color for the right-click SSP menu. r g b stand for red blue green, adjust the values to get the color you want. This'll probably take some trial and error.
+
+menu.background.font.color.r,0
+menu.background.font.color.g,0
+menu.background.font.color.b,0
+
+
+//--Menu Highlighted Text Color
+//See above
+
+menu.foreground.font.color.r,255
+menu.foreground.font.color.g,255
+menu.foreground.font.color.b,255
+
+
+//--Menu Greyed Out Font Color
+//For options that aren't selectable for some reason.
+
+menu.disable.font.color.r,150
+menu.disable.font.color.g,150
+menu.disable.font.color.b,150
+
+
+//--Menu Separator Color
+//
+
+menu.separator.color.r,240
+menu.separator.color.g,240
+menu.separator.color.b,240
+
+
+//--Menu Background Image Alignment
+//By default, the background images align to the left and to the top. But with these commands, you can change that. As an example, these have been aligned to righttop.
+
+menu.background.alignment,righttop
+menu.foreground.alignment,righttop
+menu.sidebar.alignment,bottom
+
+
+//--Menu Background Image Location
+//These are the background images for the menu. I put in a bone patterned background, both to show you can make the background whatever size you'd like. Just be aware that images larger than the menu gets cropped, and smaller than the menu SSP will fill the extra space with a solid color. 
+//You can change the filenames here if you'd like. If you don't, just replace mine with yours. I suggest at least changing the bone background to something else. 
+
+menu.background.bitmap.filename,menu_background.png
+menu.foreground.bitmap.filename,menu_foreground.png
+menu.sidebar.bitmap.filename,menu_sidebar.png
+
+
+//--Balloon Co-ordinates
+//These are the default coordinates for your Ghost's balloon. Unless you're doing something special with the balloon (such as having it overlay a specific part of the Ghost), you can leave these as is.
+
+sakura.balloon.offsetx,0
+sakura.balloon.offsety,0
+kero.balloon.offsetx,0
+kero.balloon.offsety,0
+
+//--Balloon Alignment
+//These settings define whether the balloon should flip when they would collide with the edge of the screen, or if they should be forced into facing left or right.
+//Generally you can just leave these as is.
+
+sakura.balloon.alignment,none
+kero.balloon.alignment,none
+
+
+//--Dress-ups?
+//So, dressups can be finicky to work with. They have to be defined in both surfaces.txt and here. To keep this shell accessible, I've left out any kind of dressups. However, if you're interested, you can dip on over to the N_basic shell to see an example of a dressup I coded.

@@ -1,0 +1,202 @@
+#--
+# AI Talk
+#--
+# This is where you'll write the things you want your ghost to say randomly. I'll walk you through some things that are useful when writing. 
+# The commentary here is can be dense, but I promise the rest of the Ghost will be much lighter! Knowing this information, writing everything else will be a breeze.
+# If you feel overwhelmed, just take things one step at a time. Once you know everything in here by memory, you can write a huge variety of dialogue!
+# I won't get ahead of myself though. So, let's talk terms.
+
+# An 'entry' is how Kawari classifies and holds data. If you've programmed before, it's similar to a variable. 
+# The data the entry holds is called a 'definition'. If you use machine translation to translate the Kawari documentation, you may also see definitions called 'sentences' or 'words'.
+# Definitions can hold 'strings', 'blocks', and 'substitutions'. You can think of these as 'entries' with their 'definitions' in a dictionary! That's why these code files are called dictionaries after all.
+# A string is a series of characters held as data. They are the most common type of entry.
+# A block is a specific way of writing definitions. You'll see an example later.
+# A substitution is also known as a replacement function. There are four kinds of substitutions, and you will learn about them in this Ghost. They are the part of Kawari that allows complex code to be written.
+
+# Also, I refer to the main character as 'Sentinel' and the secondary character as 'Chip' sometimes as they are the characters the template comes with (CHIPS is actually all the capital letters of their full names. 'CHIP'test and 'S'entinel).
+# When speaking of a main character in a ghost in general, they are called a 'Sakura' and a secondary character is a 'Kero', traditionally. These were the names of the main characters from Cardcaptor Sakura (´･ω･`) Isn't that cute?
+# Anyway, I digress. You're now ready to move onto the AI talk section!
+
+#--
+# AI TALK / SENTENCE
+#--
+
+# Sentence is our entry for dialogue that plays randomly. You can technically name this entry whatever you want, but traditionally it is named 'sentence'.
+# To create a new, additional definition (from now on referred to as dialogue in this context), you'll start the new line with 'sentence : ', and then write as you so please. Please view this example:
+sentence : Hello.
+# This is the most basic type of dialogue you can write. Seems pretty easy, right?
+
+# The thing is, when you're writing dialogue in English, you want to use commas and apostrophes. In Kawari, these are recognized not as grammatical structure but as commands.
+# The dialogue sentence : Let's go play! would throw an error and break your ghost, because the character ' is seen as the opening quote to a piece of dialogue without a closing quote.
+# So, how do we fix it? It is rather easy, actually. Simply enclose your dialogue in quotes. 
+# You can use single or double quotes. But be aware when using quotes, you have to be mindful of when you use the same type again in the same sentence.
+# If you use the same type of quote multiple times, you have to escape them by putting \ before them in your dialogue, or it will break.
+# Such as for single quotes: 'So, you\'re going out today?' and vice versa with double quotes: "She said \"Help!\", right?"
+# See these examples:
+sentence : "This is an example of how to escape double quotes in dialogue. \"I am I. I wish to be I.\", as he said in Episode 26. When you want to use quotes like this, just be mindful."
+sentence : 'Because "double" quotes are less common in English, it makes sense to write in them. But maybe you prefer to write in \'single\' quotes. Don\'t think you can\'t escape them either.'
+
+# I'm going to assume you know how to use SakuraScript, but if you don't, I highly recommend taking a look at https://www.ashido.com/ukagaka/scripting.html . 
+# Sentinel also has the SakuraScript reference, in English, in his recommendations! Just right click on him and hover over the top option.
+# SakuraScript, in short, is a shared language between Ghosts that tells your baseware (such as SSP or CROW) what to show on screen and in the speech balloon. You need to know it to write dialogue past an extremely basic level.
+# Here are some pieces of dialogue with SakuraScript tags. Almost everything a ghost says will have these. They will become easy to read and include in your own Ghost as you learn.
+sentence : "\1\s[10]What's going on outside today?\0\s[0]Nothing much, I assume."
+sentence : "\0\s[0]\1\s[10]Writing dialogue is very easy in Kawari! Don't you think?"
+
+# If you would like to split up lines for readability, it's very easy.
+# Start the entry definition as you would normally, with '[entry name] : '. Then, place an open parenthesis. Such as: 'ghost : ('.
+# Then, create a new line, and write your dialogue as you would normally, until you would like to split it. Then, hit newline again, and write as normally.
+# When you are done writing, the closing parenthesis will be on a new line by itself. Your entry definition would then be complete. This type of entry definition is called a 'block'. Please see the next entry as an example.
+sentence : (
+    "\0\s[0]SakuraScript can be used, even in quotes.\1\s[10]Kawari parses it easily.\w[500]\n"
+    "But if you want to output a slash directly, you can use a triple slash, like so. \\\1\\\s[10]. Looks like an error, doesn't it!"
+)
+# As a small note, you can also put the closing parenthesis on the last line instead of a new line. If that makes more sense to you, go for it. Just be consistent!
+
+# Be aware, though, when you write entry definitions like this, they will always be read as ONE element (sentence). You can't add multiple definitions in this format. 
+# The following entry wouldn't work, it would just output all of the foods as one sentence. You can check this if you'd like by calling ${foodBugged}.
+foodBugged : (
+    dog food, hard-boiled egg, yogurt chips
+    sugar cookies
+)
+
+# This is a correctly written entry with multiple definitions.
+food : hard-boiled egg, yogurt chips, banana
+# if you want, you can add more definitions in another line, just like with sentence.
+food : sunflower seeds, cashews, rice cakes, puffed rice
+
+dogFood : kibble, deer liver, Science Diet, Orijen Six Fish
+
+# You can add multiple definitions to separate entries at the same time, too, like this:
+ghosts, friends: Girl and Triangle, Snake and Otacon, Needle
+ghosts, female : Emily, Mayura
+ghosts, friends, male : Emilio 
+
+# And you can add onto them with more definitions later, too, just like with 'food' and 'sentence' too!
+friends : Sakura, Cerberus, Emily
+
+# Kawari only supports Kanji, half-width alphanumeric characters ( A-Za-z0-9 ), question marks ( '?' ), periods ( '.' ), underscores ( '_' ) and at-symbols ( '@' ) in entry names.
+# And, in entry definitions, characters with diacritics are not supported. So, the following entry definition...
+# sentence : "\0\s[0]Do you listen to music?\1\s[10] I like Gymnopédie No. 1, personally!"
+# ...does not work right, because the 'é' in 'Gymnopédie' isn't parsed correctly. It will instead output as 'Gymnopﾃｩdie', with 'é' becoming 'ﾃｩ'. I assume the same goes for entry names.
+# You *probably* won't run into any issues when naming your entries, but do keep in mind the limits. 
+# Also please note that '@' is used for temporary entries, so please don't use it in your entry names unless you want your entry to be temporary.
+
+# Entry calls are the first kind of substitution. They can be used to substitute a part of the current entry with another entry.
+# To call an entry like this, you execute, or "evaluate" it. The syntax ${entry} asks Kawari to execute 'entry'. Take note of the type of brackets, {}. I have bad eyesight and sometimes mix them up for ().
+# When calling another entry, it has to be placed outside of the quotes. This is another part of how Kawari reads quotes, it will take things inside of them literally, with the exception of \ for SakuraScript.
+sentence : "\1\s[18]Hey, I'm hungry. Do you have any "${food}", Sentinel?\0\s[3]Sorry. I'm all out."
+# And, if you run these dialogues, you can see the entries we added to both of them earlier are working exactly as intended.
+sentence : "\1\s[10]Are you friends with "${friends}"? I've heard they're pretty cool!"
+sentence : "\1\s[16]Hey, have you tried out that Ghost, "${ghosts}"?\1\s[15] It's fun to try new Ghosts!"
+# You can make entries for a ton of things. They're the main draw of Kawari and are supposed to make writing ghosts fun and easy.
+
+# You can also perform an entry call inside of another entry call.
+# This can be done to perform operations on them, for example:
+num1 : 2, 4, 6, 8
+num2 : 3, 5, 7, 9
+num3 : 2
+sentence : \0\s[0]The sum of ${num1} and ${num2} is $[ ${num1} + ${num2} ]. "\1\s[19]Are you sure that's right?\0\s[3]\n\n[half]\w2.\w2.\w2."
+# You might notice this sentence isn't mathematically correct at times when it prints. I promise, Sentinel knows how to count! It is just that, every time the entry is called, it does it randomly. So the first call of num1 here could be different than the second.
+# I'll explain how to make it consistent within a dialogue later.
+# Another use of an entry call inside of another entry call is to call a specific element in an entry at the index of the other entry:
+sentence : "\1\s[10]Unless the index number changes," $food[${num3}] "will always be 'banana'."
+# With that, you've also learned how to make an entry array call! An entry array call is when you treat the entry as an array (think, 'An array of items', or in our case, 'an array of foods') and call an element at a specific position.
+# 'num3' holds the number 2, and so it calls the element at the position 2, which is 'banana'. Remember, in programming we usually start counting from 0, not 1. So 'banana' is actually the third definition in 'food'.
+
+# The only things to be avoided when calling entries inside of another entry call are: Operators of arithmetic expressions, Command names of syntax commands (function commands are allowed), and Operators of set expressions.
+# You should be able to safely call your own entries with no problem.
+
+# You can use expressions to specify certain ways of performing entry calls-
+# '&' Chooses a definition that is inside the 'ghosts' entry and is also inside the 'friends' entry.
+sentence : "\0\s[0]This is an example of using the '&' operator in an entry call.\n\n[half]Chip, have you seen "${ghosts & friends}" lately?\1\s[10]Sorry, I can't say that I have."
+# '+' Chooses a definition from either the 'ghosts' or 'friends' entry.
+sentence : "\0\s[0]This is an example of using the '+' operator in an entry call.\n\n[half]Chip, have you seen "${ghosts + friends}" lately?\1\s[10]Sorry, I can't say that I have."
+# '-' Chooses a definition that is in 'ghosts' entry but is not in 'friends' entry.
+sentence : "\0\s[0]This is an example of using the '-' operator in an entry call.\n\n[half]Chip, have you seen "${ghosts - friends}" lately?\1\s[10]Sorry, I can't say that I have."
+# You can use these with entries other than 'ghosts' and 'friends' too, don't get it mixed up! This would choose a definition that is either in 'food' or 'dogFood', too.
+sentence : "\0\s[0]Hm.. My stomach is growling. Wonder where some of that "${food + dogFood}" is...\1\s[10]Hey-?"
+
+# Just like with normal math, multiplication and division take priority over addition and subtraction in Kawari. The odd one out is the '&' operator. It take priority over + and - too.
+# If you're using more than two entries with operators, and have a specific order you want to use them in, like in math you can use parenthesis to specify the order.
+# The following operation, '${ (ghosts + friends) & female}', asks for 'an entry that is from either the ghosts or friends entry' and is also in the 'female' entry.
+sentence : "\0\s[0]"${ (ghosts + friends) & female}" is pretty cute, isn't she? All these teenagers and kids that are running around make me broody.\1\s[10]So you really do have a soft spot."
+# You could do the same for a 'male' entry, too.
+sentence : "\0\s[0]"${ (ghosts + friends) & male}" is pretty cute, isn't he? All these teenagers and kids that are running around make me broody.\1\s[10]So you really do have a soft spot."
+# You can use these operations to create an incredibly customized and varied use of entries, so have fun with them!
+
+# Let's go back to the arithmetic issue from earlier.
+# 'sentence : \0\s[0]The sum of ${num1} and ${num2} is $[ ${num1} + ${num2} ].' was giving us an issue, where sometimes the sum wouldn't actually be correct.
+# To fix this, we'll use a history reference.
+sentence : \0\s[8]The sum of ${num1} and ${num2} is $[ ${0} + ${1} ]. "\1\s[10]Now, that seems more correct. It's the same for "${-1} and ${0}"."
+# Here, we're able to reference the previously used entries instead of randomly rolling them again. That's what ${0} and ${1} are doing, they hold the data of the previously used entries. They count from the first used to the last used.
+# Just like arrays, they start counting from 0. (A fun thing you can do is use negative numbers and it will count the entries last to firt used instead, too. You can see that in Chip's text.)
+# The unfortunate thing is you can't use them for the expressions, such as '&' or '+', the ones we just went over.
+# Because these rely on entry calls already existing, if you use them outside of that context it won't work as expected. I don't know why you would try to, though.
+
+# The last kind of entry call is a temporary entry. This is what the character '@' is used for, as discussed earlier.
+# Temporary entries only exist in the dialogue they're being executed in. They also exist in their own temporary dictionary that's separate from the rest of your Ghost
+# Temporary entries have a lot of hypothetical uses, but to keep things simple we'll use one example. 
+# We have to fill the temporary entry with something too- it doesn't have anything inside. To append a string to an entry (including temporary ones), we use the command 'pushstr'. Watch the parenthesis, here, they're '()' not '{}'.
+# Here's a temporary entry called '@animals'. Let's put in 'eels' to finish the phrase.
+sentence : $(pushstr @animals eels)"\1\s[12]My hovercraft is full of "${@animals}"."
+# You're probably wondering, why use this at all? Why not just create a normal entry called 'animals' with 'eels' inside? Or, use a history reference entry if I want to use the same phrase again?
+# Well, they're actually more useful when writing functions- blocks of code that do specific tasks- because they exist only inside of the function that created them. They are more efficient that way.
+# Unlike history references, too, they can be used repeatedly and freely inside of their own function. 
+# So if you wanted to use the expressions we learned earlier in a situation where you'd use a history reference, you could use a temporary entry to hold the result and then perform it! 
+# You could get pretty complex with that, I imagine, nesting many entry calls. But, if any of this is too complex, don't worry. You can easily write a lot of dialogue with just normal entry calls.
+
+# Also, our usage of 'pushstr' is a perfect time to introduce you to 'inline script'. Inline script is used to execute code on a greater level than entry calls.
+# KIS itself is short for 'Kawari Inline Script', and any area denoted with '=kis' is a block of inline script.
+# But anything enclosed in '$()' is also inline script!
+# So, to cover all our ground on similar looking syntax, '${}' is for entry calls, '$entry[]' is for entry array calls, '$[]' is for computational expressions, and '$()' is for inline script.
+# There's a huge variety of scripting commands I can't cover individually. If you'd like to see all of them, please refer to the "Command List" in the KIS reference manual.
+# So I don't leave you completely stranded, though, let's use a few that you'll see really often.
+
+
+# This is an if/else if/else statement. The first piece is the condition, 'the food entry returns 'sunflower seeds''. *If* that is true, then it'll evaluate the statement following it (in this case, a piece of dialogue).
+# If 'the food entry does not return 'sunflower seeds'', it moves onto the next line. The next line checks if 'the entry dogFood returns 'deer liver''.
+# If it doesn't return 'deer liver', it moves onto the next line, which has no condition. So it will always execute it, unless one of the other conditions was true.
+sentence : (
+    $(if $[${food} == 'sunflower seeds'] "\1\s[18] I'm really craving some sunflower seeds, right now." 
+    else if $[${dogFood} == 'deer liver'] "\0\s[8]Hm. Some deer liver would hit the spot."
+    else "\0\s[0]Hungry?\1\s[10]Not really.")
+)
+# If checks like this are very useful for making functions, but as you can see you can use them in dialogue, too!
+# Another useful function to know for this is 'rand'. As it sounds, it returns a random integer as a string.
+sentence : (
+    $(pushstr @num $(rand 100))
+    $(if $[${@num} > 90] "\0\s[5]The random number was greater than 90."
+    else if $[${@num} > 50] "\0\s[3]The random number was greater than 50 but not 90."
+    else "\0\s[3]The random number was not greater than 50."
+    )
+    " The random number was "${@num}"."
+)
+# We're getting a little complex here with the brackets. But, if you see through them, you can see the code is actually very simple. It's just a series of greater than checks.
+# I used a temporary entry here because rolling rand every time could give us a logic error, like the one we fixed with history references earlier. 
+# So if you're going to show the user the result like Sentinel does, consider using one too.
+# That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal to play with when writing dialogue!
+
+sentence : "\0\s[5]You can replace our lines with whatever you'd like."
+
+sentence : "\1\s[19]Have you tried turning it off and on again?"
+
+sentence : (
+    "\0\s[8]Chip, have you heard of a person called 'Melinda the Mental Marvel'?\w8\w8"
+    "\1\s[19]No, why?\w8"
+    "\0\s[0]\n\n[half]Oh, nothing.. You just remind me of this kid I met once. Chip McCallahan."
+    "\1\s[13]\n\n[half]Oh, \f[italic,true]him\f[italic,default]? No way! I \f[italic,true]test\f[italic,false] chips, not collect them to get into some lame club.\w8"
+    "\0\s[0]\n\n[half]Bummer."
+    "\1\s[19]\n\n[half]\f[size,9]Chip's Challenge... Huh!\f[size,default]"
+)
+
+# Oh, also, here's the hour roll-over event. By default it's in military time
+talk.OnHourTimeSignal : $(setstr @hour $(date %H); setstr @minute $(date %M)) "\0\s[0]It's "${@hour}":"${@minute}"."
+
+# STOP! ! ! Do not write any dialogue past this piece of code! If you do, it won't be called!! 
+# This piece of code calls on a function called "Nonoverlap" which makes sure that none of your Ghost's dialogue repeats before the others are called.
+# You can write as much as you'd like BEFORE THIS POINT. But any dialogue written afterward is *not* added to the Nonoverlap processed version of this entry! It's covered by the 'writeprotect' command.
+# Which makes the entry unable to be edited after this point. It's at the *end* of this dictonary for a reason!
+=kis
+Nonoverlap sentence;
+=end

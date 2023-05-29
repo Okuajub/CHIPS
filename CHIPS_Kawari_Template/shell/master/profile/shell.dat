@@ -1,0 +1,22 @@
+Charset,UTF-8
+__system_settings_version__,2
+char0.bind.savearray,41=0 42=0 43=0
+seriko.scaling.balloonlink,0
+balloon,C:\Users\silve\Desktop\ssp_testingclient_2_6_4\balloon\Al Tsukimi -Night-\
+Char1.balloon.isleft,0
+scriptbox.left,-544
+balloon0.offset,149.56
+Char0.centery,1080
+balloon1.offset,102.96
+Char0.balloon.isleft,1
+Char.VirtualDesktop,830b2cdf-5c66-4a98-94a5-9eb9e8a7d118
+Char0.center,-193
+scriptbox.top,382
+Char1.centery,1080
+Char1.center,-1770
+char1.bind.savearray,51=1 52=0 53=0 54=0 55=0 56=0 57=0
+seriko.scaling.percent.x,100
+seriko.scaling.balloon.percent.x,100
+seriko.scaling.percent.y,100
+seriko.scaling.balloon.percent.y,100
+__system_written_flag_do_not_remove__,written

@@ -1,0 +1,31 @@
+version,1
+
+//--
+//Surfaces.txt
+//--
+//This is the alternate shell for these characters. It's called 'basic' because I wanted to show really how simple you can go.
+
+//--The Sakura (Main Character)
+//
+
+//surface0 is the default pose. In this case, it only has one animation, which is actually a dressup.
+
+surface0
+{
+
+
+//This puts down the base image, which is surface0.
+element0,overlay,surface0.png,0,0
+
+//A dressup is actually an animation, defined with the interval 'bind'. Be aware that you'll have to define each dressup you create, in both here and surfaces.txt, or else it won't show up in the menu.
+animation0.interval,bind
+animation0.pattern0,bind,100,0,0
+
+}
+
+//--The Kero (Side Character)
+
+surface10
+{
+element0,overlay,surface10.png,0,0
+}

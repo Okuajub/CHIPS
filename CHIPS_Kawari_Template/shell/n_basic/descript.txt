@@ -1,0 +1,88 @@
+﻿//Free or Bound
+
+seriko.alignmenttodesktop,free
+
+//Use_self_alpha
+
+seriko.use_self_alpha,1
+
+
+//General Information
+ 
+charset,UTF-8
+type,shell
+name,Basic
+craftman,Okuajub
+craftmanurl,https://okuajub-netspace.neocities.org
+
+
+//Balloon Co-ordinates
+
+sakura.balloon.offsetx,0
+sakura.balloon.offsety,0
+kero.balloon.offsetx,0
+kero.balloon.offsety,0
+sakura.balloon.alignment,none
+kero.balloon.alignment,none
+
+//Menu Font Color
+
+menu.background.font.color.r,0
+menu.background.font.color.g,0
+menu.background.font.color.b,0
+
+
+//Menu Highlighted Text Color
+//See above
+
+menu.foreground.font.color.r,255
+menu.foreground.font.color.g,255
+menu.foreground.font.color.b,255
+
+
+//Menu Greyed Out Font Color
+//For options that aren't selectable for some reason.
+
+menu.disable.font.color.r,150
+menu.disable.font.color.g,150
+menu.disable.font.color.b,150
+
+
+//Menu Separate Color
+//The color of the tiny line that separates the sections on the menu.
+
+menu.separator.color.r,240
+menu.separator.color.g,240
+menu.separator.color.b,240
+
+
+//Menu Background Image Alignment
+
+menu.background.alignment,righttop
+menu.foreground.alignment,righttop
+menu.sidebar.alignment,bottom
+
+
+//Menu Background Image Location
+
+menu.background.bitmap.filename,menu_background.png
+menu.foreground.bitmap.filename,menu_foreground.png
+menu.sidebar.bitmap.filename,menu_sidebar.png
+
+
+//--Dress-up Code
+//This is coding that defines what dressups exist and what their names are.
+//This example dressup is a hairclip shaped like a bone. Its animation number was 0, so its bind group is 0, too. Default specifies if it's on by.. default or not.
+//Despite being a bit annoying to set up, dressups are actually fairly easy to implement. It just requires going back and forth between files to double check information.
+
+sakura.bindgroup0.name,Hairclip,Bone
+sakura.bindgroup0.default,0
+
+//Dress-Up Menu Organization
+//This is how your dress-up menu is organized. You can put dress-ups out of order, if you'd like, and you can split them using '-'. I've only put a Sakura dress-up here, but the Kero functions the same, just beginning with 'kero' instead of 'sakura'.
+
+sakura.menuitem0,0
+//sakura.menuitem1,-
+//sakura.menuitem2,29
+//sakura.menuitem3,100
+//sakura.menuitem4,9

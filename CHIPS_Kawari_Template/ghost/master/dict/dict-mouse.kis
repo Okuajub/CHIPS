@@ -1,0 +1,62 @@
+#--
+# Mouse Dictionary
+#--
+
+OnMouseDoubleClick : $(
+	entry
+	MouseDoubleClick${System.Request.Reference3}${System.Request.Reference4}
+	${MouseDoubleClick${System.Request.Reference3}}
+)
+
+# First, determine the "stroked character"
+OnMouseMove : $(
+	if $[ ${System.Request.Reference3} == 0 ] $(
+		entry env.MouseMove.1st;
+	) else if $[ ${System.Request.Reference3} == 1 ] $(
+		entry env.MouseMove.2nd;
+	);
+)
+
+# Then count up the "stroking count" for each character, and when it reaches the set number.
+# Reset the counter, and then do a stroking reaction talk for that point.
+
+
+OnMouseLeaveAll : $(
+	setstr sys.Move 0;
+)
+
+# Collision Detection
+env.MouseMove.1st : $(
+	inc sys.Move;
+	if $[ $[ ${sys.Move} > ${sys.SetMove1st} ] && $[ $(match ${System.Request.Status} talking) < 0 ] ] $(
+		setstr sys.Move 0;
+		entry MouseMove${System.Request.Reference3}${System.Request.Reference4} ${MouseMove${System.Request.Reference3}};
+	);
+)
+
+OnKeyPress: $(
+	entry sys.key.${System.Request.Reference0};
+)
+sys.key.r: $(
+	echo ${lastTalk}
+)
+# This is the first function I wrote in Kawari- to make them talk on command...
+sys.key.t: $(
+	echo ${OnAITalk}
+)
+sys.key.f: $(
+    echo \![reload,shiori]\0\s[0]\_qReloaded the SHIORI.\e;
+)
+
+#--
+# Other
+#--
+
+# This is the poke event from Needle. @poke is who Needle is poking (0 Sakura, 1 Kero, etc..), @type is the Shell that Needle is wearing.
+# This has been placed in the Mouse file instead of the Event file to match 'ghost-mouse.txt'.
+OnNeedlePoke : (
+    $(setstr @poke $(Reference 0))
+    $(setstr @type $(Reference 1))
+	$(if $[$(length ${talk.OnNeedlePoke${@poke}${@type}} > 0)] ${talk.OnNeedlePoke${@poke}${@type}}
+	else ${talk.OnNeedlePoke${@poke}})
+)

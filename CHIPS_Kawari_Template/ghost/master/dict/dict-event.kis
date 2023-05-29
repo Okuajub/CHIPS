@@ -1,0 +1,281 @@
+#--
+# Event Dictionary
+#--
+# Hi! Presumably, if you're here, you're interested in the more intensive parts of Kawari coding. 
+# This file handles, primarily, events from the baseware.
+
+
+#--
+# SHIORI EVENTS
+#--
+# This is the code which interprets events from the baseware! DO NOT DELETE IT! 
+# If you do, your Ghost becomes much like a human in a 'vegetative state'... Appearing alive, but not responding to the outside world at all.
+# So, unless you know what you're doing, leave it alone.
+
+# SHIORI 3.0
+# These event handlers are derived from OpenKEEPS (a Japanese Kawari template), used with permission under their license.
+
+System.Callback.OnNOTIFY : $(
+	if $(.size notify.$(.encode_entryname ${System.Request.ID})) $(
+		# Procedure call
+		.setstr @ans $(.get notify.$(.encode_entryname ${System.Request.ID}));
+		if $[ ${@ans} != "" ] $(return ${@ans});
+	);
+	if $(.size System.Request.BaseID) $(
+		# Derive source event (assuming it is an event) by splitting the IDs and checking them.
+		.split @IDs ${System.Request.BaseID} ",";
+		foreach @ID @IDs $(
+			.setstr @ID $(.encode_entryname ${@ID});
+			if $(.size notify.${@ID}) $(
+				.setstr @ans $(.get notify.${@ID});
+				if $[ ${@ans} != "" ] $(return ${@ans});
+			);
+		);
+	);
+	# There are cases where something that should come in GET comes in NOTIFY
+	# (from the "Ukagaka" specification)
+	.get System.Callback.OnGET;
+)
+
+System.Callback.OnGET : $(
+	.setstr @ID $(.encode_entryname ${System.Request.ID});
+	if $(.match_at ${System.Request.ID} On) $(
+		# Call event
+		if $(.size ${@ID}) $(
+			.setstr @ans $(.get ${@ID});
+			if $[ ${@ans} != "" ] $(return ${@ans});
+			# If there is a response, return event at this point.
+			# The situation where there is no event description or no response will be processed after this.
+			);
+		if $(.size System.Request.BaseID) $(
+			# Derive source event (assuming it is an event)
+			.split @IDs ${System.Request.BaseID} ",";
+			foreach @ID @IDs $(
+				.setstr @ID $(.encode_entryname ${@ID});
+				if $(.size ${@ID}) $(
+					.setstr @ans $(.get ${@ID});
+					if $[ ${@ans} != "" ] $(return ${@ans});
+				)
+			);
+		);
+	) else $(
+		if $(.match_at ${System.Request.ID} "\\") $(
+			# words
+			.entry compatible.$(.substr ${@ID} 1);
+			return;
+		) else $(
+			# If it is a resource string
+			if $(.size resource.${@ID}) $(.get resource.${@ID});
+			return;
+		);
+	);
+)
+
+System.Callback.OnEvent : $(
+	if $(.size System.Request.Event) $(
+		.clear System.Request.ID;
+		.copy System.Request.Event System.Request.ID;
+	) else $(
+		# 単純GET Sentence
+		.setstr System.Request.ID "OnAITalk";
+	);
+	.get System.Callback.OnGET;
+)
+
+System.Callback.OnRequest : $(
+	if $[ ${System.Request} == "TEACH" ] $(
+		.setstr System.Request.ID "OnTeach";
+		.setstr @aistr $(.get System.Callback.OnGET);
+		if $[ $(.length ${@aistr}) != 0 ] $(
+			.setstr System.Response.Sentence ${@aistr};
+			.setstr System.Response 200;
+		);
+	);
+)
+
+
+#--
+# OnTranslate
+#--
+# This bit of code that checks if a surface is valid was adapted from a YAYA equivalent created by Zichqec. Be aware that it will replace the Kero's invalid surfaces with surface0 as well.
+# Make an array of the current dialogue, with each element starting with a surface call
+# Erase the first element since it won't have a surface call
+# Split off the rest of this bit of dialogue so that we just have the surface number
+# If it isn't valid, replace it (ValidSurfaces is found in NotifyShellInfo)
+OnTranslate : $(
+	setstr @talk $(Reference 0);
+
+	split @checksurfaces ${@talk2} "\s[";
+	clear @checksurfaces[0];
+
+	foreach @element @checksurfaces split @surface ${@element} "]"; 
+	setstr @isvalid $(find ValidSurfaces $@surface[0]); 
+	if $[${@isvalid} = -1 && $@surface[0] >= 0] $(
+		setstr @talk $(gsub ${@talk} "\s["$@surface[0]"]" "\s[0]"); clear @surface; clear @isvalid
+	);
+	echo ${@talk};
+)
+
+#--
+# Basic Events
+#--
+
+# This happens on booting.
+OnInitialize : $(
+	${InitBoot};
+	${SaveLoad};
+)
+
+OnDestroy : $(
+	SaveData;
+)
+
+# Add any variables you want to initialize, in the case that they don't exist, here. 
+# This is most useful for things that are vital to functioning or variables added after an update.
+# To add a variable to be kept across saves, add it to 'savedataParam' in dict-functions.
+InitBoot : $(
+	if $[$(length ${username}) < 1] $(setstr username ${tempUser});
+    if $[$(length ${talkinterval}) < 1] $(setstr talkinterval 90);
+)
+
+OnFirstBoot : $(
+	SaveData;
+	if $[$(Reference 0) == 0] ${talk.OnFirstBoot}
+	else if $[$(Reference 0) > 10] ${talk.OnLotsInstall}
+    else ${talk.OnReinstall};
+)
+
+OnBoot : \1\s[10]\0\s[0]${talk.OnBoot}
+
+OnClose : \1\s[10]\0\s[0]${talk.OnClose}"\_w[500]\-\e"
+
+# My entire philosophy when writing how events are handled in CHIPS is that the writer should be able to create new responses to events painlessly, without having to mess with the back-end.
+# Many templates have these responses have hard-coded if/elseif/else statements for each string. This is extremely daunting for non-coders and tedious for those who do code often.
+# If they're not coded up-front, they're limited to just the generic response.
+# So, here I set this event up in a way that one simply needs to know the Sakura's name to create a specific response to them. If a specific response doesn't exist, it sends the generic event instead.
+# This means a writer can create as many unique responses as they'd like without having to worry at all about juggling long if/elseif/else chains- *while* still allowing them to be flexible in the response if they do know how to code more!
+# It is handled by the Ghost, and made very easy, up to some extent. I would like to take this approach for as many events as possible.
+OnGhostChanging : $(
+	# Reference0 is the Sakura of the Ghost being changed to. Reference 1 is if the change was manual or automatic.
+	setstr @reference0 $(Reference 0);
+	setstr @reference1 $(Reference 1);
+	if $[ $(length ${talk.OnGhostChanging${@reference0}${@reference1}} > 0)] $(${talk.OnGhostChanging${@reference0}${@reference1}})
+	else if $[${@reference0} == ${ghostSakura}] $(${talk.OnGhostReloading})
+	else $(${talk.OnGhostChanging});
+)
+
+OnGhostChanged : $(
+	# Reference0 is the Sakura of the Ghost who was changed from to this Ghost.
+	setstr @reference0 $(Reference 0);
+	if $[$(length ${talk.OnGhostChanged${@reference0}} > 0)] ${talk.OnGhostChanged${@reference0}}
+	else if $[${@reference0} == ${ghostSakura}] ${talk.OnGhostReloaded}
+	else ${talk.OnGhostChanged};
+)
+
+OnGhostCalling : $(
+	# Reference0 is the Ghost being called.
+	setstr @reference0 $(Reference 0);
+	if $[$(length ${talk.OnGhostChanged${@reference0}} > 0)] ${talk.OnGhostCalling${@reference0}};
+)
+
+OnShellChanged : $(
+	setstr @reference0 $(Reference 0);
+	if $[$(length ${talk.OnShellChanged${@reference0}} > 0)] $(${talk.OnShellChanged${@reference0}})
+	else $(${talk.OnShellChanged});
+) 
+
+OnHourTimeSignal : (
+	# Saves every hour in the case of a crash or similar
+	$(SaveData)
+	${talk.OnHourTimeSignal}
+)
+
+talkcounter : 0
+
+OnSecondChange : $(
+    if ${System.Request.Reference3} $(
+        inc talkcounter;
+        if $[ ${talkcounter} >= ${talkinterval} ] $(
+        	echo ${OnAITalk};
+            setstr talkcounter 0;
+        );
+    );
+) 
+
+OnAITalk : $(
+	setstr lastTalk ${sentence};
+	echo ${lastTalk};
+)
+
+#--
+# Network Events
+#--
+
+OnUpdateBegin    : \0
+OnUpdateReady    : \0
+OnUpdateComplete : \0
+OnUpdateFailure  : \0
+
+talk.OnUpdateBegin    : \0\s[0]\_qUpdate Begin.\_q\e
+talk.OnUpdateReady    : \0\s[0]\_qUpdating...\_q\e
+talk.OnUpdateComplete : \0\s[0]\_q${System.Request.Reference0}.\_q
+talk.OnUpdateFailure  : \0\s[0]\_q${System.Request.Reference0}.\_q\
+
+#--
+# Notify
+#--
+
+notify.OnNotifyUserInfo : $(
+	if $[$(length Reference 0 > 0)] $(setstr tempUser $(Reference 0));
+	setstr userfull $(Reference 1);
+	setstr birthdate $(Reference 2);
+	setstr usergender $(Reference 3);
+)
+
+notify.OnNotifySelfInfo : (
+	$(setstr ghostSelf $(Reference 0))
+	$(setstr ghostSakura $(Reference 1))
+	$(setstr currentShell $(Reference 3))
+	$(setstr currentBalloon $(Reference 5))
+)
+
+OnNotifyShellInfo : (
+	# reference2 is the list of surfaces in the shell
+	$(setstr reference2 $(Reference 2))
+	$(split ValidSurfaces ${reference2} ",")
+)
+
+#--
+# Ghost Terminal (https://github.com/ukatech/ghost_terminal)
+#--
+# This code is here to support a program created by Steve Green (AKA steve02081504)
+# CURRENTLY NONFUNCTIONAL - Kosui is a terminal created for Kawari ghosts that works with all of them. Please use it.
+# Please see the documentation for details.
+# This code was referenced from Taromati 2
+
+#Has_Event : (
+#	"hello!"
+#)
+
+#ShioriEcho : $(
+#	cleartree ShioriEcho
+#	setstr shioriEcho0 $(Reference 0);
+#	setstr shioriEcho0 reference.raw[0];
+#	if $[${shioriEcho0} = 'reload'] $(set ReloadFromTerminal 1; ${OnReloadShiori});
+#	if $[${shioriEcho0} = 'errorlog'] $(loglevel error warning; logfile debug.log; load kawarirc.kis; set ShioriEcho.Result "Please check your ghost\master folder for the debug log.");
+#	if $[${shioriEcho0} = 'exit'] $(set ShioriEcho.Status 'End');
+#	${X-SSTP-PassThru-Result};
+#
+#)
+
+#ShioriEcho.Begin : $(
+#	set X-SSTP-PassThru-Title "CHIPS-based Kawari Ghost";
+#	set X-SSTP-PassThru-CustomLoginInfo "Welcome. This Ghost is based on the CHIPS Kawari Template. Good luck debugging!";
+#)
+
+#--
+# Other
+#--
+
+OnSurfaceRestore : "\1\s[10]\0\s[0]"
+talk.OnSurfaceRestore : \e

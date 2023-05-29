@@ -1,0 +1,43 @@
+#--
+# Mouse Actions
+#--
+# This little file holds all of the mouse related actions. Here's a few examples to get you started. 
+# 0 refers to the Sakura, while 1 refers to the Kero, and so on.
+
+MouseDoubleClick0     : ${OnSakuraMenu}
+
+MouseDoubleClick0Head : "\0\s[0]Something wrong?"
+MouseDoubleClick0Head : "\0\s[0]Looking for something?"
+MouseDoubleClick0Head : "\0\s[0]I'm a husky, not a cat, got it?"
+
+MouseDoubleClick0Face : "\0\s[0]Something on my face?"
+MouseDoubleClick0Face : "\0\s[0]What's wrong?"
+
+MouseDoubleClick0Bust : "\0\s[0]I don't understand all this coding stuff, myself."
+
+MouseDoubleClick1     : ${OnKeroMenu}
+
+MouseDoubleClick1Head : "\1\s[10]Is my hair messed up?"
+
+MouseDoubleClick1Face : "\1\s[15]Oh, uhm, are my glasses dirty or something?"
+
+
+# The favorite part of any Ghost, petting.
+# Waiting time for petting response.
+sys.SetMove1st : 100
+
+MouseMove0Head : "\0\s[0]Hey, cut that out."
+MouseMove0Head : "\0\s[0]Stop with the lovey-dovey stuff, will you?"
+
+MouseMove0Face : "\0\s[0]Eh?"
+MouseMove0Face : "\0\s[0]That tickles.\w8 I bite when things tickle."
+
+# This is an interaction between another English ghost called Needle. The number after the event name designates which character is being poked. 0 is the Sakura, 1 is the Kero, and so on.
+talk.OnNeedlePoke0 : "\0\s[2]Ow, hey!"
+talk.OnNeedlePoke0 : "\0\s[2]Huh?!"
+
+talk.OnNeedlePoke1 : "\1\s[12]Ow, what was that for!"
+talk.OnNeedlePoke1 : "\1\s[12]Ah, Hey, that hurt!"
+
+# You can write events for if Needle is wearing a certain shell, too, by appending the shell name after the character number.
+talk.OnNeedlePoke0Syringe : "\0\s[2]Hey, I've had my rabies shot already, alright?!"

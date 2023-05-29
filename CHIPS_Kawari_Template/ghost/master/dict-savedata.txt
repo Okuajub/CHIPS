@@ -1,0 +1,15 @@
+#
+# Kawari saved file
+#
+# Entry talkinterval
+talkinterval : "190"
+# Entry tempUser
+tempUser : "Okuajub"
+# Entry userfull
+userfull : "Okuajub"
+# Entry username
+username : "Okuajub"
+# Entry birthdate
+birthdate : "1980,02,13"
+# Entry usergender
+usergender : "male"
