@@ -55,10 +55,12 @@ menu.separator.color.b,240
 
 
 //--Menu Background Image Alignment
-//By default, the background images align to the left and to the top. But with these commands, you can change that. As an example, these have been aligned to righttop.
+//By default, the background images align to the left and to the top, annd don't tile. But with these commands, you can change that. As an example, these have been aligned to righttop and tile on both the X and Y axis. That means it can loop infinitely.
+//If you'd like these images not to tile, you can remove the 'repeat' commands.
+//If you're willing to put the extra effort in, making a tiling menu like this looks very neat, and won't break if someone has a large list of balloons or Ghosts.
 
-menu.background.alignment,righttop
-menu.foreground.alignment,righttop
+menu.background.alignment,righttop+repeat-x+repeat-y 
+menu.foreground.alignment,righttop+repeat-x+repeat-y
 menu.sidebar.alignment,bottom
 
 

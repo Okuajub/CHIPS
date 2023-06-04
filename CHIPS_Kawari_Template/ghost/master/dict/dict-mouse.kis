@@ -8,7 +8,7 @@ OnMouseDoubleClick : $(
 	${MouseDoubleClick${System.Request.Reference3}}
 )
 
-# First, determine the "stroked character"
+# This determines which character is active.
 OnMouseMove : $(
 	if $[ ${System.Request.Reference3} == 0 ] $(
 		entry env.MouseMove.1st;
@@ -20,7 +20,6 @@ OnMouseMove : $(
 # Then count up the "stroking count" for each character, and when it reaches the set number.
 # Reset the counter, and then do a stroking reaction talk for that point.
 
-
 OnMouseLeaveAll : $(
 	setstr sys.Move 0;
 )
@@ -28,6 +27,7 @@ OnMouseLeaveAll : $(
 # Collision Detection
 env.MouseMove.1st : $(
 	inc sys.Move;
+	# Forces the Ghost to wait until talking is over to pet them.
 	if $[ $[ ${sys.Move} > ${sys.SetMove1st} ] && $[ $(match ${System.Request.Status} talking) < 0 ] ] $(
 		setstr sys.Move 0;
 		entry MouseMove${System.Request.Reference3}${System.Request.Reference4} ${MouseMove${System.Request.Reference3}};
@@ -37,16 +37,12 @@ env.MouseMove.1st : $(
 OnKeyPress: $(
 	entry sys.key.${System.Request.Reference0};
 )
-
 sys.key.r: $(
 	echo ${lastTalk}
 )
 # This is the first function I wrote in Kawari- to make them talk on command...
 sys.key.t: $(
 	echo ${OnAITalk}
-)
-sys.key.f: $(
-    echo \![reload,shiori]\0\s[0]\_qReloaded the SHIORI.\e;
 )
 
 #--

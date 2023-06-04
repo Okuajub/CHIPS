@@ -1,5 +1,5 @@
 #--
-# Bootend Talk
+# Bootend
 #--
 # This is the area that holds the dialogues related to booting and closing the ghost (and similar events). If you're starting here, I highly recommend you actually start with 'ghost-talk' instead.
 # This file is fairly brief, but you could expand it much more. Setting opening and closing dialogues for certain times of day, for example.

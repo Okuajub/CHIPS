@@ -10,6 +10,7 @@ load dict\dict-functions.kis;
 load dict\dict-event.kis;
 load dict\dict-mouse.kis;
 load dict\dict-resource.kis;
+load dict\dict-menu.kis;
 load dict-savedata.txt;
 
 

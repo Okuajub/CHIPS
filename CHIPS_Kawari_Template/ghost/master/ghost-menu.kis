@@ -11,75 +11,108 @@
 SakuMenuTalk : "\0\s[0]Hm?","\0\s[0]Need something?","\0\s[0]Opening the menu."
 
 OnSakuraMenu : (
-    # Gets the present day
-    $(setstr @weekday $(if $[$(date %w) = 0] "Sun" else if $[$(date %w) = 1] "Mon" else if $[$(date %w) = 2] "Tues" else if $[$(date %w) = 3] "Weds" else if $[$(date %w) = 4] "Thurs" else if $[$(date %w) = 5] "Fri" else if $[$(date %w) = 6] "Sat"))
-    $(setstr @hour $(date %H); setstr @minute $(date %M))
-    # Menu starts. Autoscroll disable is to prevent the menu from getting set to the bottom should the User not having a large enough balloon.
-    \b2${SakuMenuTalk}\w4\_q\![set,autoscroll,disable]
+    # You can safely ignore this line. It just remembers what dialogue the user saw when changing the talk interval.
+    $( if $[ $(Reference 0) != 1 ] $(setstr MenuDialogue ${SakuMenuTalk}\w4 ) else if $[ $( match ${MenuDialogue} "\_q" ) = -1 ] $(setstr MenuDialogue \_q${MenuDialogue}\_q ) )
+
+    # The menu starts. Autoscroll disable is to prevent the menu from getting set to the bottom should the User not having a large enough balloon.
+    # If you want to add any new menu options for the Sakura, this is there you would do so.
+    \b2${MenuDialogue}\_q\![set,autoscroll,disable]
     \n\n[half]
     \![*]\q[Say Something,OnAITalk]
-    \n
-    \![*]\q[Repeat Yourself,OnLastTalk]
+    $( if $[ ${lastTalk} ] (\n\![*]\q[Repeat Yourself,OnLastTalk]) )
     \n\n[half]
     \![*]\q[Config Menu,OnConfigMenu]
-    \n
-    \![*]\q[Functions Menu,OnFunctionsMenu]
     \n\n[half]
     \![*]\q[Quit Menu,OnQuit,0]
     \n\n
-    #Talkrate Assignment
+
+    #--
+    # This part is pretty script heavy, so if you're not confident you can just leave it alone.
+
+    # Talkrate Assignment
     $(setstr @interval ${talkinterval})
-    $(if $[${@interval} > 59] $(setstr @interval $[${@interval} / 60]; setstr @form minutes) else $(setstr @form seconds))
-    # If you want to provide an option for every second or every hour... Change this, I guess?
+    $( if $[ ${@interval} = 'Never' ] $(setstr @form "") else if $[ ${@interval} > 59 ] $( setstr @interval $[ ${@interval} / 60 ]; setstr @form minutes ) else $( setstr @form seconds ) )
     $(if $[${@interval} == 1] $(setstr @form minute))
+
+    # Talkrate Display
     "\f[italic,true]Talkrate:" ${@interval} ${@form}\n\f[italic,default]
-    \![*]\q[30sec,OnAssignTalkRate,30] \![*]\q[1min,OnAssignTalkRate,60] \![*]\q[3min,OnAssignTalkRate,190] \![*]\q[5min,OnAssignTalkRate,300]
+    \![*]\q[30s,OnAssignTalkRate,30] \![*]\q[1m,OnAssignTalkRate,60] \![*]\q[3m,OnAssignTalkRate,180]
+    "\![*]\q[5m,OnAssignTalkRate,300] \![*]\q[10m,OnAssignTalkRate,600] \![*]\q[15m,OnAssignTalkRate,900] \![*]\q[Never,OnAssignTalkRate,Never]"
     \n\n[half]
-    \f[italic,true]${@weekday}", %month/%day, "${@hour}":"${@minute}
+
+    # Retrieves info about the present time
+    $(setstr @weekday $(if $[$(date %w) = 0] "Sun" else if $[$(date %w) = 1] "Mon" else if $[$(date %w) = 2] "Tues" else if $[$(date %w) = 3] "Weds" else if $[$(date %w) = 4] "Thurs" else if $[$(date %w) = 5] "Fri" else if $[$(date %w) = 6] "Sat"))
+    $(setstr @hour $(date %H); setstr @minute $(date %M))
+
+    # Displays the time
+    \f[italic,true]${@weekday}", %month/%day, "${@hour}":"${@minute}\f[italic,default]
 )
 
-# You can ignore this one.
-OnLastTalk : ${lastTalk}
+#--
+# Config Menu
+#--
+# This menu handles configuration options, like changing the user's name and pronouns. If you have other configurable systems you want to code, this is a good place to put them.
+# I've left this fairly sparse, as an open canvas of sorts.
 
-# Same as the Sakura Menu Talk - You can write anything you want here without messing up the menu if you want to leave it as is.
+# Same function as the Sakura Menu Talk - You can write anything you want here without messing up the menu, if you want to leave it as is.
 ConfigMenuTalk : "\0\s[0]Configuration, huh?"
 
 OnConfigMenu : (
     \b2${ConfigMenuTalk}\w4\_q\![set,autoscroll,disable]
     \n\n[half]
-    \![*]\q[Set Talk Rate,OnChangeTalkRate]
-    \n
     \![*]\q[Change Name,OnChangeName]
     \n\n[half]
-    \![*]\q[Change Pronouns,OnConfigMenu]
+    \![*]\q[Change Pronouns,OnChangePronouns]
     \n\n[half]
     \![*]\q[Back,OnSakuraMenu]
 )
 
-OnChangeTalkRate : (
-    $(setstr @interval ${talkinterval})
-    $(if $[${@interval} > 59] $(setstr @interval $[${@interval} / 60]; setstr @form minutes) else $(setstr @form seconds))
-    # If you want to provide an option for every second or every hour... Change this, I guess?
-    $(if $[${@interval} == 1] $(setstr @form minute))
-    \b2"The talk rate is currently at every" ${@interval} ${@form}"."\_q\![set,autoscroll,disable]\w6\n\n[half]
-    \![*]\q[30 seconds,OnAssignTalkRate,30]
-    \n
-    \![*]\q[1 Minute,OnAssignTalkRate,60]
-    \n
-    \![*]\q[3 Minutes,OnAssignTalkRate,190]
-    \n
-    \![*]\q[5 Minutes,OnAssignTalkRate,300]
-    \n\n[half]
-    \![*]\q[Back,OnConfigMenu]
+# These talks are used as reactions to config choices.
+
+# This is what your Ghost will say when selecting the change name option.
+talk.OnChangeName : "\0\s[0]Alright. What would you like me to call you?"
+# A response for if the name was the same as the name they already had.
+talk.UnchangedName : "\0\s[0]Hm. That's the same as before. But alright."
+# A response for if the user didn't input anything.
+talk.NoName : "\0\s[0]I'll just go with "${username}", then."
+# A response for if the User inputs a name which is the same as the characters' names.
+talk.SelfName : "\0\s[0]That could get confusing. You got a nickname or something?"
+# A response for if the new username cleared all checks.
+talk.OnNameChanged : "\0\s[0]"${username}", huh? Got it."
+
+# This is what your Ghost will say when selecting the change pronouns option.
+talk.OnChangePronouns : "\0\s[0]Can do. What's right, then?"
+# What your Ghost says when provided with the default pronouns.
+talk.OnChoosePronouns : "\0\s[0]Which of these would you like to proceed with?"
+# When successfully changing pronouns.
+talk.OnPronounsChanged : "\0\s[0]Thanks. I've got it down now."
+# When choosing a pronoun set to delete.
+talk.OnDeletePronouns : "\0\s[0]Which one shouldn't I use?"
+# When successsfully deleting a set of pronouns.
+talk.OnPronounsDeleted : "\0\s[0]Alright. I'll remember not to use those."
+
+# When inputting custom pronouns
+# You can change this as you'd like, but I do suggest giving an example of the pronoun for the ease of the user.
+talk.Pronouns1 : "\0\s[0]What pronoun would you use in place of 'he', 'she', or 'they'?"
+talk.Pronouns2 : "\0\s[0]And what pronoun would you use in place of 'him', 'her', or 'them'?"
+talk.Pronouns3 : "\0\s[0]How about 'his', 'her', or 'their'?"
+talk.Pronouns4 : "\0\s[0]What pronoun would you use in place of 'his', 'hers', or 'theirs'?"
+talk.Pronouns5 : "\0\s[0]Last one. What pronoun would you use in place of 'himself', 'herself', or 'themself'?"
+talk.Pronouns6 : "\0\s[0]Alright. Last question. Is this set singular or plural? '"${temp.they}" are tired.' is an example of these being used in the plural."
+
+# When checking with the User if they typed their pronouns right.
+talk.OnConfirmPronouns : "\0\s[0]So, is "${temp.they}/${temp.them}/${temp.their}/${temp.theirs}/${temp.themself}" correct?"
+# When the User cancels the pronoun change.
+talk.OnExitPronouns : "\0\s[0]No problem."
+# When a user tests their pronouns.
+talk.OnTestPronouns : (
+    "I heard that "${username}" went to the animal shelter recently. "$(cap $user.they[${@i}])" saw a bunch of cute animals that "$user.they[${@i}]" wanted to be "$user.theirs[${@i}]". "
+    $(cap $user.their[${@i}])" face lit up looking at them. At least, I that's what I heard about "$user.them[${@i}]". I hope "$user.they[${@i}] $(SP 'is' 'are') "taking care of "$user.themself[${@i}]"."
 )
 
 OnAssignTalkRate : (
-    $(setstr talkinterval $(Reference 0))
-    "\![raise,OnSakuraMenu]"
-    #$(setstr @interval $(Reference 0))
-    #$(if $[${@interval} > 59] $(setstr @interval $[${@interval} / 60]; setstr @form minutes) else $(setstr @form seconds))
-    #$(if $[${@interval} == 1] $(setstr @form minute))
-    #"\0\s[0]Alright. The talk rate has been set to every "${@interval} ${@form}"."
+    $( setstr talkinterval $(Reference 0); set @dialogue $(Reference 1) )
+    "\![raise,OnSakuraMenu,1]"
 )
 
 FunctionMenuTalk : "\0\s[0]Function menu."
@@ -99,15 +132,26 @@ OnQuit : $(
     if $[$(Reference 0) == 0] ${SakuraQuit}
     else ${KeroQuit}
 )
-
+# This is used for more than just quitting the menu. It's also used when quitting out of creating custom pronouns, so be mindful of that.
 SakuraQuit : "\0\s[0]Mhm.", "\0\s[0]Sure."
 
-KeroQuit : "\1\s[10]Thanks for checking in!", "\1\s[16]Talk to you later!"
+# You can ignore this one. Its only purpose is to repeat what the Ghost last said when used, such as the repeat option in the Sakura Menu.
+OnLastTalk : ${lastTalk}
+
+
+
+#--
+# Kero Menu
+#--
+# A Kero's menu is often used for extra features or information not provided by the Sakura.
+# If you don't have a Kero, you can leave this alone or remove it. But I suggest taking a look at it to get an idea of what you can do.
 
 KeroMenuTalk : "\1\s[15]What's up?","\1\s[15]What can I do for you, "${username}"?"
 
+KeroQuit : "\1\s[10]Thanks for checking in!", "\1\s[16]Talk to you later!"
+
 OnKeroMenu : (
-    \b2${KeroMenuTalk}\_q\![set,autoscroll,disable]
+    \b2${KeroMenuTalk}\w4\_q\![set,autoscroll,disable]
     \n\n[half]
     \![*]\q[Tell me about Yourselves,OnIntroduceSelf]
     \n
@@ -119,12 +163,14 @@ OnKeroMenu : (
     \n\n[half]
     # This debug menu is something you would comment out on a public release.
     \![*]\q[Debug Menu,OnDebugMenu]
+    \n
+    \![*]\q[Higher or Lower,OnPlayHighLow]
     \n\n[half]
     \![*]\q[Quit Menu,OnQuit,1]
 )
 
 OnIntroduceSelf : (
-    "\1\s[10]Well sure! I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
+    "\1\s[10]\b2Well sure! I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
     "\1\s[15]I'm a computer programmer, and I really like Ukagaka! I also enjoy playing rhythm games and learning Japanese!\w8\w4 "
     "\1\s[16]The tough guy over there is my romantic partner, Sentinel.\w8\w4\n\n[half]"
 
@@ -145,7 +191,7 @@ OnIntroduceSelf : (
 )
 
 OnIntroduceUkagaka : (
-    "\1\s[10]An Ukagaka, also known as a Ghost, is a type of desktop toy intended to keep you company.\w8\w4 "
+    "\1\s[10]\b2An Ukagaka, also known as a Ghost, is a type of desktop toy intended to keep you company.\w8\w4 "
     "A lot of Japanese Ukagaka do this by standing there and talking to the user.\w8\w4 "
     "But English Ghosts tend to be extremely diverse due to the higher barrier to entry to create a Ghost in English.\w4 "
     "\1\s[15]You can learn more about that in the YAYA explanation in my menu.\w8\w2\n\n[half]"
@@ -166,7 +212,7 @@ OnIntroduceUkagaka : (
 )
 
 OnIntroduceKawari : (
-    "\1\s[10]Kawari is the programming language that this Ghost is based in.\s[15] Kawari's main focus is to make writing Ghosts easy, and to make Ghost dialogue diverse!\w8 "
+    "\1\s[10]\b2Kawari is the programming language that this Ghost is based in.\s[15] Kawari's main focus is to make writing Ghosts easy, and to make Ghost dialogue diverse!\w8 "
     "\s[10]It achieves this with its unique entry system. Instead of having many different variable types, Kawari has one type of variable, which can hold anything and be called anywhere.\w8 "
     "This, essentially, makes Kawari function a lot like many, many arrays (and like envelopes, if you're familiar with the term) that can happen at any time.\w2 "
     "That, in combination with layering these different entries, means that Kawari can turn many different entry calls into one single but varied dialogue, easily! How useful.\w8\w8\n\n[half]"
@@ -187,31 +233,34 @@ OnIntroduceKawari : (
 )
 
 OnIntroduceYAYA : (
-    "\1\s[10]YAYA is a continuation of an older Ghost programming language called AYA. Almost all English Ghosts are based in YAYA, and YAYA itself is based in C.\w8 "
+    "\1\s[10]\b2YAYA is a continuation of an older Ghost programming language called AYA. Almost all English Ghosts are based in YAYA, and YAYA itself is based in C.\w8 "
     "It's also still being maintained to this day, and has many contributors to keep it alive.\w4 "
+    "It's the most popular Ghost language in English, due to its easy compatibility with English character sets and the fact it's still being updated.\w4 "
     "The main thing about making a Ghost in YAYA is that there is no middleware written for YAYA. This means one often has to know at least a little coding to get started.\w8 "
     "This stops quite a few people from getting into Ghost development. But it also means a lot of our Ghosts over here are more involved than the traditional Ghost!\w8 "
+    "\n\n[half]There are a lot of different types of English Ghosts, from lightly coded to deeply coded, feature-light to feature-dense, talk-light to talk-heavy, and so on.\w4 "
+    "It all stems from the fact that YAYA itself was written primarily with coding in mind"
     "\1\s[0]\s[15]I hope that as you use this template it'll make it easier for you to get into Ghost development than ever before.\w4"
     \n\n[half]
     \![*]\q[Back,OnKeroMenu]
 )
 
+# Having a debug menu can be helpful as you can hide it from the user as needed.
 OnDebugMenu : (
-    "\1\s[12]Uh oh, something go wrong? This menu's here to handle some functions that help with debugging issues. Alright. Here's the debug options.\n\n[half]"
-    \![*]\q[Force load Save file,OnForceLoadSave]
+    \b2"\1\s[12]Uh oh, something go wrong? This menu's here to handle hold debugging functions.\s[10] Alright. Here's the debug options.\n\n[half]"\w4\_q\![set,autoscroll,disable]
+    \![*]\q[Show All Saved Entries,OnShowData]
     \n
     \![*]\q[Test Variable,OnTestVariable]
     \n\n[half]
     \![*]\q[Quit Menu,OnQuit,1]
 )
 
-OnForceLoadSave : (
-    $(logprint ${SaveLoad})
-    ${SaveLoad}
-    "\1\s[10]Save file has been force loaded."
+OnShowData : $(
+    foreach @entries savedataParam $( echo "\b2"${@entries}": "; echo ${${@entries}}"\n" )
 )
 
 OnTestVariable : (
-    "\1\s[10]Testing!"
+    "\1\s[10]Testing!\n\n[half]"
+
     # This entry can be used to test code on demand. Very helpful for longer and more complex SakuraScript or KIS.
 )

@@ -4,8 +4,11 @@
 # This little file holds all of the mouse related actions. Here's a few examples to get you started. 
 # 0 refers to the Sakura, while 1 refers to the Kero, and so on.
 
+#These actions happen when double clicking the Ghost. When a hotspot/collision is not specified, it opens the menu.
 MouseDoubleClick0     : ${OnSakuraMenu}
 
+# You can specify a hotspot/collision (as defined in surfaces.txt) of the character, so that they say something unique when the user double clicks there.
+# In some Ghosts, this is used to hit them. But in this example dialogue it doesn't mean anything in particular.
 MouseDoubleClick0Head : "\0\s[0]Something wrong?"
 MouseDoubleClick0Head : "\0\s[0]Looking for something?"
 MouseDoubleClick0Head : "\0\s[0]I'm a husky, not a cat, got it?"
@@ -23,8 +26,11 @@ MouseDoubleClick1Face : "\1\s[15]Oh, uhm, are my glasses dirty or something?"
 
 
 # The favorite part of any Ghost, petting.
+# Petting is probably one of the most consistent feature in Ghosts, in my experience. 
+# That doesn't mean you need to have it (one of my favorite Ghosts, Faeia and Tahir, doesn't include petting at all), just that users may expect it. Hence it being included.
+
 # Waiting time for petting response.
-sys.SetMove1st : 100
+sys.SetMove1st : 50
 
 MouseMove0Head : "\0\s[0]Hey, cut that out."
 MouseMove0Head : "\0\s[0]Stop with the lovey-dovey stuff, will you?"
@@ -32,7 +38,15 @@ MouseMove0Head : "\0\s[0]Stop with the lovey-dovey stuff, will you?"
 MouseMove0Face : "\0\s[0]Eh?"
 MouseMove0Face : "\0\s[0]That tickles.\w8 I bite when things tickle."
 
-# This is an interaction between another English ghost called Needle. The number after the event name designates which character is being poked. 0 is the Sakura, 1 is the Kero, and so on.
+MouseMove1Head : "\1\s[15]Oh! Um, hi!"
+MouseMove1Head : "\1\s[15]Heyyy, stop that! You might make Sentinel jealous."
+
+MouseMove1Face : "\1\s[13]Err.."
+MouseMove1Face : "\1\s[13]What's that for?"
+
+# This is an interaction between another English Ghost called Needle.
+# Needle is a Ghost which, among other features, sends an event called "OnNeedlePoke" to other Ghosts. This event is implied to be annoying or painful.
+# The number after the event name designates which character is being poked. 0 is the Sakura, 1 is the Kero, and so on.
 talk.OnNeedlePoke0 : "\0\s[2]Ow, hey!"
 talk.OnNeedlePoke0 : "\0\s[2]Huh?!"
 

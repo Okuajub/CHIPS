@@ -1,7 +1,7 @@
 #--
 # AI Talk
 #--
-# This is where you'll write the things you want your ghost to say randomly. I'll walk you through some things that are useful when writing. 
+# This file is where you'll write the things you want your ghost to say randomly. I'll walk you through some things that are useful when writing. 
 # The commentary here is can be dense, but I promise the rest of the Ghost will be much lighter! Knowing this information, writing everything else will be a breeze.
 # If you feel overwhelmed, just take things one step at a time. Once you know everything in here by memory, you can write a huge variety of dialogue!
 # I won't get ahead of myself though. So, let's talk terms.
@@ -46,7 +46,7 @@ sentence : "\0\s[0]\1\s[10]Writing dialogue is very easy in Kawari! Don't you th
 # If you would like to split up lines for readability, it's very easy.
 # Start the entry definition as you would normally, with '[entry name] : '. Then, place an open parenthesis. Such as: 'ghost : ('.
 # Then, create a new line, and write your dialogue as you would normally, until you would like to split it. Then, hit newline again, and write as normally.
-# When you are done writing, the closing parenthesis will be on a new line by itself. Your entry definition would then be complete. This type of entry definition is called a 'block'. Please see the next entry as an example.
+# When you are done writing, the closing parenthesis will be on a new line by itself. Your entry definition would then be complete! This type of entry definition is called a 'block'. Please see the next entry as an example.
 sentence : (
     "\0\s[0]SakuraScript can be used, even in quotes.\1\s[10]Kawari parses it easily.\w[500]\n"
     "But if you want to output a slash directly, you can use a triple slash, like so. \\\1\\\s[10]. Looks like an error, doesn't it!"
@@ -70,7 +70,7 @@ dogFood : kibble, deer liver, Science Diet, Orijen Six Fish
 # You can add multiple definitions to separate entries at the same time, too, like this:
 ghosts, friends: Girl and Triangle, Snake and Otacon, Needle
 ghosts, female : Emily, Mayura
-ghosts, friends, male : Emilio 
+ghosts, friends, male : Emilio
 
 # And you can add onto them with more definitions later, too, just like with 'food' and 'sentence' too!
 friends : Sakura, Cerberus, Emily
@@ -175,7 +175,39 @@ sentence : (
 # We're getting a little complex here with the brackets. But, if you see through them, you can see the code is actually very simple. It's just a series of greater than checks.
 # I used a temporary entry here because rolling rand every time could give us a logic error, like the one we fixed with history references earlier. 
 # So if you're going to show the user the result like Sentinel does, consider using one too.
-# That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal to play with when writing dialogue!
+
+#--
+# CHIPS Specific
+#--
+# There are some unique entries which I've built in to CHIPS to help with writing some things which would otherwise be a bit difficult.
+# Of interest to you may be: 
+
+# User-centric Entries 
+# The entries 'username', 'userfull', 'usergender', and 'birthdate' are entries that keep information on the User. 
+# username holds the user's name as set in the Ghost, which is their nickname in SSP's preferences by default. If they don't have a name set, they will be called "User".
+# userfull is similar, except that the User can't change it inside the Ghost. It's always their full name as described in the SSP preferences.
+# usergender is the user's gender as set by the SSP preferences. "male", "female" and "undef" are the three values it can have.
+# birthdate is the user's birthday! Also set by the SSP preferences. It takes the form of "yyyy,mm,dd", such as "1972,10,31" for "October 31st, 1972" (Sentinel's birthday, haha).
+# There's fun things you could do with these, such as using a user's full name when a Ghost is upset, making gender-specific comments, or giving the user a happy birthday message.
+
+# Pronouns
+# A unique aspect of CHIPS is its pronouns system. The user can have multiple sets, and mix them or have them used consistently in a conversation.
+# Since this is unique to CHIPS, I'll go ahead and go over it. It's not as hard as you might think!
+
+# There are five entries which control pronouns. The entries are: 'they','them','their','theirs', and 'themself'.
+# There's also one function that should help you in making correct subject-pronoun-verb agreement. It's called 'SP'. It stands for "Singular/Plural".
+# That probably sounds complicated but it's actually pretty easy to write! Take a look.
+sentence : (
+    # 'username' calls the user's name and makes the user the subject.
+    "\1\s[10] Hey, Sentinel. Do you think "${username}" should use pronouns to refer to the User?"
+    # Here, the entry 'their' is called. It'll choose an appropriate possessive determiner (such as "their") for the subject.
+    "\0\s[0]I think it's "${their}" choice. "
+    # The function 'SP' is used to determine if a word should be singular or plural relative to the last pronoun. 
+    "I've got no idea what "${they}$(SP "'s" "'ve")" got planned."
+)
+# If you don't plan on acknowledging the User at all in your writing, you don't have to use this. It's just an option, not an expectation!
+# Not all Ghost users actually like being acknowledged in a Ghost. So, maybe consider what kind of Ghost you're writing and who it would appeal to.
+# That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal, now, to play with when writing dialogue!
 
 sentence : "\0\s[5]You can replace our lines with whatever you'd like."
 
@@ -190,13 +222,19 @@ sentence : (
     "\1\s[19]\n\n[half]\f[size,9]Chip's Challenge... Huh!\f[size,default]"
 )
 
-# Oh, also, here's the hour roll-over event. By default it's in military time.
-talk.OnHourTimeSignal : $(setstr @hour $(date %H); setstr @minute $(date %M)) "\0\s[0]It's "${@hour}":"${@minute}"."
+sentence : "\1\s[10]"
+
+# Oh, also, here's the hour roll-over event. Be aware it doesn't always go off exactly on the hour. If you don't want it, just erase it or comment it.
+talk.OnHourTimeSignal : $(setstr @minute $(date %M)) "\0\s[0]It's %hour:"${@minute}"."
+# If you want your Ghost to use a 24-hour format (from a 24-hour format country, works a specific profession, former soldier, simple preference, etc?)...
+# ...you can go ahead and copy and paste *this* verison over the other, or switch which is commented.
+# talk.OnHourTimeSignal : $(setstr @hour $(date %H); setstr @minute $(date %M)) "\0\s[0]It's "${@hour}":"${@minute}"."
+# If you wanted your Ghost to switch between the two, you could also use both. Just like 'sentence', or 'food', event entries like these can have multiple definitions.
 
 # STOP! ! ! Do not write any dialogue past this piece of code! If you do, it won't be called!! 
 # This piece of code calls on a function called "Nonoverlap" which makes sure that none of your Ghost's dialogue repeats before the others are called.
 # You can write as much as you'd like BEFORE THIS POINT. But any dialogue written afterward is *not* added to the Nonoverlap processed version of this entry! It's covered by the 'writeprotect' command.
-# Which makes the entry unable to be edited after this point. It's at the *end* of this dictonary for a reason!
+# ...Which makes the entry unable to be edited after this point. It's at the *end* of this dictonary for a reason!
 =kis
 Nonoverlap sentence;
 =end

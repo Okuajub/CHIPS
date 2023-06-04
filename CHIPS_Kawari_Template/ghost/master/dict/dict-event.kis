@@ -4,6 +4,7 @@
 # Hi! Presumably, if you're here, you're interested in the more intensive parts of Kawari coding. 
 # This file handles, primarily, events from the baseware. These are SHIORI events.
 # A lot of this is, honestly, fairly boring. Middleware writing is not as unique as creating new features, in my opinion, but it's something that had to be done!
+# If you'd like to check out some optional functions, that may be more fun, I suggest checking out the optional files folder.
 # If you're going to keep marching on, good luck! ヾ(•ω•`)o
 
 
@@ -98,12 +99,13 @@ System.Callback.OnRequest : $(
 #--
 # OnTranslate
 #--
-# This bit of code that checks if a surface is valid was adapted from a YAYA equivalent created by Zichqec. Be aware that it will replace the Kero's invalid surfaces with surface0 as well.
-# Make an array of the current dialogue, with each element starting with a surface call
-# Erase the first element since it won't have a surface call
-# Split off the rest of this bit of dialogue so that we just have the surface number
-# If it isn't valid, replace it (ValidSurfaces is found in NotifyShellInfo)
+
 OnTranslate : $(
+	# This bit of code that checks if a surface is valid was adapted from a YAYA equivalent created by Zichqec. Be aware that it will replace the Kero's invalid surfaces with surface0 as well.
+	# Make an array of the current dialogue, with each element starting with a surface call
+	# Erase the first element since it won't have a surface call
+	# Split off the rest of this bit of dialogue so that we just have the surface number
+	# If it isn't valid, replace it. ValidSurfaces is found in NotifyShellInfo.
 	setstr @talk $(Reference 0);
 
 	split @checksurfaces ${@talk2} "\s[";
@@ -114,7 +116,15 @@ OnTranslate : $(
 	if $[${@isvalid} = -1 && $@surface[0] >= 0] $(
 		setstr @talk $(gsub ${@talk} "\s["$@surface[0]"]" "\s[0]"); clear @surface; clear @isvalid
 	);
-	echo ${@talk};
+
+	if $[${ForceSet} != 0] $( setstr currentPronoun $(rand $[$(size user.they)]); );
+
+	# Allows code to be evaluated in script input. Checks that there's no event in reference2 and no special flag in reference1. Code, very loosely, referenced from Girl and Triangle.
+	if $[ $(Reference 1) == "" && $( Reference 2 ) == ""] $(
+		echo $(eval ${@talk})
+	)
+    else $(echo ${@talk})
+	
 )
 
 #--
@@ -124,20 +134,78 @@ OnTranslate : $(
 # This happens on ALL booting.
 OnInitialize : $(
 	${InitBoot};
-	${SaveLoad};
 )
 # This happens on ALL closing.
 OnDestroy : $(
 	SaveData;
 )
 
-# Add any variables you want to initialize, in the case that they don't exist, here. 
-# This is most useful for things that are vital to functioning or variables added after an update.
-# To add a variable to be kept across saves, add it to 'savedataParam' in dict-functions.
+# Add any entries you want to initialize with default values, in the case that they don't exist, here. 
+# This is most useful for things that are vital to functioning, have unique default values, or are entries added after an update.
+# To add an entry to be kept across saves, add it to 'savedataParam' in dict-functions.
+# This will not overwrite the user's data unless that data was not present in the first place. (So long as you use the $[ !${entry} ] truth evaluation.)
 InitBoot : $(
-	if $[$(length ${username}) < 1] $(setstr username ${tempUser});
-    if $[$(length ${talkinterval}) < 1] $(setstr talkinterval 90);
+	${SaveLoad};
+	# Sets the user's name to the name in SSP's preferences.
+	if $[ $(length ${username}) < 1 ] $(setstr username ${tempUser});
+	# Second check, for if the first doesn't work for some reason.
+	if $[ $(length ${username}) < 1 ] $(setstr username "User");
+	# Sets the default pronouns, also based on SSP preferences.
+	if $[ $(length ${user.they}) < 1 || $(length ${user.them}) < 1 || $(length ${user.their}) < 1 || $(length ${user.theirs}) < 1 || $(length ${user.themself}) < 1 || $(length ${user.singularplural}) < 1 ] $(
+		if $[ ${usergender} = "female" ] $(copytree pronounsFem user)
+		else if $[ ${usergender} = "male" ] $(copytree pronounsMasc user)
+		else $(copytree pronounsNeut user);
+	);
+	# Sets a default value for singular/plural pronouns.
+	if $[ $(length ${lastSP}) = 0 ] $(setstr lastSP '0');
+	# Sets a default value for if pronouns should be mixed or not.
+	if $[ $(length ${ForceSet}) = 0 ] $(setstr ForceSet '0');
+	# Sets a talk interval if there is none.
+    if $[ $(length ${talkinterval}) = 0 ] $(setstr talkinterval 300);
 )
+
+# A set of trees of default pronouns. Used primarily for copying purposes.
+pronounsFem.they     : "she"
+pronounsFem.them     : "her"
+pronounsFem.their    : "her"
+pronounsFem.theirs   : "hers"
+pronounsFem.themself : "herself"
+pronounsFem.singularplural : "0"
+
+pronounsMasc.they     : "he"
+pronounsMasc.them     : "him"
+pronounsMasc.their    : "his"
+pronounsMasc.theirs   : "his"
+pronounsMasc.themself : "himself"
+pronounsMasc.singularplural : "0"
+
+pronounsNeut.they     : "they"
+pronounsNeut.them     : "them"
+pronounsNeut.their    : "their"
+pronounsNeut.theirs   : "theirs"
+pronounsNeut.themself : "themself"
+pronounsNeut.singularplural : "1"
+
+pronounsIt.they : "it"
+pronounsIt.them : "it"
+pronounsIt.their : "its"
+pronounsIt.theirs : "its"
+pronounsIt.themself : "itself"
+pronounsIt.singularplural : "0"
+
+pronounsName.they : ${username}
+pronounsName.them : ${username}
+pronounsName.their : ${username}"'s"
+pronounsName.theirs : ${username}"'s"
+pronounsName.themself : ${username}"'s self"
+pronounsName.singularplural : "0"
+
+they     : $(OnUpdatePronoun they)
+them     : $(OnUpdatePronoun them)
+their    : $(OnUpdatePronoun their)
+theirs   : $(OnUpdatePronoun theirs)
+themself : $(OnUpdatePronoun themself)
+
 
 OnFirstBoot : $(
 	SaveData;
@@ -188,8 +256,6 @@ OnShellChanged : $(
 ) 
 
 OnHourTimeSignal : (
-	# Saves every hour in the case of a crash or similar
-	$(SaveData)
 	${talk.OnHourTimeSignal}
 )
 
@@ -205,7 +271,11 @@ OnSecondChange : $(
             setstr talkcounter 0;
         );
     );
-) 
+)
+
+OnMinuteChange : $(
+	SaveData;
+)
 
 OnAITalk : $(
 	setstr lastTalk ${sentence};
@@ -240,6 +310,7 @@ notify.OnNotifyUserInfo : $(
 notify.OnNotifySelfInfo : (
 	$(setstr ghostSelf $(Reference 0))
 	$(setstr ghostSakura $(Reference 1))
+	$(setstr ghostKero $(Reference 2))
 	$(setstr currentShell $(Reference 3))
 	$(setstr currentBalloon $(Reference 5))
 )
