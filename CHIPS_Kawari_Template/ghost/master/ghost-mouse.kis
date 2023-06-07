@@ -39,12 +39,12 @@ MouseMove0Face : "\0\s[0]Eh?"
 MouseMove0Face : "\0\s[0]That tickles.\w8 I bite when things tickle."
 
 MouseMove1Head : "\1\s[15]Oh! Um, hi!"
-MouseMove1Head : "\1\s[15]Heyyy, stop that! You might make Sentinel jealous."
+MouseMove1Head : "\1\s[15]Heyyy, stop that!\w2 You might make Sentinel jealous."
 
 MouseMove1Face : "\1\s[13]Err.."
 MouseMove1Face : "\1\s[13]What's that for?"
 
-# This is an interaction between another English Ghost called Needle.
+# This is an interaction between this Ghost and another English Ghost called Needle.
 # Needle is a Ghost which, among other features, sends an event called "OnNeedlePoke" to other Ghosts. This event is implied to be annoying or painful.
 # The number after the event name designates which character is being poked. 0 is the Sakura, 1 is the Kero, and so on.
 talk.OnNeedlePoke0 : "\0\s[2]Ow, hey!"

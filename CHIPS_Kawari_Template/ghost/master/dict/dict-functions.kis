@@ -86,8 +86,8 @@ function cap $(
 # The following functions all work together to save data. Based up OpenKEEPS, but heavily simplified.
 
 # Filenames for the user's data.
-usersavefile : dict-savedata.txt
-userbackupfile : dict-bakdata.txt
+usersavefile : profile\dict-savedata.txt
+userbackupfile : profile\dict-bakdata.txt
 
 # The function that writes the save file.
 =kis
@@ -101,7 +101,8 @@ savedataParam (
 	talkinterval, 
     tempUser, userfull, username, 
     birthdate, usergender, ForceSet,
-    user.they, user.them, user.their, user.theirs, user.themself, user.singularplural
+    user.they, user.them, user.their, user.theirs, user.themself, user.singularplural,
+    devmode
 )
 
 # Loads the save file after backing up the user's old data to the backup file.

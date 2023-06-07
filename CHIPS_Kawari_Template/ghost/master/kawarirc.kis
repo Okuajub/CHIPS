@@ -11,7 +11,7 @@ load dict\dict-event.kis;
 load dict\dict-mouse.kis;
 load dict\dict-resource.kis;
 load dict\dict-menu.kis;
-load dict-savedata.txt;
+load profile\dict-savedata.txt;
 
 
 # Ghost Dialogue
@@ -19,6 +19,7 @@ load ghost-bootend.kis;
 load ghost-mouse.kis;
 load ghost-aitalk.kis;
 load ghost-menu.kis;
+load ghost-network.kis;
 
 
 # Logs error/behavior information and event information. (Very useful since we do not have a Tama equivalent for Kawari that shows events firing live.)

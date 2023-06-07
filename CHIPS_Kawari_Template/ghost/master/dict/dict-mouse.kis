@@ -40,7 +40,7 @@ OnKeyPress: $(
 sys.key.r: $(
 	echo ${lastTalk}
 )
-# This is the first function I wrote in Kawari- to make them talk on command...
+# This is the first entry I wrote in Kawari- to make them talk on command...
 sys.key.t: $(
 	echo ${OnAITalk}
 )

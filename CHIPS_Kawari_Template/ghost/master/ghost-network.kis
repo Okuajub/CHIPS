@@ -1,0 +1,13 @@
+#--
+# Network Events
+#--
+# This dialogue occurs when events connect to the network to gather information from the web.
+
+talk.OnUpdateBegin    : "\0\s[0]Updating1 "$(Reference 0)"...\w[500]"
+talk.OnUpdateReady    : "\0\s[0]"$(Reference 0)" new files."
+talk.OnUpdateComplete : "\0\s[0]Successfully updated."
+talk.OnUpdateFailure  : "\0\s[0]The update failed. '"$(Reference 0)"' is the reason."
+
+talk.OnSNTPBegin   : "\0\s[0]Connecting to "$(Reference 0)"...\w[500]"
+talk.OnSNTPCorrect : "\0\s[0]The clock's been corrected."
+talk.OnSNTPFailure : "\0\s[0]Failed to connect to "$(Reference 0)"."

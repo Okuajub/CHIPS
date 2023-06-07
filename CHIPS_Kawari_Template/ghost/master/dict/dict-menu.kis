@@ -3,6 +3,12 @@
 #--
 # This file handles the back-end of the menus. Many long functions coming up.
 
+OnToggleVanish : $(
+    if $[${vanishFlag} = 1] $(setstr vanishFlag 0);
+    else $(setstr vanishFlag 1);
+    echo "\![raise,OnConfigMenu]"
+)
+
 # Opens the input box for the name change.
 OnChangeName : (
     ${talk.OnChangeName}
@@ -199,5 +205,8 @@ OnTestPronouns : (
 )
 
 OnTestSet : $(
-    echo $( setstr ${@i} $(Reference 0) ) ${talk.OnTestPronouns}
+    setstr i $(Reference 0);
+    setstr lastSP $user.singularplural[${i}];
+    echo ${talk.OnTestPronouns};
+    clear i;
 )

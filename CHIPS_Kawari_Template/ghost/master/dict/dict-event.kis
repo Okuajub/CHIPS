@@ -101,11 +101,12 @@ System.Callback.OnRequest : $(
 #--
 
 OnTranslate : $(
-	# This bit of code that checks if a surface is valid was adapted from a YAYA equivalent created by Zichqec. Be aware that it will replace the Kero's invalid surfaces with surface0 as well.
+	# This bit of code that checks if a surface is valid was adapted from a YAYA equivalent created by Zichqec. 
+	# Be aware that it will replace the Kero's invalid surfaces with surface0 as well.
 	# Make an array of the current dialogue, with each element starting with a surface call
 	# Erase the first element since it won't have a surface call
 	# Split off the rest of this bit of dialogue so that we just have the surface number
-	# If it isn't valid, replace it. ValidSurfaces is found in NotifyShellInfo.
+	# If it isn't valid, as in not present in ValidSurfaces, replace it. ValidSurfaces is found in NotifyShellInfo.
 	setstr @talk $(Reference 0);
 
 	split @checksurfaces ${@talk2} "\s[";
@@ -143,19 +144,13 @@ OnDestroy : $(
 # Add any entries you want to initialize with default values, in the case that they don't exist, here. 
 # This is most useful for things that are vital to functioning, have unique default values, or are entries added after an update.
 # To add an entry to be kept across saves, add it to 'savedataParam' in dict-functions.
-# This will not overwrite the user's data unless that data was not present in the first place. (So long as you use the $[ !${entry} ] truth evaluation.)
+# This will not overwrite the user's data unless that data was not present in the first place. (So long as you use the $[ $(length ${entry}) < 1 ] truth evaluation.)
 InitBoot : $(
 	${SaveLoad};
 	# Sets the user's name to the name in SSP's preferences.
 	if $[ $(length ${username}) < 1 ] $(setstr username ${tempUser});
 	# Second check, for if the first doesn't work for some reason.
 	if $[ $(length ${username}) < 1 ] $(setstr username "User");
-	# Sets the default pronouns, also based on SSP preferences.
-	if $[ $(length ${user.they}) < 1 || $(length ${user.them}) < 1 || $(length ${user.their}) < 1 || $(length ${user.theirs}) < 1 || $(length ${user.themself}) < 1 || $(length ${user.singularplural}) < 1 ] $(
-		if $[ ${usergender} = "female" ] $(copytree pronounsFem user)
-		else if $[ ${usergender} = "male" ] $(copytree pronounsMasc user)
-		else $(copytree pronounsNeut user);
-	);
 	# Sets a default value for singular/plural pronouns.
 	if $[ $(length ${lastSP}) = 0 ] $(setstr lastSP '0');
 	# Sets a default value for if pronouns should be mixed or not.
@@ -230,9 +225,9 @@ OnGhostChanging : $(
 	# Reference0 is the Sakura of the Ghost being changed to. Reference 1 is if the change was manual or automatic.
 	setstr @reference0 $(Reference 0);
 	setstr @reference1 $(Reference 1);
-	if $[ $(length ${talk.OnGhostChanging${@reference0}${@reference1}} > 0)] $(${talk.OnGhostChanging${@reference0}${@reference1}})
-	else if $[${@reference0} == ${ghostSakura}] $(${talk.OnGhostReloading})
-	else $(${talk.OnGhostChanging});
+	if $[ $(length ${talk.OnGhostChanging${@reference0}${@reference1}} > 0)] ${talk.OnGhostChanging${@reference0}${@reference1}}
+	else if $[${@reference0} == ${ghostSakura}] ${talk.OnGhostReloading}
+	else ${talk.OnGhostChanging};
 )
 
 OnGhostChanged : $(
@@ -246,17 +241,22 @@ OnGhostChanged : $(
 OnGhostCalling : $(
 	# Reference0 is the Ghost being called.
 	setstr @reference0 $(Reference 0);
-	if $[$(length ${talk.OnGhostChanged${@reference0}} > 0)] ${talk.OnGhostCalling${@reference0}};
+	if $[$(length ${talk.OnGhostCalling${@reference0}} > 0)] ${talk.OnGhostCalling${@reference0}}
+	else ${talk.OnGhostCalling};
 )
 
 OnShellChanged : $(
 	setstr @reference0 $(Reference 0);
-	if $[$(length ${talk.OnShellChanged${@reference0}} > 0)] $(${talk.OnShellChanged${@reference0}})
-	else $(${talk.OnShellChanged});
+	if $[$(length ${talk.OnShellChanged${@reference0}} > 0)] ${talk.OnShellChanged${@reference0}}
+	else ${talk.OnShellChanged};
 ) 
 
 OnHourTimeSignal : (
 	${talk.OnHourTimeSignal}
+)
+
+OnMinuteChange : $(
+	SaveData;
 )
 
 # These three entries go together. They handle the random talk, in tandem.
@@ -273,10 +273,6 @@ OnSecondChange : $(
     );
 )
 
-OnMinuteChange : $(
-	SaveData;
-)
-
 OnAITalk : $(
 	setstr lastTalk ${sentence};
 	echo ${lastTalk};
@@ -286,15 +282,63 @@ OnAITalk : $(
 # Network Events
 #--
 
-OnUpdateBegin    : \0
-OnUpdateReady    : \0
-OnUpdateComplete : \0
-OnUpdateFailure  : \0
+On_homeurl : $(
+	if $[${devmode} = 1] "https://URLtoNowhere/"
+	else ${homeURL}
+)
 
-talk.OnUpdateBegin    : \0\s[0]\_qUpdate Begin.\_q\e
-talk.OnUpdateReady    : \0\s[0]\_qUpdating...\_q\e
-talk.OnUpdateComplete : \0\s[0]\_q${System.Request.Reference0}.\_q
-talk.OnUpdateFailure  : \0\s[0]\_q${System.Request.Reference0}.\_q\
+On_vanishbutton.visible : $(
+	if $[${vanishFlag} = "on"] "1"
+	else "0"
+)
+
+OnUpdateBegin    : $(
+	if $[$(length ${talk.OnUpdateBegin} > 0)] ${talk.OnUpdateBegin}
+	else "\0\s[0]Updating "$(Reference 0)"...\w[500]";
+)
+OnUpdateReady    : $(
+	if $[$(length ${talk.OnUpdateReady} > 0)] ${talk.OnUpdateReady}
+	else "\0\s[0]"$(Reference 0)" new files.";
+)
+OnUpdateComplete : $(
+	if $[$(length ${talk.OnUpdateComplete} > 0)] ${talk.OnUpdateComplete}
+	else "\0\s[0]Successfully updated.";
+)
+OnUpdateFailure  : $(
+	if $[$(length ${talk.OnUpdateFailure} > 0)] ${talk.OnUpdateFailure}
+	else "\0\s[0]The update failed. '"$(Reference 0)"' is the reason.";
+)
+
+
+
+# NTP Time Sync Option
+OnSNTPBegin : $(
+	if $[$(length ${talk.OnSNTPBegin} > 0)] ${talk.OnSNTPBegin}
+	else "\0\s[0]Connecting to "$(Reference 0)"...\w[500]";
+	
+)
+
+OnSNTPCompare : $(
+	split @servertime $(Reference 1) ",";
+	split @localtime $(Reference 2) ",";
+	setstr @ntime $@servertime[3]":"$@servertime[4]", "$@servertime[1]"/"$@servertime[2]", "$@servertime[0]; 
+	setstr @wtime $@localtime[3]":"$@localtime[4]", "$@localtime[1]"/"$@localtime[2]", "$@localtime[0];
+	if $[$(Reference 3) != 0] $(echo 
+	"\0\s[0]The time retrieved from "$(Reference 0)" is "${@ntime}". Your device's time is "${@wtime}".\w8 Would you like me to fix the clock?\n\n[half]\q[Yes,OnSNTPChange]\n\q[No,OnQuit,0]")
+	else $(echo "The clock's already correct.")
+)
+
+OnSNTPChange : "\6\e"
+
+OnSNTPCorrect : $(
+	if $[$(length ${talk.OnSNTPCorrect} > 0)] ${talk.OnSNTPCorrect}
+	else "\0\s[0]The clock's been corrected.";
+)
+
+OnSNTPFailure : $(
+	if $[$(length ${talk.OnSNTPFailure} > 0)] ${talk.OnSNTPFailure}"\w[500]"
+	else "\0\s[0]Failed to connect to "$(Reference 0)".\w[500]";
+)
 
 #--
 # Notify
@@ -302,9 +346,15 @@ talk.OnUpdateFailure  : \0\s[0]\_q${System.Request.Reference0}.\_q\
 
 notify.OnNotifyUserInfo : $(
 	if $[$(length Reference 0 > 0)] $(setstr tempUser $(Reference 0));
+	if $[$(length ${username} = "")] $(setstr username ${tempUser});
 	setstr userfull $(Reference 1);
 	setstr birthdate $(Reference 2);
 	setstr usergender $(Reference 3);
+	if $[ $(length ${user.they}) < 1 || $(length ${user.them}) < 1 || $(length ${user.their}) < 1 || $(length ${user.theirs}) < 1 || $(length ${user.themself}) < 1 || $(length ${user.singularplural}) < 1 ] $(
+		if $[ ${usergender} = "female" ] $(copytree pronounsFem user)
+		else if $[ ${usergender} = "male" ] $(copytree pronounsMasc user)
+		else $(copytree pronounsNeut user);
+	);
 )
 
 notify.OnNotifySelfInfo : (

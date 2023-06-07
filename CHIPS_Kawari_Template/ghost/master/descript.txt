@@ -1,11 +1,16 @@
+//Information about the Ghost that gets sent to your baseware.
+
 charset,UTF-8
 type,ghost
+//These
 name,CHIPS Template
 sakura.name,Sentinel
 kero.name,CHIPtest
 craftman,Okuajub
 craftmanurl,Okuajub
+//This, specifically, is the first URL it checks for updates
 homeurl,https://okuajub-netspace.neocities.org/
+
 shiori,shiori.dll
 icon,icon.ico
 readme.charset,UTF-8

@@ -97,7 +97,8 @@ num1 : 2, 4, 6, 8
 num2 : 3, 5, 7, 9
 num3 : 2
 sentence : \0\s[0]The sum of ${num1} and ${num2} is $[ ${num1} + ${num2} ]. "\1\s[19]Are you sure that's right?\0\s[3]\n\n[half]\w2.\w2.\w2."
-# You might notice this sentence isn't mathematically correct at times when it prints. I promise, Sentinel knows how to count! It is just that, every time the entry is called, it does it randomly. So the first call of num1 here could be different than the second.
+# You might notice this sentence isn't mathematically correct at times when it prints. I promise, Sentinel knows how to count! 
+# The problem is: every time the entry is called, it does so randomly. So the first call of num1 here could be different than the second.
 # I'll explain how to make it consistent within a dialogue later.
 # Another use of an entry call inside of another entry call is to call a specific element in an entry at the index of the other entry:
 sentence : "\1\s[10]Unless the index number changes," $food[${num3}] "will always be 'banana'."
@@ -183,9 +184,10 @@ sentence : (
 # Of interest to you may be: 
 
 # User-centric Entries 
-# The entries 'username', 'userfull', 'usergender', and 'birthdate' are entries that keep information on the User. 
+# The entries 'username', 'userfull', 'tempname', 'usergender', and 'birthdate' are entries that keep information on the User. 
 # username holds the user's name as set in the Ghost, which is their nickname in SSP's preferences by default. If they don't have a name set, they will be called "User".
 # userfull is similar, except that the User can't change it inside the Ghost. It's always their full name as described in the SSP preferences.
+# tempname holds the user's nickname as set in SSP and can't be changed within the Ghost. I don't see much use for this besides some fourth-wall break type stuff, but, I wanted to put it out there!
 # usergender is the user's gender as set by the SSP preferences. "male", "female" and "undef" are the three values it can have.
 # birthdate is the user's birthday! Also set by the SSP preferences. It takes the form of "yyyy,mm,dd", such as "1972,10,31" for "October 31st, 1972" (Sentinel's birthday, haha).
 # There's fun things you could do with these, such as using a user's full name when a Ghost is upset, making gender-specific comments, or giving the user a happy birthday message.

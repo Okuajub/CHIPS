@@ -6,8 +6,8 @@
 # Network Update URL
 #--
 # This is the link you'll use to update your Ghost.
-homeurl: ""
-useorigin1: 1
+homeURL : ""
+useorigin1 : 1
 
 #--
 # Recommendations (The sites under the Recommendations tab in the right click menu.)
