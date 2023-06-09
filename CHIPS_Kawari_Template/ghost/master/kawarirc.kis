@@ -9,13 +9,13 @@
 load dict\dict-functions.kis;
 load dict\dict-event.kis;
 load dict\dict-mouse.kis;
-load dict\dict-resource.kis;
 load dict\dict-menu.kis;
 load profile\dict-savedata.txt;
 
 
 # Ghost Dialogue
 load ghost-bootend.kis;
+load ghost-resource.kis;
 load ghost-mouse.kis;
 load ghost-aitalk.kis;
 load ghost-menu.kis;

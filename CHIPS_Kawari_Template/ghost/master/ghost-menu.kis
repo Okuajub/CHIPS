@@ -170,7 +170,7 @@ OnKeroMenu : (
 )
 
 OnIntroduceSelf : (
-    "\1\s[10]\b2Well sure! I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
+    "\1\t\*\s[10]\b2Well sure! I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
     "\1\s[15]I'm a computer programmer, and I really like Ukagaka! I also enjoy playing rhythm games and learning Japanese!\w8\w4 "
     "\1\s[16]The tough guy over there is my romantic partner, Sentinel.\w8\w4\n\n[half]"
 
@@ -191,19 +191,19 @@ OnIntroduceSelf : (
 )
 
 OnIntroduceUkagaka : (
-    "\1\s[10]\b2An Ukagaka, also known as a Ghost, is a type of desktop toy intended to keep you company.\w8\w4 "
-    "A lot of Japanese Ukagaka do this by standing there and talking to the user.\w8\w4\n\n[half] "
+    "\1\t\*\s[10]\b2An Ukagaka, also known as a Ghost, is a type of desktop toy intended to keep you company.\w8\w4 "
+    "A lot of Japanese Ukagaka do this by standing there and talking to the user.\w8\w4\n\n[half]"
 
     "But English Ghosts tend to be extremely diverse due to the higher barrier to entry to create a Ghost in English.\w4 "
     "\1\s[15]You can learn more about that in the YAYA explanation in my menu.\w8\w2\n\n[half]"
 
-    "\1\s[10]Ukagaka originate in early 2000s Otaku culture. As such they were often filled with layered in-jokes, unusual dialects, and, of course, were in Japanese.\n\n[half] "
+    "\1\s[10]Ukagaka originate in early 2000s Otaku culture. As such they were often filled with layered in-jokes, unusual dialects, and, of course, they were in Japanese.\n\n[half]"
     "This made Ukagaka difficult for non-Japanese speakers to use and develop. Some English users still used the music player Ghost FLELE which didn't require knowing Japanese to operate.\w4\n\n[half]"
     
     "But, in the 2010s, English ghosts started to be broken into. Especially after the first thorough English Ghost creation walkthrough was created by Zarla. "
-    "\1\s[10]We, as the CHIPS template, are intended to be used as a kind of template!\w8\n\n[half] "
+    "\1\s[10]We, as the CHIPS template, are intended to be used as a kind of template!\w8\n\n[half]"
     "Although, we're more designed as middleware. Which means that our code handles the more technical stuff, and the User can just focus on writing their unique features.\w8 "
-    "We're called a template because no other English Ghost foundations use a middleware-like structure as far as we know.\w4\n\n[half] "
+    "We're called a template because no other English Ghost foundations use a middleware-like structure as far as we know.\w4\n\n[half]"
     "So distinguishing us from other English Ghost bases would, honestly, probably be "
     "\f[italic,true]more\f[italic,default] confusing for new users trying to choose a base to work from than just calling us a template like the others.\n\n[half]"
 
@@ -213,15 +213,15 @@ OnIntroduceUkagaka : (
 )
 
 OnIntroduceKawari : (
-    "\1\s[10]\b2Kawari is the programming language that this Ghost is based in.\s[15] Kawari's main focus is to make writing Ghosts easy, and to make Ghost dialogue diverse!\w8 "
-    "\s[10]It achieves this with its unique entry system. Instead of having many different variable types, Kawari has one type of variable, which can hold anything and be called anywhere.\w8\n\n[half] "
+    "\1\t\*\s[10]\b2Kawari is the programming language that this Ghost is based in.\s[15] Kawari's main focus is to make writing Ghosts easy, and to make Ghost dialogue diverse!\w8 "
+    "\s[10]It achieves this with its unique entry system. Instead of having many different variable types, Kawari has one type of variable, which can hold anything and be called anywhere.\w8\n\n[half]"
 
     "This, essentially, makes Kawari function a lot like many, many arrays (and like envelopes, if you're familiar with the term) that can happen at any time.\w2 "
     "That, in combination with layering these different entries, means that Kawari can turn many different entry calls into one single but varied dialogue, easily! How useful.\w8\w8\n\n[half]"
 
     "For a little history, Kawari has been around since at least 2001. "
     "Kawari's 7th phase, the earliest phase recorded that's easily accessible, was worked on in early 2002, too.\w8 "
-    "\1\s[10]Kawari was considered hard to work with in the early Phases, including Phase 7. Issues in its code from multiple successive changes and a lack of coding flexibility were cited as reasons why.\w4\n\n[half] "
+    "\1\s[10]Kawari was considered hard to work with in the early Phases, including Phase 7. Issues in its code from multiple successive changes and a lack of coding flexibility were cited as reasons why.\w4\n\n[half]"
 
     "The difficulties in creating and maintaining Kawari are a whole story to themselves. Which, you can read about in the Kawari Programming Reference! "
     "I highly suggest doing so if you think Kawari as a whole is as interesting as I do.\w8\w8\n\n[half]"
@@ -229,7 +229,7 @@ OnIntroduceKawari : (
     "\1\s[15]Anyway.\w8\w8\1\s[10] Phase 8, an entire overhaul of Kawari, was available sometime in July of 2002 and is the version you're on now! (well, unless it makes a surprise comeback.)\w8 "
     "Phase 8 attempted to rework the issues Kawari was having. I definitely am glad it's what we have to work with now!\w8 "
 
-    "\1\s[10]Development on Kawari stopped sometime in 2008. That's the latest year we have recorded for changes and the last year on the license.\w4\n\n[half] "
+    "\1\s[10]Development on Kawari stopped sometime in 2008. That's the latest year we have recorded for changes and the last year on the license.\w4\n\n[half]"
     "But, Kawari \f[italic,true]is\f[italic,default] open source! So, if someone wanted to continue it, it's not out of the question. It'd just be a fork of the original.\w6 "
     "\1\s[15]If you're familiar with C++ and STL, maybe you could give it a look?\w4"
     \n\n[half]
@@ -237,13 +237,13 @@ OnIntroduceKawari : (
 )
 
 OnIntroduceYAYA : (
-    "\1\s[10]\b2YAYA is a continuation of an older Ghost programming language called AYA. Almost all English Ghosts are based in YAYA, and YAYA itself is based in C.\w8 "
-    "It's also still being maintained to this day, and has many contributors to keep it alive.\w4\n\n[half] "
+    "\1\t\*\s[10]\b2YAYA is a continuation of an older Ghost programming language called AYA. Almost all English Ghosts are based in YAYA, and YAYA itself is based in C.\w8 "
+    "It's also still being maintained to this day, and has many contributors to keep it alive.\w4\n\n[half]"
 
     "It's the most popular Ghost language in English, due to its easy compatibility with English character sets and the fact it's still being updated.\w4 "
-    "The main thing about making a Ghost in YAYA is that there is no middleware written for YAYA. This means one often has to know at least a little coding to get started.\w8\n\n[half] "
+    "The main thing about making a Ghost in YAYA is that there is no middleware written for YAYA. This means one often has to know at least a little coding to get started.\w8\n\n[half]"
 
-    "This stops quite a few people from getting into Ghost development. But it also means a lot of our Ghosts over here are more involved than the traditional Ghost!\w8\n\n[half] "
+    "This stops quite a few people from getting into Ghost development. But it also means a lot of our Ghosts over here are more involved than the traditional Ghost!\w8\n\n[half]"
 
     "There are a lot of different types of English Ghosts, from lightly coded to deeply coded, feature-light to feature-dense, talk-light to talk-heavy, and so on.\w4 "
     "It all stems from the fact that YAYA itself was written primarily with coding in mind"

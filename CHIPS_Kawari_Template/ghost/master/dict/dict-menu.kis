@@ -3,9 +3,10 @@
 #--
 # This file handles the back-end of the menus. Many long functions coming up.
 
+# Toggles whether the Ghost can be uninstalled or not.
 OnToggleVanish : $(
-    if $[${vanishFlag} = 1] $(setstr vanishFlag 0);
-    else $(setstr vanishFlag 1);
+    if $[${vanishFlag} = "1"] $(setstr vanishFlag "0")
+    else $(setstr vanishFlag "1");
     echo "\![raise,OnConfigMenu]"
 )
 

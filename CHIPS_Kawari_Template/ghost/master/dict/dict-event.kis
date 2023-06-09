@@ -282,14 +282,13 @@ OnAITalk : $(
 # Network Events
 #--
 
-On_homeurl : $(
+resource.homeurl : $(
 	if $[${devmode} = 1] "https://URLtoNowhere/"
-	else ${homeURL}
+	else ${homeurl}
 )
 
-On_vanishbutton.visible : $(
-	if $[${vanishFlag} = "on"] "1"
-	else "0"
+resource.vanishbutton.visible : (
+	${vanishFlag}
 )
 
 OnUpdateBegin    : $(
@@ -309,10 +308,9 @@ OnUpdateFailure  : $(
 	else "\0\s[0]The update failed. '"$(Reference 0)"' is the reason.";
 )
 
-
-
 # NTP Time Sync Option
-OnSNTPBegin : $(
+
+OnSNTPBegin   : $(
 	if $[$(length ${talk.OnSNTPBegin} > 0)] ${talk.OnSNTPBegin}
 	else "\0\s[0]Connecting to "$(Reference 0)"...\w[500]";
 	
@@ -328,7 +326,7 @@ OnSNTPCompare : $(
 	else $(echo "The clock's already correct.")
 )
 
-OnSNTPChange : "\6\e"
+OnSNTPChange  : "\6\e"
 
 OnSNTPCorrect : $(
 	if $[$(length ${talk.OnSNTPCorrect} > 0)] ${talk.OnSNTPCorrect}
@@ -338,6 +336,35 @@ OnSNTPCorrect : $(
 OnSNTPFailure : $(
 	if $[$(length ${talk.OnSNTPFailure} > 0)] ${talk.OnSNTPFailure}"\w[500]"
 	else "\0\s[0]Failed to connect to "$(Reference 0)".\w[500]";
+)
+
+# BIFF Email Check
+
+OnBIFFBegin : $(
+	if $[$(length ${talk.OnBIFFBegin} > 0)] ${talk.OnBIFFBegin}"\w[500]"
+	else "\0\s[0]Connecting to "$(Reference 0)"...\w[500]"
+)
+
+OnBIFFComplete, OnBIFFComplete2 : $(
+	if $[$(length ${talk.OnBIFFComplete} > 0)] ${talk.OnBIFFComplete}
+	else $(
+		if $[$(Reference 0) == 0] "\0\s[0]There are no new emails." 
+		else if $[$(Reference 0) = 1] "\0\s[0]There is 1 email." 
+		else "\0\s[0]There are "$(Reference 0)" emails."
+	)
+)
+
+OnBIFFFailure : $(
+	if $[$(length ${talk.OnBIFFBegin} > 0)] ${talk.OnBIFFFailure}
+	else "\0\s[0]Failed to connect to "$(Reference 2)". The reason was '"$(Reference 0)"'.\w[500]"
+)
+
+OnHeadlinesenseBegin, OnRSSBegin : (
+	${talk.OnNewsBegin}\w[500]
+)
+
+OnHeadlinesenseFailure, OnRSSFailure : $(
+	${talk.OnNewsFailure}
 )
 
 #--

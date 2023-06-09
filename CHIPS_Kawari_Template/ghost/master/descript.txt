@@ -8,7 +8,7 @@ sakura.name,Sentinel
 kero.name,CHIPtest
 craftman,Okuajub
 craftmanurl,Okuajub
-//This, specifically, is the first URL it checks for updates
+//This is the URL the Ghost checks for updates with when closed (such as through the explorer).
 homeurl,https://okuajub-netspace.neocities.org/
 
 shiori,shiori.dll

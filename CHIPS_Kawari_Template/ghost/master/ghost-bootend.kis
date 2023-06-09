@@ -25,7 +25,7 @@ talk.OnGhostChangedAngel : "\0\s[0]\1\s[15]Oh, hey, are you new to SSP? Or just 
 # And, for if the user reloaded them.
 talk.OnGhostReloaded     : "\1\s[10]\0\s[0]Reloaded. Everything right now?"
 
-talk.OnGhostCalling      : "\1\s[10]Welcome,"${$(Reference 0)}"!\0\s[0]\w4Hey."
+talk.OnGhostCalling      : "\1\s[10]Welcome," $(Reference 0)"!\0\s[0]\w4Hey."
 
 # Additional responses are called by the shell name. Case sensitive.
 talk.OnShellChanged       : "\1\s[10]\0\s[0]Huh, a new look."
@@ -35,7 +35,8 @@ talk.OnShellChangedBasic  : (
     "\1\s[10]\n\n[half]There's code that replaces invalid surface calls with surface0, so if I turn into Sentinel, that's because a surface that doesn't exist was called."
 )
 
-talk.OnWindowStateRestore : \1\s[10]\0\s[0]\e
+# This happens when the Ghost is unminimized.
+talk.OnWindowStateRestore : \1\s[10]\0\s[0]Feels good to be out in the open again.
 
 # You can set multiple responses to the same event, if you want.
 
