@@ -262,9 +262,6 @@ OnShowData : $(
 # This entry can be used to test code on demand. Very helpful for longer and more complex SakuraScript or KIS.
 OnTestVariable : (
     "\1\s[10]Testing!\n\n[half]"
-    $(set @temp Hai)
-    $( set @temp $(callsaorix "yaya" @temp TOUPPER ${@temp}) )\n
-    ${@temp}
 )
 
 # This won't work if you don't have Kosui in your ghost\master folder.
