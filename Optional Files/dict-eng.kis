@@ -1,0 +1,58 @@
+#--
+# English Style Features
+#--
+# These pieces of middleware are here to provide an option for those who'd like to have some functions more like English ghosts (i.e. based off of the GT Template)
+
+# Allows the "Select.function" type of choice.
+OnChoiceSelect : $(
+    eval "Select."$(Reference 0)
+)
+
+# A functions menu is a fairly common menu in GT-based Ghosts (who in themselves are by extension based off of "Y and J", a Korean ghost.)
+
+FunctionMenuTalk : "\0\s[0]Function menu."
+
+OnFunctionsMenu : (
+    \t\*\b2${FunctionMenuTalk}\_q\![set,autoscroll,disable]
+    \n\n[half]
+    "\![*]\q[Open Calendar,OnOpenFunc,1]"
+    \n
+    "\![*]\q[Check Email,OnOpenFunc,2]"
+    \n
+    "\![*]\q[SSP Preferences,OnOpenFunc,3]"
+    \n
+    "\![*]\q[System information,OnSysInfo]"
+    \n
+    "\![*]\q[Empty Recycle bin,OnEmptyBin]"
+    \n\n[half]
+    \![*]\q[Back,OnSakuraMenu]
+)
+
+talk.OpenCalendar : "\0\s[0]Opening the calendar.\1\s[10]Unfortunately, at the moment, SSP's calendar events are broken. So, your Ghosts won't react to your schedule."
+
+talk.OpenPreferences : "\0\s[0]Opening the SSP preferences.\1\s[10]You can set useful data for Ghosts to use, here, such as your name or birthday. Or, enable developer options!"
+
+OnOpenFunc : $(
+    if [$(Reference 0) = 1] ${talk.OpenCalendar}\![open,calendar];
+    if [$(Reference 0) = 2] "\![biff]\e";
+    if [$(Reference 0) = 3] ${talk.OpenPreferences}\![open,configurationdialog];
+    
+)
+
+# I didn't want to include any SAORI with this template, so this is pretty barebones. It uses environment variables from SakuraScript. 
+# If you wanted more information, the SAORI "cpuid" (CPU ID, not a weird spelling of "Cupid" I thought for the longest time) can gather some more info.
+# I put in an example of what calling that SAORI would look like.
+OnSysInfo : (
+    \t\*\b2
+    # '?' randomly selects one of these strings.
+    $(?
+    "\0\s[0]System Information."
+    "\0\s[0]Here's the info you wanted."
+    )
+    \_q\![set,autoscroll,disable]
+    "OS Uptime: %exh"
+    "Resolution: %screenwidthx%screenheight" 
+    # OS: $(callsaori cpuid os.name)
+)
+
+OnEmptyBin

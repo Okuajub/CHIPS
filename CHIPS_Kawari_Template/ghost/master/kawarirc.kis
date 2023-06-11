@@ -2,6 +2,7 @@
 # Kawarirc.kis
 #--
 # This sets the load order for your Ghost. If you're just going into the files and saving over them, you don't need to touch anything in here.
+# If you need to add a new file, you can add it to the load order here.
 
 =kis
 
@@ -19,10 +20,9 @@ load ghost-resource.kis;
 load ghost-mouse.kis;
 load ghost-aitalk.kis;
 load ghost-menu.kis;
-load ghost-network.kis;
+load ghost-etc.kis;
 
-
-# Logs error/behavior information and event information. (Very useful since we do not have a Tama equivalent for Kawari that shows events firing live.)
+# Logs error/behavior information and event information.
 loglevel error warning info baseevents;
 
 # Records said logs in 'kawari.log'.

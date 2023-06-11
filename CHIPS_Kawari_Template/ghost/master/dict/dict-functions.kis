@@ -82,6 +82,16 @@ function cap $(
 )
 =end
 
+# IsExist
+# Not to be confused with the file management function "isexist".
+# Checks if an entry contains more than 1 character. Useful
+# Returns true/false
+=kis
+function IsExist $(
+    return $[$(length ${$@arg[1]}) > 0]
+)
+=end
+
 # usersavefile, userbackupfile, SaveData, savedataParam, SaveLoad
 # The following functions all work together to save data. Based up OpenKEEPS, but heavily simplified.
 

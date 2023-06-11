@@ -1,0 +1,124 @@
+#--
+# Tips
+#--
+# This file is named after the "Tips" section of the Kawari documentation.
+# https://kawari.sourceforge.net/8.2.5/tips.html (roughly processed English version: https://okuajub-netspace.neocities.org/Kawari/tips)
+
+#-- Story
+# Stories function much like chains in YAYA. However, I personally find them a bit easier to write.
+# Stories are an entry that is called continuously until it's finished.
+# Here is the sample script provided by the Kawari documentation.
+
+# Write a story in the story1 entry.
+story1 : (
+    "\0\s[0]Once upon a time, there lived an old man and an old woman."
+    \1\s[10]...\e
+)
+story1 : (
+    "\0\s[0]The woman was washing her clothes in the river"、
+    "when a large peach came from upstream."
+    "\1\s[10]Well, that's a promise."\e
+)
+story1 : (
+    "\0\s[0]The woman, delighted, took the peach home"
+    "and split it in two with her husband."
+    "\1\s[10]But, is Momotaro safe?"\e
+)
+story1 : (
+    "\0\s[0]Then, from inside the peach, a plump Unyuu emerged..."
+    "\1\s[10]Wait a sec.\e"
+)
+story1 : (
+    "\0\s[0]The woman hurridly sealed the peach..."
+    "\1\s[10]Hey!"
+    "\0\s[0]And sold it to "${badCorporation}" at a high price,"
+    "\s[5]and Unyuu lived out the rest of his life in a very comical way. The end!"
+    "\1\s[11]The end?!"\e
+)
+story1 : (
+    "\0\s[5]That was a good story. Wasn't it heartwarming, Unyuu?"
+    "\1\s[11]Which part?! You and my fist need to talk at once."
+    "\0\s[0So, you want a full-course of "${specialMove}"？\s[6]"
+    \1...\w9...\w9...\w9\s[10]We have a "${treat}", tonight, Miss."
+    "\0\s[5]Good to know."\e
+)
+# A counter for how far you've read
+story1.pos : 0
+# Increment the counter by one, and reset it to zero when all the entries have been read
+story1.inc : $(setstr story1.pos $[ (${story1.pos} + 1) % $(size story1) ])
+
+# Registers the story in the talk entry. When called, increment the counter by one.
+sentence : $story1[${story1.pos}]${story1.inc}
+
+# Registers the story in the talk entry
+sentence : ${story1}
+
+#-- Nonoverlap
+# A set of functions to enable unique random entry calls.
+# This is commonly used in English ghosts to make their randomtalk less repetitive. 
+# These scripts are pre-included in CHIPS by default.
+
+# Call random words from entries without duplicates
+# argument : entry name
+# return : random entry definition
+# note : Occupies the entry "entry name.buffer"
+=kis
+function GetWordRandom $(
+    if $[ $(size @arg) != 2] $(return);
+    if $[ $(size $@arg[1].buffer) == 0 ] $(copy $@arg[1] $@arg[1].buffer);
+
+    setstr @pos $(rand $(size $@arg[1].buffer));
+    get $@arg[1].buffer[${@pos}];
+    clear $@arg[1].buffer[${@pos}];
+);
+=end
+
+# Create an entry that calls the specified entry without overlapping words
+# argument : entry name
+# return : none
+# note : Occupies "entry name.backup" and "entry name.backup.buffer"
+=kis
+function Nonoverlap $(
+    if $[ $(size $@arg[1].backup) == 0 ] $(copy $@arg[1] $@arg[1].backup);
+    set $@arg[1] "$(GetWordRandom "$@arg[1]".backup)";
+    writeprotect $@arg[1];
+    writeprotect $@arg[1].backup;
+);
+=end
+
+# Specifying the 'name' entry avoids duplication.
+=kis
+Nonoverlap name;
+=end
+
+#-- Sequential Entries
+# Similar to stories in concept, but as a set of functions.
+# These functions allows you to make many sequential stories much easier.
+
+# Call words from an entry in index order
+# argument : entry name
+# return : an entry definition
+# note : Occupies the entry "entryname.pos"
+=kis
+function GetWordSequential $(
+    if $[ $(size @arg) != 2] $(return);
+    if $[ $(size $@arg[1].pos) == 0 ] $(setstr $@arg[1].pos 0);
+
+    get $@arg[1][${$@arg[1].pos}];
+    setstr $@arg[1].pos $[ (${$@arg[1].pos}+1) % $(size $@arg[1]) ];
+);
+=end
+
+# Make an entry that calls the specified entry in subscript order
+# argument : entry name
+# return : none
+# note : occupies "entryname.backup" and "entryname.backup.pos"
+=kis
+function Sequential $(
+    if $[ $(size $@arg[1].backup) == 0 ] $(copy $@arg[1] $@arg[1].backup);
+    set $@arg[1] "$(GetWordSequential "$@arg[1]".backup)";
+    writeprotect $@arg[1];
+    writeprotect $@arg[1].backup;
+);
+=end
+

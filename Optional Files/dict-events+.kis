@@ -1,0 +1,208 @@
+#--
+# Extra Events Dictionary
+#--
+# This file is the middleware and example entries for additional events. Some of these are sent from the baseware, some are from other Ghosts, and some are from external programs.
+
+# This is an interaction between this Ghost and another English Ghost called Needle.
+# Needle is a Ghost which, among other features, sends an event called "OnNeedlePoke" to other Ghosts. This event is implied to be annoying or painful.
+# @poke is who Needle is poking (0 Sakura, 1 Kero, etc..), @type is the Shell that Needle is wearing. T
+OnNeedlePoke : (
+    $(setstr @poke $(Reference 0))
+    $(setstr @type $(Reference 1))
+	$(if $[$(length ${talk.OnNeedlePoke${@poke}${@type}} > 0)] ${talk.OnNeedlePoke${@poke}${@type}}
+	else ${talk.OnNeedlePoke${@poke}})
+)
+
+# And, the response entries would look something like this:
+# This is the poke event from Needle. 
+# The number after the event name designates which character is being poked. 0 is the Sakura, 1 is the Kero, and so on.
+#talk.OnNeedlePoke0 : "\0\s[2]Ow, hey!"
+#talk.OnNeedlePoke0 : "\0\s[2]Huh?!"
+
+#talk.OnNeedlePoke1 : "\1\s[12]Ow, what was that for!"
+#talk.OnNeedlePoke1 : "\1\s[12]Ah, Hey, that hurt!"
+
+# You can write events for if Needle is wearing a certain shell, too, by appending the shell name after the character number.
+#talk.OnNeedlePoke0Syringe : "\0\s[2]Hey, I've had my rabies shot already, alright?!"
+
+#--
+# External Events
+#--
+# https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event_ex.html
+
+# -- Standalone Programs
+# Some programs are explicitly designed send data to Ghosts through SSTP. These programs were more popular in the aughts, the main period of popularity for Ukagaka.
+# Some included are middleware for NekoDrift (猫どりふ) and Kinoko (きのこ).
+# For entries with JP names, remember to set the Ghost's SAORI character set to Shift JIS in SSP (or another baseware if it has the option). 
+# If you don't, it won't be able to read the entry names correctly. It'll just play the generic dialogue.
+
+
+# Kinoko (きのこ)
+# Kinoko is a small program which attaches an object to the Ghost. Normally, their head. It's mostly aesthetic, but it has fun interactions with NekoDrift.
+# Event Section https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event_ex.html#OnKinokoObjectCreate
+
+talk.KinokoCreate    : "\0\s[2]Huh? What's this.. "$(Reference 0)"?"
+talk.KinokoDestroy   : "\0\s[3]Glad to have that thing off."
+talk.KinokoChanged   : "\0\s[2]Another one... It's "$(Reference 0)".. some kinda "$(Reference 2)"?" 
+talk.KinokoInstalled : "\0\s[3]You want more of these?"
+
+# A talk for the default antenna.
+talk.KinokoChanged.電波塔 : "\0\s[3]An antenna... Are you trying to contact aliens, or something?\w8 I'd prefer if you didn't do it on my head."
+# A talk for the nameplate category.
+talk.KinokoChanged.へツドマ一ク : "\0\s[8]What's this? Some kind of nameplate?"
+
+OnKinokoObjectCreate : $(
+    KinokoTalk Create;
+)
+
+OnKinokoObjectDestroy : $(
+    KinokoTalk Destroy;
+)
+
+OnKinokoObjectChanging : $(
+    KinokoTalk Changing;
+)
+# I originally had this implemented, but the next event fires too fast for it to be useful, really.
+# talk.KinokoChanging  : "\0\s[2]Eh? Trying to grow something else?\w[500]"
+
+OnKinokoObjectChanged : $(
+    KinokoTalk Changed;
+)
+
+OnKinokoObjectInstalled : $(
+    KinokoTalk Installed;
+)
+
+=kis
+function KinokoTalk $(
+    if $[$(IsExist talk.Kinoko$@arg[1].$(Reference 0))] ${talk.KinokoCreate.$(Reference 0)}
+    else if $[$(IsExist talk.Kinoko$@arg[1].$(Reference 2))] ${talk.KinokoCreate.$(Reference 2)}
+    else (${talk.Kinoko$@arg[1]});
+)
+=end
+
+# NekoDrift (猫どりふ)
+# NekoDrift is a program which drops objects on Ghosts' heads. 
+# Its name is a reference to a popular gag a JP band, "The Drifters", performed on their show "It's 8 O'Clock! Everybody Gather 'Round")". The gag often dropped washtubs on themselves or others for comedic effect.
+# For consistency with the event names, I'll be using "Nekodorif" instead of "NekoDrift" in the code.
+# Event Section https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event_ex.html#OnNekodorifObjectEmerge
+
+dorifObj  : obj
+dorifTarg : targ
+dorifType : type
+dorifChar : char
+dorifDef  : 0
+
+# The love letter is one of the few items with a name in English, so I'll explain how this works with it.
+# You'll go ahead and write new entries with the entry name as so: "talk.NekoDorif[action].[item].[0/1]"
+# The action is one of five options: Emerge, Hit, Dodge, Drop, and Vanish. Each of these will have their own little note when I get to them.
+# The item is the name of the item, in this case, 'loveletter'.
+# The 0/1 tells us if it's the Sakura or the Kero.
+
+# Emerge is when the item first spawns and is falling.
+talk.NekoDorifEmerge.loveletter.0 : "\0\s[0]Huh, look, Chip. It's a love letter."
+
+# Hit is when it actually collides with the character.
+talk.NekoDorifHit.loveletter.0    : (
+    "\0\s[0]Hmm.. It's addressed to both of us, Chip.\n\n[half]"
+    "\1\s[13]What, really?\w8 Who sends a love letter to two people?"
+    "\0\s[0]I have a pretty good idea.\w[500]\n\n[half]"
+    '\p[2]\s[-1]"Dear Chip and Sentinel.\n'
+    "I miss you so much! I know you're working hard, with this new job and all, but I miss you all the same.\n"
+    "When you get off of work today, would you two like a stay-at-home date? I'll make dinner, but it's \f[italic,true]Sentinel's\f[italic,default] choice for movie this time, CHIPtest!\n"
+    "XOXO\n\n[half]"
+    "     -Beowulf"'"'
+    "\1\s[11]\n\n[half]Oh.. I never would of expected an anonymous love letter from Beo...\w[500]\s[19] Hey, wait a minute- Why's it your choice tonight?\n\n[half]"
+    "\0\s[0]There's a post script here.\n\n[half]"
+    '\p[2]\n\n[half]"'"P.S. If Chip asks why it's your choice, it's because he always picks anime.\nI love his geeky self, but I want to see what you'll pick this time!"'"'
+    "\0\s[0]\w[500]So there you have it.\n\n[half]"
+    "\1\s[13]Oh.\w8\w8\s[15] Hahahaha, well.. it's a good thing he specified then.\w8 Because he's right.\n\n[half]"
+    "\0\s[5]We both know you pretty well.\n\w8I'm looking forward to it. Thinking about Beowulf's making me ravenous."
+    "\1\s[18]\![set,balloonwait,1.5]That's not grammati.\w4.\w4.\w4.\w8\s[16]\w[1000]\w[500]\![set,balloonwait,1] Me, too."
+)
+# You can set multiple responses, if you'd like.
+talk.NekoDorifHit.loveletter.0   : (
+    "\0\s[0]It's addressed to me.\n\n[half]"
+    "\1\s[18]Harumph.\n\n[half]"
+    "\0\s[0]What, you want one too?\n\n[half]"
+    "\1\s[19]N-no.\w8 I'm just doubtful considering you're already dating Beo and I.\n\n[half]"
+    "\0\s[0]Fair enough. It says...\n\n[half]"
+    "\p[2]\s[-1]Dear ~~Sentinel~~ <3 <3 ✧\n\n[half]"
+    "You're muscles are so RIPPLING and your ~EARS~ are SOOOOOOOOOOoooooOOOOOO cute!!!~ Not to mention your tail... and your eyes.. Oh Oh! And...\n\n[half]"
+    "\0\s[0]It goes on like this for awhile.\n\n[half]"
+    "\p[2]\s[-1]i love you more than ANYTHING in the world. Please write back to me!\n"
+    "~xOxOxoooooooooooooooo...ooOxO~\n"
+    "Your biggest fan,"
+    "\n\n[half]"
+    "-[illegible]~"
+    "\1\s[18]Weird...\n\n[half]"
+    "\0\s[5]I'd prove that I'm not single, but we're at work right now."
+    "\1\s[11]Pfft. You huge flirt."
+)
+# And just like any other entry, you can assign multiple of them the same value with commas.
+talk.NekoDorifDefend.loveletter.0, talk.NekoDorifDodge.loveletter.0 : "\0\s[3]I was kinda looking forward to that."
+talk.NekoDorifVanish.loveletter.0 : "\0\s[0]Oh well."
+
+# These are just catch-alls for any other object.
+talk.NekoDorifEmerge.etc.0 : "\0\s[0]Hey. What's that?"
+talk.NekoDorifHit.etc.0    : "\0\s[2]Hey-?! What was that for?"
+talk.NekoDorifVanish.etc.0 : "\0\s[3]Ghrrr..."
+talk.NekoDorifDefend.etc.0 : "\0\s[8]Thanks to this, that didn't hurt me at all."
+talk.NekoDorifDodge.etc.0  : "\0\s[7]You're really getting on my nerves."
+
+talk.NekoDorifEmerge.etc.1 : "\0\s[1]What is \f[italic,true]that?\f[italic,default]"
+talk.NekoDorifHit.etc.1    : "\1\s[12]Hey-!\w8\w8\s[15] Why'd you do that? That hurt!"
+talk.NekoDorifVanish.etc.1 : "\1\s[13]Well, it's gone now..."
+talk.NekoDorifDodge.etc.1  : "\1\s[15]Hah! Take that!"
+
+# References :
+# ref0 = object name
+# ref1 = target Ghost name
+# ref2 = object category
+# ref3 = Kinoko activity; 1 if true, 0 if not
+# ref4 = Target Character (e.g. Sakura, Kero)
+
+# When the Object first starts to fall, not necessarily when it hits the character.
+OnNekodorifObjectEmerge : $(
+    DorifSet;
+    DorifTalk Emerge;
+)
+
+# When the object actually hits the character.
+OnNekodorifObjectHit : $(
+    if $[$(Reference 3) = 1 ] $(set dorifDef "1"; DorifTalk Defend)
+    else $(DorifTalk Hit);
+)
+
+# This happens when the object is falling just before vanishing. However, most Ghosts aren't tall enough to say much of anything during this. So I didn't add any etc. dioalogue for it.
+OnNekodorifObjectDrop : $(
+   DorifTalk Drop;
+)
+
+# When the object leaves the screen.
+OnNekodorifObjectVanish : $(
+    if $[${dorifDef} = 1] $(DorifTalk Vanish; set dorifDef "0");
+)
+
+# When the object did not successfully hit, and it leaves the screen.
+OnNekoDorifObjectDodge : $(
+    DorifTalk Dodge;
+)
+
+=kis
+function DorifTalk $(
+    # argument 1 is the event type, e.g. emerge, vanish. Turns into "NekoDorifEmerge", etc.
+    if $(IsExist talk.NekoDorif$@arg[1].${dorifObj}.${dorifTarg}) \t${talk.NekoDorif$@arg[1].${dorifObj}.${dorifTarg}}
+    else if $(IsExist talk.NekoDorif$@arg[1]${dorifType}.${dorifTarg}) \t${talk.NekoDorif$@arg[1]${dorifType}.${dorifTarg}}
+    else \t${talk.NekoDorif$@arg[1].etc.${dorifTarg}}
+)
+=end
+
+=kis
+function DorifSet $(
+    setstr dorifObj $(gsub $(Reference 0) " " "");
+    setstr dorifType $(Reference 2);
+    if $[ $(Reference 1) = ${ghostKero} ] $(setstr dorifTarg "1"; setstr dorifChar ${ghostKero})
+    else $(setstr dorifTarg "0"; setstr dorifChar ${ghostSakura});
+)
+=end

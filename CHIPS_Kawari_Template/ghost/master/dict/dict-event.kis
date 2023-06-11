@@ -218,6 +218,7 @@ OnClose : \1\s[10]\0\s[0]${talk.OnClose}"\_w[500]\-\e"
 # My entire philosophy when writing how events are handled in CHIPS is that the writer should be able to create new responses to events painlessly, without having to mess with the back-end.
 # Many templates have these responses have hard-coded if/elseif/else statements for each string. This is extremely daunting for non-coders and tedious for those who do code often.
 # If they're not coded up-front, they're limited to just the generic response.
+
 # So, here I set this event up in a way that one simply needs to know the Sakura's name to create a specific response to them. If a specific response doesn't exist, it sends the generic event instead.
 # This means a writer can create as many unique responses as they'd like without having to worry at all about juggling long if/elseif/else chains- *while* still allowing them to be flexible in the response if they do know how to code more!
 # It is handled by the middleware, and made very easy, up to some extent. I would like to take this approach for as many events as possible.
@@ -273,6 +274,7 @@ OnSecondChange : $(
     );
 )
 
+# Using this as their AI talk event also allows old specification (e.g. Kinoko's talk request) to work.
 OnAITalk : $(
 	setstr lastTalk ${sentence};
 	echo ${lastTalk};
@@ -408,11 +410,25 @@ OnNotifyShellInfo : (
 # I was creating this code, unwittingly, while a certain bug in my programming was preventing many events from returning responses. As such, it's not been tested.
 # I may revisit this, in time, however at the moment Kosui serves an extremely similar purpose and so I've not gone back to pursue this.
 
-# This code was referenced from Taromati 2
+# This code was referenced from Taromati 2 and YAYA source code.
 
-#Has_Event : (
-#	"hello!"
-#)
+On_Has_Event : $(
+	callsaori yaya SHIORI3EV.On_Has_Event;
+)
+
+#   set @event_name reference.raw[0];
+# 	set @SecurityLevel reference.raw[1];
+# 	if $[!$(IsExist @SecurityLevel)] $(set @SecurityLevel ${System.SecurityLevel});
+# 	if $[$(substr(${@event_name} 0 2)) != 'On'] $(set @event_name On_${@event_name});
+# 	setstr @result 0;
+# 	if $[$(tolower(${@SecurityLevel})) == 'external'] $(set @event_name 'ExternalEvent.'${@event_name});
+# 	set @result $(IsExist @event_name);
+# 	if $[!${@result}] $(set @result $(IsExist 'SHIORI3EV.'${@event_name}));
+# 	$(X_SSTP_PassThru 'Result' ${@result});
+
+ExternalEvent.On_Has_Event : (
+	${On_Has_Event}
+)
 
 #ShioriEcho : $(
 #	cleartree ShioriEcho

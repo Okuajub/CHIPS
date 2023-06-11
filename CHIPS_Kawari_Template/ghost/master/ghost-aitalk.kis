@@ -209,7 +209,7 @@ sentence : (
 )
 # If you don't plan on acknowledging the User at all in your writing, you don't have to use this. It's just an option, not an expectation!
 # Not all Ghost users actually like being acknowledged in a Ghost. So, maybe consider what kind of Ghost you're writing and who it would appeal to.
-# That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal, now, to play with when writing dialogue!
+# That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal, now. Play and have fun when writing dialogue!
 
 sentence : "\0\s[5]You can replace our lines with whatever you'd like."
 
@@ -226,12 +226,8 @@ sentence : (
 
 sentence : "\1\s[10]"
 
-# Oh, also, here's the hour roll-over event. Be aware it doesn't always go off exactly on the hour. If you don't want it, just erase it or comment it.
+# Oh, also, here's the hour roll-over event. It's in the 24-hour format. Be aware it doesn't always go off exactly on the hour, hence including the minute dynamically. If you don't want it, just erase it or comment it.
 talk.OnHourTimeSignal : $(setstr @minute $(date %M)) "\0\s[0]It's %hour:"${@minute}"."
-# If you want your Ghost to use a 24-hour format (from a 24-hour format country, works a specific profession, former soldier, simple preference, etc?)...
-# ...you can go ahead and copy and paste *this* verison over the other, or switch which is commented.
-# talk.OnHourTimeSignal : $(setstr @hour $(date %H); setstr @minute $(date %M)) "\0\s[0]It's "${@hour}":"${@minute}"."
-# If you wanted your Ghost to switch between the two, you could also use both. Just like 'sentence', or 'food', event entries like these can have multiple definitions.
 
 # STOP! ! ! Do not write any dialogue past this piece of code! If you do, it won't be called!! 
 # This piece of code calls on a function called "Nonoverlap" which makes sure that none of your Ghost's dialogue repeats before the others are called.

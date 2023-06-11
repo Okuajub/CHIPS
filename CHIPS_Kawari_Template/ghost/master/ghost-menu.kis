@@ -118,18 +118,6 @@ OnAssignTalkRate : (
     "\![raise,OnSakuraMenu,1]"
 )
 
-FunctionMenuTalk : "\0\s[0]Function menu."
-
-OnFunctionsMenu : (
-    \t\*\b2${FunctionMenuTalk}\_q\![set,autoscroll,disable]
-    \n\n[half]
-    "Placeholder text for the function menu."
-    \n
-    "A future function, maybe."
-    \n\n[half]
-    \![*]\q[Back,OnSakuraMenu]
-)
-
 # This handles quitting dialogue.
 OnQuit : $(
     if $[$(Reference 0) == 0] ${SakuraQuit}
@@ -170,11 +158,13 @@ OnKeroMenu : (
 )
 
 OnIntroduceSelf : (
-    "\1\t\*\s[10]\b2Well sure! I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
+    "\1\t\*\s[10]\b2Well sure! "
+    "\1\s[10]Sentinel and I were brought out here to help you learn about Kawari, and making Ghosts. This is kind of a part-time job for us at the moment.\w8\n"
+    "I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
     "\1\s[15]I'm a computer programmer, and I really like Ukagaka! I also enjoy playing rhythm games and learning Japanese!\w8\w4 "
-    "\1\s[16]The tough guy over there is my romantic partner, Sentinel.\w8\w4\n\n[half]"
+    "\1\s[16]And, the tough guy over there is my romantic partner, Sentinel.\w8\w4\n\n[half]"
 
-    "\0\s[0]Hey. \w8\w8\n\n[half]"
+    "\0\s[0]Hey.\w8\w8\n\n[half]"
 
     "\1\s[10]He's more of the outdoorsy type, and tends to take a more reserved role social situations. \w8\w8"
     "\1\s[15]We met at work, and honestly I didn't even notice that he wasn't an outgoing person. I just kept coming back to talk to him, oblivious.\w8\n\n[half]"
@@ -185,7 +175,7 @@ OnIntroduceSelf : (
 
     "\0\s[0]That \w3is something I always liked about you. Heart on your sleeve type."
 
-    "\1\s[11]Well... \w4\s[15]Thanks."
+    "\1\s[11]Well... \w4\s[15]Thanks.\w8 "
     \n\n[half]
     \![*]\q[Back,OnKeroMenu]
 )
@@ -258,16 +248,26 @@ OnDebugMenu : (
     \![*]\q[Show All Saved Entries,OnShowData]
     \n
     \![*]\q[Test Variable,OnTestVariable]
+    \n
+    \![*]\q[Open Kosui Debugger,OnOpenKosui]
     \n\n[half]
     \![*]\q[Quit Menu,OnQuit,1]
 )
 
+# Shows the current user data.
 OnShowData : $(
     foreach @entries savedataParam $( echo "\b2"${@entries}": "; echo ${${@entries}}"\n" )
 )
 
+# This entry can be used to test code on demand. Very helpful for longer and more complex SakuraScript or KIS.
 OnTestVariable : (
     "\1\s[10]Testing!\n\n[half]"
+    $(set @temp Hai)
+    $( set @temp $(callsaorix "yaya" @temp TOUPPER ${@temp}) )\n
+    ${@temp}
+)
 
-    # This entry can be used to test code on demand. Very helpful for longer and more complex SakuraScript or KIS.
+# This won't work if you don't have Kosui in your ghost\master folder.
+OnOpenKosui : (
+    "\1\s[10]\![open,file,kosui.exe]Sure thing. Kosui, coming up."
 )

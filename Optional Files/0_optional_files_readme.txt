@@ -1,0 +1,1 @@
+This little folder holds optional files for you to drop in your Ghost, such as extra scripts, new functions, and things like that. There's extra information on each in their respective files, so give them a look!

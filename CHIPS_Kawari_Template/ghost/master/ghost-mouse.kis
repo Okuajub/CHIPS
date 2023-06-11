@@ -43,15 +43,3 @@ MouseMove1Head : "\1\s[15]Heyyy, stop that!\w2 You might make Sentinel jealous."
 
 MouseMove1Face : "\1\s[13]Err.."
 MouseMove1Face : "\1\s[13]What's that for?"
-
-# This is an interaction between this Ghost and another English Ghost called Needle.
-# Needle is a Ghost which, among other features, sends an event called "OnNeedlePoke" to other Ghosts. This event is implied to be annoying or painful.
-# The number after the event name designates which character is being poked. 0 is the Sakura, 1 is the Kero, and so on.
-talk.OnNeedlePoke0 : "\0\s[2]Ow, hey!"
-talk.OnNeedlePoke0 : "\0\s[2]Huh?!"
-
-talk.OnNeedlePoke1 : "\1\s[12]Ow, what was that for!"
-talk.OnNeedlePoke1 : "\1\s[12]Ah, Hey, that hurt!"
-
-# You can write events for if Needle is wearing a certain shell, too, by appending the shell name after the character number.
-talk.OnNeedlePoke0Syringe : "\0\s[2]Hey, I've had my rabies shot already, alright?!"

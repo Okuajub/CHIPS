@@ -56,7 +56,7 @@ OnChangePronouns : (
     \![*]\q[Replace Current Set,OnChangePronouns.start,replace]\n
     \![*]\q[Add New Set,OnChangePronouns.start,add]\n
     $(if $[ $(size user.they) > 1] $(echo \![*]\q[Delete A Set,OnDeletePronouns.start,delete]\n) )
-    \![*]\q[Toggle Mixed Sets ":" $(if $[${ForceSet} != 0] $(echo ON) else $(echo OFF)),OnTogglePronouns]\n
+    \![*]Toggle Mixed Sets ":" \q[$(if $[${ForceSet} != 0] $(echo ON) else $(echo OFF)),OnTogglePronouns]\n
     \![*]\q[Test a Set,OnTestPronouns]\n
     \n[half]
     \![*]\q[Quit Menu,OnQuit,0]
@@ -65,7 +65,7 @@ OnChangePronouns : (
 # The starting menu for choosing pronouns.
 OnChangePronouns.start : (
     $( setstr @mode $(Reference 0) )
-    \b2${talk.OnChoosePronouns}\_q\![set,autoscroll,disable]\n\n[half]
+    \b2\t\*${talk.OnChoosePronouns}\_q\![set,autoscroll,disable]\n\n[half]
     \![*]\q[She/Her,OnChangePronouns.end,she,${@mode}]\n
     \![*]\q[He/Him,OnChangePronouns.end,he,${@mode}]\n
     \![*]\q[They/Them,OnChangePronouns.end,they,${@mode}]\n

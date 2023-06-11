@@ -1,4 +1,9 @@
 #--
+# Miscelleaneous Events
+#--
+# There's many events which are not necessarily needed for Ghost functioning, and this is the file that holds them, here.
+
+#--
 # Network Events
 #--
 # This dialogue occurs when events connect to the network to gather information from the web. 

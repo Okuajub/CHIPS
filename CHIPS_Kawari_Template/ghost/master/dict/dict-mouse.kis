@@ -44,16 +44,3 @@ sys.key.r: $(
 sys.key.t: $(
 	echo ${OnAITalk}
 )
-
-#--
-# Other
-#--
-
-# This is the poke event from Needle. @poke is who Needle is poking (0 Sakura, 1 Kero, etc..), @type is the Shell that Needle is wearing.
-# This has been placed in the Mouse file instead of the Event file to match 'ghost-mouse.txt'.
-OnNeedlePoke : (
-    $(setstr @poke $(Reference 0))
-    $(setstr @type $(Reference 1))
-	$(if $[$(length ${talk.OnNeedlePoke${@poke}${@type}} > 0)] ${talk.OnNeedlePoke${@poke}${@type}}
-	else ${talk.OnNeedlePoke${@poke}})
-)
