@@ -2,6 +2,8 @@
 # Tips
 #--
 # This file is named after the "Tips" section of the Kawari documentation.
+# It includes some, but not all, functions from that section. Not included are options to accomodate old specification, and scripts better stored somewhere else.
+# These scripts are included with permission outlined in the Kawari license.
 # https://kawari.sourceforge.net/8.2.5/tips.html (roughly processed English version: https://okuajub-netspace.neocities.org/Kawari/tips)
 
 #-- Story
@@ -122,3 +124,56 @@ function Sequential $(
 );
 =end
 
+#-- Simple Character Discriminator
+# Distinguishes between different character types, using the tables below.
+
+# Character table used for discrimination
+asciichar : "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+asciichar : "abcdefghijklmnopqrstuvwxyz_"
+asciichar : "+-0123456789."
+asciichar : "-^\!\"#$%&'()=|@[;:],./`{+*}<>?_"
+=kis
+writeprotect asciichar;
+=end
+
+# Function that serves as a template for character type identification
+=kis
+function ischaracters $(
+    setstr @pos 0;
+
+    while $[ ${@pos} < $(length $@arg[1]) ] $(
+        setstr @char $(char_at $@arg[1] ${@pos});
+        if $[ $@arg[2] !~ ${@char} ] $(
+            return 0;
+        );
+        inc @pos;
+    );
+    return 1;
+);
+# True if the string contains only uppercase alphabetic characters
+function isupper $(ischaracters $@arg[1] $asciichar[0]);
+# True if the string contains only lower-case alphabetic characters
+function islower $(ischaracters $@arg[1] $asciichar[1]);
+# 数字だけなら真
+function isnumerical $(ischaracters $@arg[1] $asciichar[2]);
+# True if the string is alphabetic only
+function isalpha $(ischaracters $@arg[1] $(get asciichar[0..1]));
+# True if the string consists only of alphabetic and numeric characters
+function isalnum $(ischaracters $@arg[1] $(get asciichar[0..2]));
+=end
+
+# Example usage
+string1 : alphabet
+string2 : P2P
+string3 : 12345
+
+=kis
+isupper ${string1};
+# return 0
+islower ${string1};
+# return 1
+isalnum ${string2};
+# return 1
+isnumerical ${string1}${string3};
+# return 0
+=end

@@ -8,30 +8,19 @@ OnMouseDoubleClick : $(
 	${MouseDoubleClick${System.Request.Reference3}}
 )
 
-# This determines which character is active.
-OnMouseMove : $(
-	if $[ ${System.Request.Reference3} == 0 ] $(
-		entry env.MouseMove.1st;
-	) else if $[ ${System.Request.Reference3} == 1 ] $(
-		entry env.MouseMove.2nd;
-	);
-)
-
-# Then count up the "stroking count" for each character, and when it reaches the set number.
-# Reset the counter, and then do a stroking reaction talk for that point.
-
-OnMouseLeaveAll : $(
-	setstr sys.Move 0;
-)
-
-# Collision Detection
-env.MouseMove.1st : $(
-	inc sys.Move;
+# Pets the appropriate character. Mousewheel option included for accessibility
+OnMouseMove, OnMouseWheel : $(
+	inc stroke;
 	# Forces the Ghost to wait until talking is over to pet them.
-	if $[ $[ ${sys.Move} > ${sys.SetMove1st} ] && $[ $(match ${System.Request.Status} talking) < 0 ] ] $(
-		setstr sys.Move 0;
+	if $[ $[ ${stroke} > ${strokeLimit} ] && $[ $(match ${System.Request.Status} talking) < 0 ] ] $(
+		setstr stroke 0;
 		entry MouseMove${System.Request.Reference3}${System.Request.Reference4} ${MouseMove${System.Request.Reference3}};
 	);
+)
+
+# Sets the stroke counter to 0 when the mouse isn't on the Ghost
+OnMouseLeaveAll : $(
+	setstr stroke 0;
 )
 
 OnKeyPress: $(

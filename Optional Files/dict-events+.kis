@@ -3,27 +3,157 @@
 #--
 # This file is the middleware and example entries for additional events. Some of these are sent from the baseware, some are from other Ghosts, and some are from external programs.
 
-# This is an interaction between this Ghost and another English Ghost called Needle.
-# Needle is a Ghost which, among other features, sends an event called "OnNeedlePoke" to other Ghosts. This event is implied to be annoying or painful.
-# @poke is who Needle is poking (0 Sakura, 1 Kero, etc..), @type is the Shell that Needle is wearing. T
-OnNeedlePoke : (
-    $(setstr @poke $(Reference 0))
-    $(setstr @type $(Reference 1))
-	$(if $[$(length ${talk.OnNeedlePoke${@poke}${@type}} > 0)] ${talk.OnNeedlePoke${@poke}${@type}}
-	else ${talk.OnNeedlePoke${@poke}})
+#-- 
+# Base Events
+#--
+# These are events built into SSP (some of which may also be in other basewares), but aren't necessary enough to include by default.
+# I didn't want to include them by default, as many folks feel pressured by how dense a template it. So, as a middle ground, they go here!
+
+OnInstallBegin : "\0\s[0]This archive has an install.txt, meaning we can install it."
+
+talk.OnInstalled : "\0\s[0]We've just installed a "$(Reference 0)", "$(Reference 1)"."
+
+OnInstallComplete : $(
+    if $[$(Reference 0) = "ghost"] \t\*${talk.OnInstalled}" What would you like to do?\n\n[half]\![*]\q[Call "$(Reference 1)",OnOpenInstall,"$(Reference 1)"]\n\![*]\q[Change To "$(Reference 1)",OnChangeToInstall,ghost,"$(Reference 1)]"\n\![*]\q[Neither,null]"
+    else if $[$(Reference 0) = "shell"] \t\*${talk.OnInstalled}" What would you like to do?\n\n[half]\![*]\q[Change To "$(Reference 1)",OnChangeToInstall,shell,"$(Reference 1)"]\n\![*]\q[None,null]"
+    else if $[$(Reference 0) = "balloon"] \t\*${talk.OnInstalled}"\n\n[half]\![*]\q[Change To "$(Reference 1)",OnChangeToInstall,balloon,"$(Reference 1)"]\n\![*]\q[None,null]"
+    else ${talk.OnInstalled}
 )
+
+OnOpenInstall : "\![call,ghost,"$(Reference 0)"]"
+
+OnChangeToInstall : "\![change,"$(Reference 0)","$(Reference 1)"]"
+
+OnInstallFailure : "\0\s[0]The install failed. The reason was "$(Reference 0)"."
+
+OnInstallRefuse : "\0\s[0]The install refused. This "$(Reference 1)" is probably for "$(Reference 0)"."
+
+OnInstallReroute : "\0\s[0]Looks like this is for "$(Reference 0)". They're right over there, so I'll sent it over."
+
+#-- Uninstallation Talk
+# Things the Ghost will say related to uninstallation.
+
+OnVanishSelecting : "\0\s[0]Are you sure you'd like to uninstall?"
+
+OnVanishSelected  : "\0\s[0]Can do. Uninstalling."
+
+OnVanishCancel    : "\0\s[0]Uninstallation canceled."
+
+OnVanishButtonHold : "\0\s[0]The uninstall was interrupted by the balloon being popped."
+
+talk.OnVanished : "\0\s[0]You uninstalled another Ghost before switching to us."
+
+talk.OnVanishedSnake : "\0\s[3]\1\s[13]Err... We're not next, right?"
+
+talk.OnOtherGhostVanished : "\0\s[3]\1\s[13]\w2.\w2.\w2.\w2\0\s[3]\w8Doing some tidying up?\w8\1\s[13]Looks like "$(Reference 2)" was what got tidied up."
+
+talk.OnOtherGhostVanishedSnake : "\0\s[2]\1\s[12]Err, you don't have any plans on uninstalling us, would you?\0\s[3]I imagine "${they}$(SP "'s" "'re")" not uninstalling all "${their}" brown haired, blue eyed Ghosts."
+
+OnVanished : $(
+    # Reference 0 is the Sakura name of the ghost which was just uninstalled.
+    if $[ $( IsExist talk.OnVanished$(Reference 0) ) ] ${talk.OnVanished$(Reference 0)}
+    else ${talk.OnVanished}
+)
+OnOtherGhostVanished : $(
+    # Reference 0 is the Sakura name of the ghost which was just uninstalled.
+    if $[ $( IsExist talk.OnOtherGhostVanished$(Reference 0) ) ] ${talk.OnOtherGhostVanished$(Reference 0)}
+    else ${talk.OnOtherGhostVanished}
+)
+
+#-- OnDisplayHandover
+# These will go when moving the Ghost across monitors. Primary for when they move to the primary monitor, and 'other' for when moved to a non-primary monitor.
+# As is standard, 0 refers to the Sakura and 1 to the Kero. This can also handle more characters, if applicable. Just number them right.
+talk.OnDisplayPrimary0 : "\0\s[0]Need some company?"
+
+talk.OnDisplayPrimary1 : "\1\s[15]Oh, you want me on your primary monitor? Thanks."
+
+# I suggest not making these too sad sounding or nagging, because they'll happen anytime the Ghost is moved between them. Even accidentally or only temporarily.
+talk.OnDisplayOther0 : "\0\s[0]Was I in your way?"
+
+talk.OnDisplayOther1 : "\1\s[13]Ah, I can be out of the way, here."
+
+OnDisplayHandover : $(
+    if $[$(Reference 0) = "update"] $(
+        split @movement $(Reference 2) ,;
+        if $[$@movement[-3] = 0] ${talk.OnDisplayPrimary$(Reference 1)}
+        else ${talk.OnDisplayOther$(Reference 1)}
+    )
+)
+
+#-- OnBatteryNotify
+# This event notifies the current condition of the battery.
+# Critical (Crit) occurs when the User's battery hits 5%. Low is 33%, and High is 66%.
+# reference1 is the remaining amount of time on the battery, which you can include in your dialogue if you'd like.
+
+# These occur when the User is running off their own battery power.
+talk.CritBattery : "\0\s[0]Hey, your battery is about to run out. Don't forget to save your work."
+talk.LowBattery  : "\0\s[0]Your battery is getting low."
+
+# These occur when the User is charging.
+talk.HighBattery.Charging : "\0\s[0]Looks like your battery's alright now."
+talk.CritBattery.Charging : "\0\s[0]Saved by the bell."
+
+# These occur when running off of backup power.
+talk.CritBattery.Backup   : "\0\s[3]Uh oh. Working off backup power this low could turn out bad. Don't forget to save your work."
+
+# OnBatteryNotify
+# Responds to certain battery levels and statuses.
+# No arguments.
+# Returns appropriate dialogue.
+OnBatteryNotify : $(
+    setstr @EventName "";
+    # Battery charge level
+    if $[$(Reference 0) = "5"] $(setstr @EventName "CritBattery")
+    else if $[$(Reference 0) = "33"]$(setstr @EventName "LowBattery")
+    else if $[$(Reference 0) = "66"] $(setstr @EventName "HighBattery");
+    # Battery Status; Online is charging, backup is a backup power supply, offline is not charging.
+    if $[$(Reference 2) = "online"] $( setstr @EventName talk.${@EventName}.Charging )
+    else if $[$(Reference 2) = "backup"] $( setstr @EventName talk.${@EventName}.Backup )
+    else if $[$(Reference 2) = "offline"] $( setstr @EventName talk.${@EventName} )
+    else $( setstr @EventName talk.${@EventName} );
+    ${@EventName}
+)
+
+OnCPULoadHigh : "Looks like your CPU load is pretty high."
+
+OnCPULoadLow : "Ah. Your CPU load came back down. Good."
+
+OnDeviceArrival : "Device Inserted."
+
+OnDeviceRemove  : "Device Removed."
+
+#--
+# Ghost Events
+#--
+# These are events sent by other Ghosts. 
+# They're each unique and require poking at other developers or their code documentation to find out how to respond to them.
+# ...Unless you're using my middleware! That's the whole point of this section, haha. (´▽`);
+# Anyway. I always like it when folks put these in, so I hope this makes it easier on you.
+
+#-- OnNeedlePoke
+# This is an interaction between this Ghost and another English Ghost called Needle.
+# Needle is a Ghost which, among other features, sends an event called "OnNeedlePoke" to other Ghosts when overlapping them. This event is implied to be annoying or painful.
 
 # And, the response entries would look something like this:
 # This is the poke event from Needle. 
 # The number after the event name designates which character is being poked. 0 is the Sakura, 1 is the Kero, and so on.
-#talk.OnNeedlePoke0 : "\0\s[2]Ow, hey!"
-#talk.OnNeedlePoke0 : "\0\s[2]Huh?!"
+talk.OnNeedlePoke0 : "\0\s[2]Ow, hey!"
+talk.OnNeedlePoke0 : "\0\s[2]Huh?!"
 
-#talk.OnNeedlePoke1 : "\1\s[12]Ow, what was that for!"
-#talk.OnNeedlePoke1 : "\1\s[12]Ah, Hey, that hurt!"
+talk.OnNeedlePoke1 : "\1\s[12]Ow, what was that for!"
+talk.OnNeedlePoke1 : "\1\s[12]Ah, Hey, that hurt!"
 
 # You can write events for if Needle is wearing a certain shell, too, by appending the shell name after the character number.
-#talk.OnNeedlePoke0Syringe : "\0\s[2]Hey, I've had my rabies shot already, alright?!"
+talk.OnNeedlePoke0Syringe : "\0\s[2]Hey, I've had my rabies shot already, alright?!"
+
+# OnNeedlePoke
+# Reacts to overlap with the Ghost "Needle".
+# No arguments. reference0 is who Needle is poking (0 Sakura, 1 Kero, etc..), reference1 is the Shell that Needle is wearing.
+# Returns appropriate dialogue.
+OnNeedlePoke : $(
+    if $[$(length ${talk.OnNeedlePoke$(Reference 0)$(Reference 1)} > 0)] ${talk.OnNeedlePoke$(Reference 0)$(Reference 1)}
+	else ${talk.OnNeedlePoke$(Reference 0)};
+)
 
 #--
 # External Events
@@ -33,7 +163,7 @@ OnNeedlePoke : (
 # -- Standalone Programs
 # Some programs are explicitly designed send data to Ghosts through SSTP. These programs were more popular in the aughts, the main period of popularity for Ukagaka.
 # Some included are middleware for NekoDrift (猫どりふ) and Kinoko (きのこ).
-# For entries with JP names, remember to set the Ghost's SAORI character set to Shift JIS in SSP (or another baseware if it has the option). 
+# For entries with JP names, remember to set the Ghost's SHIORI character set to Shift JIS in SSP (or another baseware if it has the option). 
 # If you don't, it won't be able to read the entry names correctly. It'll just play the generic dialogue.
 
 
@@ -41,16 +171,20 @@ OnNeedlePoke : (
 # Kinoko is a small program which attaches an object to the Ghost. Normally, their head. It's mostly aesthetic, but it has fun interactions with NekoDrift.
 # Event Section https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event_ex.html#OnKinokoObjectCreate
 
+# These handle generic responses.
 talk.KinokoCreate    : "\0\s[2]Huh? What's this.. "$(Reference 0)"?"
 talk.KinokoDestroy   : "\0\s[3]Glad to have that thing off."
 talk.KinokoChanged   : "\0\s[2]Another one... It's "$(Reference 0)".. some kinda "$(Reference 2)"?" 
 talk.KinokoInstalled : "\0\s[3]You want more of these?"
 
+# To write a reaction to a specific item, simply write its item name.
 # A talk for the default antenna.
 talk.KinokoChanged.電波塔 : "\0\s[3]An antenna... Are you trying to contact aliens, or something?\w8 I'd prefer if you didn't do it on my head."
+# Or, to cover whole categories (e.g. you don't want to write individual responses to all the mushrooms) write the category name.
 # A talk for the nameplate category.
 talk.KinokoChanged.へツドマ一ク : "\0\s[8]What's this? Some kind of nameplate?"
 
+# These are the event handlers. Refer to the "KinokoTalk" function to see what this is doing.
 OnKinokoObjectCreate : $(
     KinokoTalk Create;
 )
@@ -73,6 +207,10 @@ OnKinokoObjectInstalled : $(
     KinokoTalk Installed;
 )
 
+# KinokoTalk
+# Calls the appropriate response in Kinoko Events. First checks for if a specific item response exists, then a category response, then generic response.
+# Argument 1 is the event name. Reference 0 is the item name, 2 is the category.
+# Returns the talk for the relevant event.
 =kis
 function KinokoTalk $(
     if $[$(IsExist talk.Kinoko$@arg[1].$(Reference 0))] ${talk.KinokoCreate.$(Reference 0)}
@@ -83,12 +221,13 @@ function KinokoTalk $(
 
 # NekoDrift (猫どりふ)
 # NekoDrift is a program which drops objects on Ghosts' heads. 
-# Its name is a reference to a popular gag a JP band, "The Drifters", performed on their show "It's 8 O'Clock! Everybody Gather 'Round")". The gag often dropped washtubs on themselves or others for comedic effect.
+# Its name is a reference to a popular gag from the show "It's 8 O'Clock! Everybody Gather 'Round")" hosted by the JP band, "The Drifters". 
+# The gag often played out as them having washtubs dropped on themselves or others for comedic effect.
 # For consistency with the event names, I'll be using "Nekodorif" instead of "NekoDrift" in the code.
 # Event Section https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event_ex.html#OnNekodorifObjectEmerge
 
+# Default variables when loaded up.
 dorifObj  : obj
-dorifTarg : targ
 dorifType : type
 dorifChar : char
 dorifDef  : 0
@@ -140,7 +279,9 @@ talk.NekoDorifHit.loveletter.0   : (
     "\1\s[11]Pfft. You huge flirt."
 )
 # And just like any other entry, you can assign multiple of them the same value with commas.
+# Defend is when a Kinoko item blocks it from hitting the character. Dodge is when it misses the character.
 talk.NekoDorifDefend.loveletter.0, talk.NekoDorifDodge.loveletter.0 : "\0\s[3]I was kinda looking forward to that."
+# Vanish is when it's fully disappeared.
 talk.NekoDorifVanish.loveletter.0 : "\0\s[0]Oh well."
 
 # These are just catch-alls for any other object.
@@ -174,12 +315,12 @@ OnNekodorifObjectHit : $(
     else $(DorifTalk Hit);
 )
 
-# This happens when the object is falling just before vanishing. However, most Ghosts aren't tall enough to say much of anything during this. So I didn't add any etc. dioalogue for it.
+# This happens when the object is falling just before vanishing. However, most Ghosts aren't tall enough to say much of anything during this. So I didn't add any 'etc.' dialogue for it.
 OnNekodorifObjectDrop : $(
    DorifTalk Drop;
 )
 
-# When the object leaves the screen.
+# When the object leaves the screen. DorifDef is "Dorif Defend"
 OnNekodorifObjectVanish : $(
     if $[${dorifDef} = 1] $(DorifTalk Vanish; set dorifDef "0");
 )
@@ -189,6 +330,11 @@ OnNekoDorifObjectDodge : $(
     DorifTalk Dodge;
 )
 
+
+# DorifTalk
+# Calls the appropriate response to NekoDorif events. First checks for if a specific item response exists, then a category response, then generic response.
+# Argument 1 is the event type. dorifObj is the item name, dorifType is the category. dorifTarg is which character is targeted.
+# Returns the talk for the relevant event.
 =kis
 function DorifTalk $(
     # argument 1 is the event type, e.g. emerge, vanish. Turns into "NekoDorifEmerge", etc.
@@ -198,11 +344,15 @@ function DorifTalk $(
 )
 =end
 
+# DorifSet
+# Sets the appropriate variables for NekoDorif events.
+# No arguments.
+# Returns nothing.
 =kis
 function DorifSet $(
     setstr dorifObj $(gsub $(Reference 0) " " "");
     setstr dorifType $(Reference 2);
-    if $[ $(Reference 1) = ${ghostKero} ] $(setstr dorifTarg "1"; setstr dorifChar ${ghostKero})
-    else $(setstr dorifTarg "0"; setstr dorifChar ${ghostSakura});
+    if $[ $(Reference 1) = ${ghostKero} ] $(setstr dorifTarg "1")
+    else $(setstr dorifTarg "0");
 )
 =end

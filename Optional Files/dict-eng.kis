@@ -2,13 +2,56 @@
 # English Style Features
 #--
 # These pieces of middleware are here to provide an option for those who'd like to have some functions more like English ghosts (i.e. based off of the GT Template)
+# Ghosts come in all different styles, ranging from traditional to totally off the walls- which look different in the JP and ENG communities!
+# So don't feel pressured to make your Ghost more like one style. They're highly customizable mediums, just use what looks fun or interesting to you.
 
+#-- Offscreen Talk & Overlapping Talk
+# Some folks like it when a Ghost talks about being offscreen or overlapping eachother. So, here's how you'd do that.
+
+talk.HeldOffscreen : "\0\s[0]Hey, are you trying to get rid of me?\w5\1\s[10]You can reset a Ghost's position by pressing 'Ctrl-Shift-F12' while the Ghost is in focus."
+
+talk.Offscreen     : "\1\s[13]Looks like Sentinel is still offscreen... You can bring him back with 'Ctrl-Shift-F12' if you can't reach him."
+
+talk.Onscreen      : "\0\s[3]Back to the world of the living, huh?"
+
+talk.Overlapping   : "\0\s[0]We're overlapping."
+
+OnSecondChange : $(
+    if ${System.Request.Reference3} $(
+        # If you don't want them to comment on being offscreen, delete the next two lines.
+        if $[${screenFlag} = 0 && $(Reference 1) = 1]  ${talk.HeldOffscreen}\w[1000]\w[1000]\w[1000]\n\n[half]${talk.Offscreen}\e
+        else if $[${screenFlag} = 1 && $(Reference 1) = 0] $(setstr screenFlag 0; echo ${talk.Onscreen}\e)
+        # If you don't want them to notice overlapping, delete this next line. If you don't want offscreen talk, but do want overlapping, delete the two lines above and delete the word "else" from the next line.
+        else if $[$(Reference 2) = 1] ${talk.Overlapping}
+        else $(
+            inc talkcounter;
+            if $[ ${talkcounter} >= ${talkinterval} ] $(
+                echo ${OnAITalk};
+                setstr talkcounter 0;
+            );
+        );
+    );
+)
+
+# If you want them to keep talking about being offscreen instead of normal dialogue, replace OnAITalk with this.
+OnAITalk : $(
+    if $[screenFlag = 1] ${talk.Offscreen}
+    else $(
+        setstr lastTalk ${sentence};
+        echo ${lastTalk};
+    );
+)
+
+#-- 'Select.' Option
 # Allows the "Select.function" type of choice.
 OnChoiceSelect : $(
     eval "Select."$(Reference 0)
 )
 
+#-- Functions Menu
 # A functions menu is a fairly common menu in GT-based Ghosts (who in themselves are by extension based off of "Y and J", a Korean ghost.)
+# However, they are rarely seen in JP ghosts, and often aren't able to be tailored much to the character.
+# So, I decided to have them be optional.
 
 FunctionMenuTalk : "\0\s[0]Function menu."
 
@@ -23,7 +66,7 @@ OnFunctionsMenu : (
     \n
     "\![*]\q[System information,OnSysInfo]"
     \n
-    "\![*]\q[Empty Recycle bin,OnEmptyBin]"
+    "\![*]\q[Empty Recycle bin,OnSelectEmptyBin]"
     \n\n[half]
     \![*]\q[Back,OnSakuraMenu]
 )
@@ -32,27 +75,62 @@ talk.OpenCalendar : "\0\s[0]Opening the calendar.\1\s[10]Unfortunately, at the m
 
 talk.OpenPreferences : "\0\s[0]Opening the SSP preferences.\1\s[10]You can set useful data for Ghosts to use, here, such as your name or birthday. Or, enable developer options!"
 
+# Little entry to handle these even smaller entries, because creating separate entries for each of these would be nonsensical.
 OnOpenFunc : $(
-    if [$(Reference 0) = 1] ${talk.OpenCalendar}\![open,calendar];
-    if [$(Reference 0) = 2] "\![biff]\e";
-    if [$(Reference 0) = 3] ${talk.OpenPreferences}\![open,configurationdialog];
-    
+    if $[$(Reference 0) = 1] ${talk.OpenCalendar}"\![open,calendar]";
+    if $[$(Reference 0) = 2] "\![biff]\e";
+    if $[$(Reference 0) = 3] ${talk.OpenPreferences}"\![open,configurationdialog]";
 )
 
-# I didn't want to include any SAORI with this template, so this is pretty barebones. It uses environment variables from SakuraScript. 
-# If you wanted more information, the SAORI "cpuid" (CPU ID, not a weird spelling of "Cupid" I thought for the longest time) can gather some more info.
-# I put in an example of what calling that SAORI would look like.
+OnNotifyOSInfo : $(
+    split @reference0 $(Reference 0) ,;
+    split @reference1 $(Reference 1) ,;
+    split @reference2 $(Reference 2) ,;
+    set OS $@reference0[0]; set OSVer $@reference0[1];
+    set CPU $@reference1[0] $@reference1[1] $@reference1[2];
+    set PhysMemory $@reference2[0]; set VirtMemory $@reference2[1];
+)
+
+# This little menu uses environment variables from SakuraScript, and information from OnNotifyOSInfo, to provide the user data.
 OnSysInfo : (
     \t\*\b2
-    # '?' randomly selects one of these strings.
+    # '?' randomly selects one of these strings. An alternate to creating a separate entry for menu dialogue, like this. 
+    # It looks a bit cluttered, and possibly confusing, which is why I opted to use an entry in the main Ghost.
     $(?
     "\0\s[0]System Information."
     "\0\s[0]Here's the info you wanted."
     )
-    \_q\![set,autoscroll,disable]
-    "OS Uptime: %exh"
-    "Resolution: %screenwidthx%screenheight" 
-    # OS: $(callsaori cpuid os.name)
+    \_q\![set,autoscroll,disable]\n\n[half]
+    "OS: "${OS} Ver.${OSVer}\n
+    "OS Uptime: %exh hours"\n
+    "CPU: "${CPU}\n
+    "Physical Memory: "${PhysMemory}\n
+    "Virtual Memory: "${VirtMemory}\n
+    "Resolution: %screenwidthx%screenheight"\n
+    \n[half]
+    "\![*]\q[Quit,OnQuit,0"]
 )
 
-OnEmptyBin
+# These'll go when the user selects to empty the recycle bin. and when it's been emptied, respectively.
+OnSelectEmptyBin : "\0\s[3]Alright,\w[500] emptying the recycle bin.\w[500]\![execute,emptyrecyclebin]"
+
+# This occurs when the bin has been emptied by the Ghost.
+# This event has some fun references you could use. 
+# https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event.html#OnRecycleBinEmpty
+OnRecycleBinEmpty : "\0\s[0]Bin's been emptied."
+
+# These two events were added fairly recently, so they're not in many Ghosts yet, let alone English ones.
+# But as recycle bin related events, it seems proper to put them here.
+
+# When a Ghost other than this one empties the recycle bin, you can make your Ghost respond by including this event. Also has fun references.
+OnRecycleBinEmptyFromOther : "\0\s[0]Tidying up?"
+
+# Another fun event to have your Ghost comment on. Be aware it happens every time the User puts something in the recycle bin, though.
+OnRecycleBinStatusUpdate : $(
+    # If the User just emptied the bin without asking the Ghost to.
+    if $[$(Reference 0) = 0] "\0\s[0]What, you didn't want me to empty your bin?\w4 I'm \f[italic,true]so\f[italic,default] hurt."
+    # If the User just added more than 5 files to the bin
+    else if $[$(Reference 2) > 5] "\0\s[0]Got a lot of junk to clear out? Me too."
+    # If the user just deleted five files in the bin.
+    else if $[$(Reference 2) < -5] "\0\s[0]Got a lot of junk to clear out? Me too."
+)

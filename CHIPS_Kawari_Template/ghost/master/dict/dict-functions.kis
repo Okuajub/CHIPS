@@ -84,7 +84,7 @@ function cap $(
 
 # IsExist
 # Not to be confused with the file management function "isexist".
-# Checks if an entry contains more than 1 character. Useful
+# Checks if an entry contains any characters. Useful for checking if an entry exists repeatedly.
 # Returns true/false
 =kis
 function IsExist $(
@@ -107,6 +107,7 @@ function SaveData $(
 =end
 
 # Variables to be saved. If you add any that need to be kept over boots, please remember to put them here.
+# 'devmode' is an entry to engage development mode. To engage it, put '$(setstr devmode 1)' in the script input.
 savedataParam (
 	talkinterval, 
     tempUser, userfull, username, 

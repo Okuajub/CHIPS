@@ -161,7 +161,7 @@ sentence : $(pushstr @animals eels)"\1\s[12]My hovercraft is full of "${@animals
 sentence : (
     $(if $[${food} == 'sunflower seeds'] "\1\s[18] I'm really craving some sunflower seeds, right now." 
     else if $[${dogFood} == 'deer liver'] "\0\s[8]Hm. Some deer liver would hit the spot."
-    else "\0\s[0]Hungry?\1\s[10]Not really.")
+    else "\0\s[0]Hungry?\1\s[10]\w4Not really.")
 )
 # If checks like this are very useful for making functions, but as you can see you can use them in dialogue, too!
 # Another useful function to know for this is 'rand'. As it sounds, it returns a random integer as a string.
@@ -209,7 +209,15 @@ sentence : (
 )
 # If you don't plan on acknowledging the User at all in your writing, you don't have to use this. It's just an option, not an expectation!
 # Not all Ghost users actually like being acknowledged in a Ghost. So, maybe consider what kind of Ghost you're writing and who it would appeal to.
-# That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal, now. Play and have fun when writing dialogue!
+
+# Dev Mode
+# Eventually, you'll probably want to test something, or create an option that only you, the developer, can see.
+# 'devmode' is a special entry in CHIPS that is used to engage development mode. To engage it, enter '$(setstr devmode 1)' in the script input.
+# This will set 'devmode' to be ON. Be aware, smart users can also do this, so don't put any sensitive information behind devmode. 
+# It's better used to do things like hide debug menus, or neatly turn off a buggy function you're still working on.
+
+# That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal, now. I've written some examples of less bland dialogues here.
+# Play and have fun when writing dialogue!
 
 sentence : "\0\s[5]You can replace our lines with whatever you'd like."
 
@@ -224,7 +232,23 @@ sentence : (
     "\1\s[19]\n\n[half]\f[size,9]Chip's Challenge... Huh!\f[size,default]"
 )
 
-sentence : "\1\s[10]"
+# Lets set up some entries...
+media : "'The End of Evangelion'", "'Pacific Rim'", "'Robin Hood'", "'Aliens'", "'Citizen Kane'", "'John Wick'", "'Johnny Mnemonic'", "'Metal Gear Solid 4: Guns of the Patriots'"
+media : "'Uncharted'", "'Bram Stoker's Dracula'", "'Resident Evil'"
+
+mediaCritiques : "I thought the pacing was too slow.", "The music was so bland. I don't get why it's praised all the time.", "It was totally just a jab at the fans.", "It looked so cheap!"
+mediaCritiques : "Genuinely unpleasant to watch. Couldn't some of the effects budget gone to the writing instead?", "The main character didn't have any chemistry at all."
+
+mediaDefense   : "Oh, come on, it wasn't \f[italic,true]that\f[italic,default] bad.", "How can you say that, when the subtext was so good?", "Clearly you just don't understand it."
+mediaDefense   : "I think that the music really sells it. C'mon, I'll set up a home theater and you can see it! Or, hear it.", "Oh, that's not fair. It's totally subjective."
+
+# Putting them all together, this one dialogue has a possibility of 360 different variations. Isn't that helpful? Even discounting the media entry call, that's still 60 different variations!
+sentence : (
+    "\1\s[18]So, Sentinel, what'd you think of "${media}"?\n\n[half]"
+    "\0\s[8]Hmm. I liked it. But.. "${mediaCritiques}"\n\n[half]"
+    "\1\s[13]"${mediaDefense}
+    "\0\s[6]Suit yourself."
+)
 
 # Oh, also, here's the hour roll-over event. It's in the 24-hour format. Be aware it doesn't always go off exactly on the hour, hence including the minute dynamically. If you don't want it, just erase it or comment it.
 talk.OnHourTimeSignal : $(setstr @minute $(date %M)) "\0\s[0]It's %hour:"${@minute}"."

@@ -8,7 +8,7 @@
 MouseDoubleClick0     : ${OnSakuraMenu}
 
 # You can specify a hotspot/collision (as defined in surfaces.txt) of the character, so that they say something unique when the user double clicks there.
-# In some Ghosts, this is used to hit them. But in this example dialogue it doesn't mean anything in particular.
+# In some Ghosts, this is used to hit them. It might also be used to ask about an accessory, or as a button. But in this example dialogue it doesn't mean anything in particular.
 MouseDoubleClick0Head : "\0\s[0]Something wrong?"
 MouseDoubleClick0Head : "\0\s[0]Looking for something?"
 MouseDoubleClick0Head : "\0\s[0]I'm a husky, not a cat, got it?"
@@ -26,14 +26,17 @@ MouseDoubleClick1Face : "\1\s[15]Oh, uhm, are my glasses dirty or something?"
 
 
 # The favorite part of any Ghost, petting.
+# Petting occurs when moving the mouse over collision areas.
+# In CHIPS, it also occurs when the mousewheel is scrolled over these areas as an accessibility feature. Scrolling requires less precise movements.
 # Petting is probably one of the most consistent feature in Ghosts, in my experience. 
 # That doesn't mean you need to have it (one of my favorite Ghosts, Faeia and Tahir, doesn't include petting at all), just that users may expect it. Hence it being included.
 
-# Waiting time for petting response.
-sys.SetMove1st : 50
+# Waiting time for petting response. You can adjust this if you feel it is too long or too short.
+strokeLimit : 50
 
 MouseMove0Head : "\0\s[0]Hey, cut that out."
 MouseMove0Head : "\0\s[0]Stop with the lovey-dovey stuff, will you?"
+MouseMove0Head : "\0\s[0]Don't make me sick Chip on you.\1\s[15]Haha!"
 
 MouseMove0Face : "\0\s[0]Eh?"
 MouseMove0Face : "\0\s[0]That tickles.\w8 I bite when things tickle."

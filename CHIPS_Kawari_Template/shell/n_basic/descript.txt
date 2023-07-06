@@ -1,4 +1,6 @@
-﻿//Free or Bound
+﻿// Go ahead and scroll to the bottom if you're looking for the dress-up options.
+
+//Free or Bound
 
 seriko.alignmenttodesktop,free
 
@@ -72,7 +74,7 @@ menu.sidebar.bitmap.filename,menu_sidebar.png
 
 //--Dress-up Code
 //This is coding that defines what dressups exist and what their names are.
-//This example dressup is a hairclip shaped like a bone. Its animation number was 0, so its bind group is 0, too. Default specifies if it's on by.. default or not.
+//This example dressup is a hairclip shaped like a bone. Its animation number was 0, so its bind group is 0, too. Default specifies if it's on by default or not, with 0 being false and 1 being true.
 //Despite being a bit annoying to set up, dressups are actually fairly easy to implement. It just requires going back and forth between files to double check information.
 
 sakura.bindgroup0.name,Hairclip,Bone
