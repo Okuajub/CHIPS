@@ -1,0 +1,395 @@
+#--
+# Event Dictionary
+#--
+# As this is the comment-cleaned version, I've removed any commentary not strictly necessary from this side.
+# It's expected you already understand Kawari and how CHIPS works behind the scenes as well.
+# Mint is more geared towards people who would like to edit CHIPS more heavily.
+# Good luck! ヾ(•ω•`)o
+
+
+#--
+# SHIORI EVENT HANDLERS
+#--
+# This is the code which interprets events from the baseware! DO NOT DELETE IT! 
+
+# SHIORI 3.0 Standard
+# These event handlers are derived from OpenKEEPS (a Japanese Kawari template), used with permission under their license.
+
+System.Callback.OnNOTIFY : $(
+	if $(.size notify.$(.encode_entryname ${System.Request.ID})) $(
+		# Procedure call
+		.setstr @ans $(.get notify.$(.encode_entryname ${System.Request.ID}));
+		if $[ ${@ans} != "" ] $(return ${@ans});
+	);
+	if $(.size System.Request.BaseID) $(
+		# Derive source event (assuming it is an event) by splitting the IDs and checking them.
+		.split @IDs ${System.Request.BaseID} ",";
+		foreach @ID @IDs $(
+			.setstr @ID $(.encode_entryname ${@ID});
+			if $(.size notify.${@ID}) $(
+				.setstr @ans $(.get notify.${@ID});
+				if $[ ${@ans} != "" ] $(return ${@ans});
+			);
+		);
+	);
+	# There are cases where something that should come in GET comes in NOTIFY
+	# (from the "Ukagaka" specification)
+	.get System.Callback.OnGET;
+)
+
+System.Callback.OnGET : $(
+	.setstr @ID $(.encode_entryname ${System.Request.ID});
+	if $(.match_at ${System.Request.ID} On) $(
+		# Call event
+		if $(.size ${@ID}) $(
+			.setstr @ans $(.get ${@ID});
+			if $[ ${@ans} != "" ] $(return ${@ans});
+			# If there is a response, return the event, at this point.
+			# The situation where there is no event description or no response will be processed after this.
+			);
+		if $(.size System.Request.BaseID) $(
+			# Derive source event (assuming it is an event)
+			.split @IDs ${System.Request.BaseID} ",";
+			foreach @ID @IDs $(
+				.setstr @ID $(.encode_entryname ${@ID});
+				if $(.size ${@ID}) $(
+					.setstr @ans $(.get ${@ID});
+					if $[ ${@ans} != "" ] $(return ${@ans});
+				)
+			);
+		);
+	) else $(
+		if $(.match_at ${System.Request.ID} "\\") $(
+			# definitions
+			.entry compatible.$(.substr ${@ID} 1);
+			return;
+		) else $(
+			# If it is a resource string
+			if $(.size resource.${@ID}) $(.get resource.${@ID});
+			return;
+		);
+	);
+)
+
+System.Callback.OnEvent : $(
+	if $(.size System.Request.Event) $(
+		.clear System.Request.ID;
+		.copy System.Request.Event System.Request.ID;
+	) else $(
+		# 単純GET Sentence
+		.setstr System.Request.ID "OnAITalk";
+	);
+	.get System.Callback.OnGET;
+)
+
+System.Callback.OnRequest : $(
+	if $[ ${System.Request} == "TEACH" ] $(
+		.setstr System.Request.ID "OnTeach";
+		.setstr @aistr $(.get System.Callback.OnGET);
+		if $[ $(.length ${@aistr}) != 0 ] $(
+			.setstr System.Response.Sentence ${@aistr};
+			.setstr System.Response 200;
+		);
+	);
+)
+
+#--
+# OnTranslate
+#--
+
+OnTranslate : $(
+	# Invalid surface check, adapted from a YAYA equivalent created by Zichqec. 
+	# Be aware that it will replace the Kero's invalid surfaces with surface0 as well.
+	setstr @talk $(Reference 0);
+	split @checksurfaces ${@talk} "\s[";
+	clear @checksurfaces[0];
+	foreach @element @checksurfaces $(split @surface ${@element} "]"); 
+	foreach @element @surface $(
+		setstr @isvalid $(find ValidSurfaces ${@element}); 
+		if $[ ${@isvalid} = -1 && ${@element} >= 0 ] $(
+			setstr @talk $( gsub ${@talk} "\s["${@element}"]" "\s[0]" );
+		);
+	);
+	clear @surface; clear @isvalid;
+
+	# Uses consistent pronouns when ForceSet is true.
+	if $[ ${ForceSet} != 0 ] $( 
+		setstr currentPronoun $(rand $[ $( size user.they ) ]); 
+	);
+
+	# Allows code to be evaluated in script input.
+	if $[ $( Reference 1 ) == "" && $( Reference 2 ) == ""] $(
+		echo $(eval ${@talk})
+	)
+    else $(
+		echo ${@talk}
+	);
+
+)
+
+#--
+# Basic Events
+#--
+
+# This happens on ALL booting.
+OnInitialize : $(
+	${InitBoot};
+)
+# This happens on ALL closing.
+OnDestroy : $(
+	SaveData;
+)
+
+# Variable Initializaton
+InitBoot : $(
+	${SaveLoad};
+	# Sets the user's name to the name in SSP's preferences.
+	if $[ $(length ${username}) < 1 ] $(setstr username ${tempUser});
+	# Second check, for if the first doesn't work for some reason.
+	if $[ $(length ${username}) < 1 ] $(setstr username "User");
+	# Sets a default value for singular/plural pronouns.
+	if $[ $(length ${lastSP}) = 0 ] $(setstr lastSP '0');
+	# Sets a default value for if pronouns should be mixed or not.
+	if $[ $(length ${ForceSet}) = 0 ] $(setstr ForceSet '0');
+	# Sets a talk interval if there is none.
+    if $[ $(length ${talkinterval}) = 0 ] $(setstr talkinterval '300');
+	setstr vanishFlag '0';
+)
+
+# A set of trees of default pronouns. Used primarily for copying purposes. Split into fem/masc/neut (etc.) trees for readability in code.
+pronounsFem.they     : "she"
+pronounsFem.them     : "her"
+pronounsFem.their    : "her"
+pronounsFem.theirs   : "hers"
+pronounsFem.themself : "herself"
+pronounsFem.singularplural : "0"
+
+pronounsMasc.they     : "he"
+pronounsMasc.them     : "him"
+pronounsMasc.their    : "his"
+pronounsMasc.theirs   : "his"
+pronounsMasc.themself : "himself"
+pronounsMasc.singularplural : "0"
+
+pronounsNeut.they     : "they"
+pronounsNeut.them     : "them"
+pronounsNeut.their    : "their"
+pronounsNeut.theirs   : "theirs"
+pronounsNeut.themself : "themself"
+pronounsNeut.singularplural : "1"
+
+pronounsIt.they : "it"
+pronounsIt.them : "it"
+pronounsIt.their : "its"
+pronounsIt.theirs : "its"
+pronounsIt.themself : "itself"
+pronounsIt.singularplural : "0"
+
+pronounsName.they : ${username}
+pronounsName.them : ${username}
+pronounsName.their : ${username}"'s"
+pronounsName.theirs : ${username}"'s"
+pronounsName.themself : ${username}"'s self"
+pronounsName.singularplural : "0"
+
+they     : $(OnUpdatePronoun they)
+them     : $(OnUpdatePronoun them)
+their    : $(OnUpdatePronoun their)
+theirs   : $(OnUpdatePronoun theirs)
+themself : $(OnUpdatePronoun themself)
+
+
+OnFirstBoot : $(
+	SaveData;
+	if $[$(Reference 0) == 0] ${talk.OnFirstBoot}
+	else if $[$(Reference 0) > 10] ${talk.OnLotsInstall}
+    else ${talk.OnReinstall};
+)
+
+
+OnBoot : \1\s[10]\0\s[0]${talk.OnBoot}
+
+OnClose : \1\s[10]\0\s[0]${talk.OnClose}"\_w[500]\-\e"
+
+OnGhostChanging : $(
+	# Reference0 is the Sakura of the Ghost being changed to. Reference 1 is if the change was manual or automatic.
+	setstr @reference0 $(Reference 0);
+	setstr @reference1 $(Reference 1);
+	if $[ $(length ${talk.OnGhostChanging${@reference0}${@reference1}} > 0)] ${talk.OnGhostChanging${@reference0}${@reference1}}
+	else if $[${@reference0} == ${ghostSakura}] ${talk.OnGhostReloading}
+	else ${talk.OnGhostChanging};
+)
+
+OnGhostChanged : $(
+	# Reference0 is the Sakura of the Ghost who was changed from to this Ghost.
+	setstr @reference0 $(Reference 0);
+	if $[$(length ${talk.OnGhostChanged${@reference0}} > 0)] ${talk.OnGhostChanged${@reference0}}
+	else if $[${@reference0} == ${ghostSakura}] ${talk.OnGhostReloaded}
+	else ${talk.OnGhostChanged};
+)
+
+OnGhostCalling : $(
+	# Reference0 is the Ghost being called.
+	setstr @reference0 $(Reference 0);
+	if $[$(length ${talk.OnGhostCalling${@reference0}} > 0)] ${talk.OnGhostCalling${@reference0}}
+	else ${talk.OnGhostCalling};
+)
+
+OnShellChanged : $(
+	setstr @reference0 $(Reference 0);
+	if $[$(length ${talk.OnShellChanged${@reference0}} > 0)] ${talk.OnShellChanged${@reference0}}
+	else ${talk.OnShellChanged};
+) 
+
+OnHourTimeSignal : (
+	${talk.OnHourTimeSignal}
+)
+
+OnMinuteChange : $(
+	SaveData;
+)
+
+talkcounter : 0
+
+OnSecondChange : $(
+    if ${System.Request.Reference3} $(
+        inc talkcounter;
+        if $[ ${talkcounter} >= ${talkinterval} ] $(
+        	echo ${OnAITalk};
+            setstr talkcounter 0;
+        );
+    );
+)
+
+OnAITalk : $(
+	setstr lastTalk ${sentence};
+	echo ${lastTalk};
+)
+
+#--
+# Network Events
+#--
+# Events that connect to the net.
+
+# If the user is in devmode, set the URL to a dummy URL. Otherwise, use the normal URL.
+resource.homeurl : $(
+	if $[${devmode} = 1] "https://dummyURL/"
+	else ${homeurl}
+)
+
+resource.vanishbutton.visible : (
+	${vanishFlag}
+)
+
+OnUpdateBegin    : $(
+	if $[$(length ${talk.OnUpdateBegin} > 0)] ${talk.OnUpdateBegin}
+	else "\0\s[0]Updating "$(Reference 0)"...\w[500]";
+)
+OnUpdateReady    : $(
+	if $[$(length ${talk.OnUpdateReady} > 0)] ${talk.OnUpdateReady}
+	else "\0\s[0]"$(Reference 0)" new files.";
+)
+OnUpdateComplete : $(
+	if $[$(length ${talk.OnUpdateComplete} > 0)] ${talk.OnUpdateComplete}
+	else "\0\s[0]Successfully updated.";
+)
+OnUpdateFailure  : $(
+	if $[$(length ${talk.OnUpdateFailure} > 0)] ${talk.OnUpdateFailure}
+	else "\0\s[0]The update failed. '"$(Reference 0)"' is the reason.";
+)
+
+# NTP Time Sync Option
+
+OnSNTPBegin   : $(
+	if $[$(length ${talk.OnSNTPBegin} > 0)] ${talk.OnSNTPBegin}
+	else "\0\s[0]Connecting to "$(Reference 0)"...\w[500]";
+	
+)
+
+OnSNTPCompare : $(
+	split @servertime $(Reference 1) ",";
+	split @localtime $(Reference 2) ",";
+	setstr @ntime $@servertime[3]":"$@servertime[4]", "$@servertime[1]"/"$@servertime[2]", "$@servertime[0]; 
+	setstr @wtime $@localtime[3]":"$@localtime[4]", "$@localtime[1]"/"$@localtime[2]", "$@localtime[0];
+	if $[$(Reference 3) != 0] $(echo 
+	"\0\s[0]The time retrieved from "$(Reference 0)" is "${@ntime}". Your device's time is "${@wtime}".\w8 Would you like me to fix the clock?\n\n[half]\q[Yes,OnSNTPChange]\n\q[No,OnQuit,0]")
+	else $(echo "The clock's already correct.")
+)
+
+OnSNTPChange  : "\6\e"
+
+OnSNTPCorrect : $(
+	if $[$(length ${talk.OnSNTPCorrect} > 0)] ${talk.OnSNTPCorrect}
+	else "\0\s[0]The clock's been corrected.";
+)
+
+OnSNTPFailure : $(
+	if $[$(length ${talk.OnSNTPFailure} > 0)] ${talk.OnSNTPFailure}"\w[500]"
+	else "\0\s[0]Failed to connect to "$(Reference 0)".\w[500]";
+)
+
+# BIFF Email Check
+
+OnBIFFBegin : $(
+	if $[$(length ${talk.OnBIFFBegin} > 0)] ${talk.OnBIFFBegin}"\w[500]"
+	else "\0\s[0]Connecting to "$(Reference 0)"...\w[500]"
+)
+
+OnBIFFComplete, OnBIFFComplete2 : $(
+	if $[$(length ${talk.OnBIFFComplete} > 0)] ${talk.OnBIFFComplete}
+	else $(
+		if $[$(Reference 0) == 0] "\0\s[0]There are no new emails." 
+		else if $[$(Reference 0) = 1] "\0\s[0]There is 1 email." 
+		else "\0\s[0]There are "$(Reference 0)" emails."
+	)
+)
+
+OnBIFFFailure : $(
+	if $[$(length ${talk.OnBIFFBegin} > 0)] ${talk.OnBIFFFailure}
+	else "\0\s[0]Failed to connect to "$(Reference 2)". The reason was '"$(Reference 0)"'.\w[500]"
+)
+
+OnHeadlinesenseBegin, OnRSSBegin : (
+	${talk.OnNewsBegin}\w[500]
+)
+
+OnHeadlinesenseFailure, OnRSSFailure : $(
+	${talk.OnNewsFailure}
+)
+
+#--
+# Notify
+#--
+# Silent events
+
+notify.OnNotifyUserInfo : $(
+	if $[$(length Reference 0 > 0)] $(setstr tempUser $(Reference 0));
+	if $[$(length ${username} = "")] $(setstr username ${tempUser});
+	setstr userfull $(Reference 1);
+	setstr birthdate $(Reference 2);
+	setstr usergender $(Reference 3);
+	if $[ $(length ${user.they}) < 1 || $(length ${user.them}) < 1 || $(length ${user.their}) < 1 || $(length ${user.theirs}) < 1 || $(length ${user.themself}) < 1 || $(length ${user.singularplural}) < 1 ] $(
+		if $[ ${usergender} = "female" ] $(copytree pronounsFem user)
+		else if $[ ${usergender} = "male" ] $(copytree pronounsMasc user)
+		else $(copytree pronounsNeut user);
+	);
+)
+
+notify.OnNotifySelfInfo : $(
+	setstr ghostSelf $(Reference 0);
+	setstr ghostSakura $(Reference 1);
+	setstr ghostKero $(Reference 2);
+	setstr currentShell $(Reference 3);
+	setstr currentBalloon $(Reference 5);
+)
+
+notify.OnNotifyShellInfo : $(
+	# reference2 is the list of surfaces in the shell
+	setstr @reference2 $(Reference 2);
+	split ValidSurfaces ${@reference2} ",";
+)
+
+#--
+# Other
+#--
+OnSurfaceRestore : "\1\s[10]\0\s[0]"

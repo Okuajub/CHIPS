@@ -1,0 +1,1 @@
+This is where you'll put the readme for your shell. It provides a little extra information on it, just like the Ghost readme.

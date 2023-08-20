@@ -1,0 +1,34 @@
+#--
+# Mouse Dictionary
+#--
+
+OnMouseDoubleClick : $(
+	entry
+	MouseDoubleClick${System.Request.Reference3}${System.Request.Reference4}
+	${MouseDoubleClick${System.Request.Reference3}}
+)
+
+# Pets the appropriate character. Mousewheel option included for accessibility
+OnMouseMove, OnMouseWheel : $(
+	inc stroke;
+	# Forces the Ghost to wait until talking is over to pet them.
+	if $[ $[ ${stroke} > ${strokeLimit} ] && $[ $(match ${System.Request.Status} talking) < 0 ] ] $(
+		setstr stroke 0;
+		entry MouseMove${System.Request.Reference3}${System.Request.Reference4} ${MouseMove${System.Request.Reference3}};
+	);
+)
+
+# Sets the stroke counter to 0 when the mouse isn't on the Ghost
+OnMouseLeaveAll : $(
+	setstr stroke 0;
+)
+
+OnKeyPress: $(
+	entry sys.key.${System.Request.Reference0};
+)
+sys.key.r: $(
+	echo ${lastTalk}
+)
+sys.key.t: $(
+	echo ${OnAITalk}
+)
