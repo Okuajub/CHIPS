@@ -3,7 +3,7 @@
 //You can find the Ukadoc page for it here: https://ukagakadreamteam.github.io/ukadoc/manual/descript_shell.html
 
 //--General Info
-//If you filled out the descript.txt for your Ghost already, this should look similar. These following lines define information about the shell and it's creator. You don't have to touch the first two lines, and if this is the default shell for your Ghost, you don't have to touch the third either. Just fill in your name and your website.
+//If you filled out the descript.txt for your Ghost already, this should look similar. These following lines define information about the shell and it's creator. You don't have to touch the first two lines, and if this is the default shell for your Ghost, you don't have to touch the third either. Remember to replace my information with your name and your website (if you have one).
 
 charset,UTF-8
 type,shell
@@ -13,7 +13,7 @@ craftman,Okuajub
 craftmanurl,https://okuajub-netspace.neocities.org
 
 //--Use_self_alpha
-//Originally, Ghosts didn't naturally support transparent PNGs, and instead required a set of PNA files to define transparency per surface. Thankfully, now, shells can use this option to use their own transparency instead of PNA files. You can leave this as it is, unless you want to use PNAs for some reason.
+//Originally, Ghosts didn't naturally support transparent PNGs, and instead required a set of PNA files to define transparency per surface. Thankfully, now, shells can use this option to use their own transparency instead of PNA files. You can leave this as it is.
 
 seriko.use_self_alpha,1
 
@@ -21,9 +21,10 @@ seriko.use_self_alpha,1
 //This controls whether the characters snap to the top or bottom of the screen, or if they can be freely put anywhere. The master shell for CHIPS has this set to 'bottom' because the characters are cut off at the thighs. But many English ghosts use 'free', which allows them to be placed anywhere. Consider which works best for your shell.
 
 seriko.alignmenttodesktop,bottom
+//seriko.alignmenttodesktop,free
 
 //--Menu Font Color
-//This is the font color for the right-click SSP menu. r g b stand for red blue green, adjust the values to get the color you want. This'll probably take some trial and error.
+//This is the font color for the right-click SSP menu. r g b stands for red blue green, adjust the values to get the color you want. This'll probably take some trial and error. Keep in mind readability for your users!
 
 menu.background.font.color.r,0
 menu.background.font.color.g,0
@@ -41,32 +42,33 @@ menu.foreground.font.color.b,255
 //--Menu Greyed Out Font Color
 //For options that aren't selectable for some reason.
 
-menu.disable.font.color.r,150
-menu.disable.font.color.g,150
-menu.disable.font.color.b,150
+menu.disable.font.color.r,140
+menu.disable.font.color.g,140
+menu.disable.font.color.b,140
 
 
 //--Menu Separator Color
-//
+//This controls the color of the bar that separates menu options.
 
-menu.separator.color.r,240
-menu.separator.color.g,240
-menu.separator.color.b,240
+menu.separator.color.r,180
+menu.separator.color.g,180
+menu.separator.color.b,180
 
 
 //--Menu Background Image Alignment
-//By default, the background images align to the left and to the top, annd don't tile. But with these commands, you can change that. As an example, these have been aligned to righttop and tile on both the X and Y axis. That means it can loop infinitely.
-//If you'd like these images not to tile, you can remove the 'repeat' commands.
-//If you're willing to put the extra effort in, making a tiling menu like this looks very neat, and won't break if someone has a large list of balloons or Ghosts.
+//Without modifying them, menu background images align to the top-left and don't tile. But with these commands, you can change that. As an example, these have been aligned to right-top and tile on both the X and Y axis. That means it can loop infinitely.
+//If you'd like these images not to tile, you can remove the 'repeat' commands. I've made them tile as it saves a little file size for a solid color like this. But tiled patterns can look neat too! Just make sure your menu is still readable.
 
 menu.background.alignment,righttop+repeat-x+repeat-y 
 menu.foreground.alignment,righttop+repeat-x+repeat-y
+
+//This controls the alignment of your sidebar image.
 menu.sidebar.alignment,bottom
 
 
 //--Menu Background Image Location
-//These are the background images for the menu. I put in a bone patterned background, both to show you can make the background whatever size you'd like. Just be aware that images larger than the menu gets cropped, and smaller than the menu SSP will fill the extra space with a solid color. 
-//You can change the filenames here if you'd like. If you don't, just replace mine with yours. I suggest at least changing the bone background to something else. 
+//These are the background images for the menu. Just be aware that images larger than the menu gets cropped, and smaller than the menu SSP will fill the extra space with a solid color. 
+//You can change the filenames here if you'd like. If you don't, just replace the images with yours.
 
 menu.background.bitmap.filename,menu_background.png
 menu.foreground.bitmap.filename,menu_foreground.png
@@ -90,4 +92,4 @@ kero.balloon.alignment,none
 
 
 //--Dress-ups?
-//So, dressups can be finicky to work with. They have to be defined in both surfaces.txt and here. To keep this shell accessible, I've left out any kind of dressups. However, if you're interested, you can dip on over to the N_basic shell to see an example of a dressup I coded.
+//So, dress-ups can be finicky to work with. They have to be defined in both surfaces.txt and here. To keep this shell accessible, I've left out any kind of dressups. However, if you're interested, you can dip on over to the n_basic shell in the optional files to see a simple implementation of a dress-up.

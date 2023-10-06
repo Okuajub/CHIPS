@@ -1,2 +1,0 @@
-This is where you'll put the readme for your shell. It provides a little extra information on it, just like the Ghost readme.
-This is the 'Basic' shell. It shows the minimum requirements for a shell, and how a dressup is implemented.

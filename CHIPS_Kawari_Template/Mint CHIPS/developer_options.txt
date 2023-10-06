@@ -1,3 +1,0 @@
-ghost/master/profile/,nonar,noupdate
-shell/master/profile/,nonar,noupdate
-ghost/master/kawari.log,nonar,noupdate

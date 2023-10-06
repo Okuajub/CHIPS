@@ -1,7 +1,9 @@
 #--
 # Mouse Dictionary
 #--
+# These are mouse cursor actions people can take with your Ghost.
 
+# When double-clicking the Ghost.
 OnMouseDoubleClick : $(
 	entry
 	MouseDoubleClick${System.Request.Reference3}${System.Request.Reference4}
@@ -23,6 +25,7 @@ OnMouseLeaveAll : $(
 	setstr stroke 0;
 )
 
+# Key presses
 OnKeyPress: $(
 	entry sys.key.${System.Request.Reference0};
 )

@@ -1,5 +1,8 @@
 version,1
 
+//IMPORTANT:
+//The illustrations provided are intended to be replaced. Please do not redistribute them without permission.
+
 //--
 //Surfaces.txt
 //--

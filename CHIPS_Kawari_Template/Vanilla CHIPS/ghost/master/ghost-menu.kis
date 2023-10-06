@@ -80,6 +80,8 @@ talk.UnchangedName : "\0\s[0]Hm. That's the same as before. But alright."
 talk.NoName : "\0\s[0]I'll just go with "${username}", then."
 # A response for if the User inputs a name which is the same as the characters' names.
 talk.SelfName : "\0\s[0]That could get confusing. You got a nickname or something?"
+# A response for if the User inputs a name which is in the blacklist.
+talk.BadName : "\0\s[0]I'm not sure if I want to say that. What else you got?"
 # A response for if the new username cleared all checks.
 talk.OnNameChanged : "\0\s[0]"${username}", huh? Got it."
 
@@ -120,8 +122,8 @@ OnAssignTalkRate : (
 
 # This handles quitting dialogue.
 OnQuit : $(
-    if $[$(Reference 0) == 0] ${SakuraQuit}
-    else ${KeroQuit}
+    if $[$(Reference 0) == 0] \![close,inputbox,__SYSTEM_ALL_INPUT__]${SakuraQuit}
+    else \![close,inputbox,__SYSTEM_ALL_INPUT__]${KeroQuit}
 )
 # This is used for more than just quitting the menu. It's also used when quitting out of creating custom pronouns, so be mindful of that.
 SakuraQuit : "\0\s[0]Mhm.", "\0\s[0]Sure."
@@ -273,6 +275,15 @@ OnShowData : $(
 # This entry can be used to test code on demand. Very helpful for longer and more complex SakuraScript or KIS.
 OnTestVariable : (
     "\1\s[10]Testing!\n\n[half]"
+    \q[saysomething,script:
+    "hellooooa "
+    "lorem ipsum dolor amet"
+    '"I\'m"'
+    "${sentence}"
+    "${sentence}"
+    ]
+    \n\n[half]\q[saysomething2,script:'${sentence}']
+    '\q[Close balloon,script:\e]\nNesting is also possible.\n\q[No. 1,"script:\q[No. 2,script:There isn"'\'\'"t a 3.]"]'
 )
 
 # This won't work if you don't have Kosui in your ghost\master folder.

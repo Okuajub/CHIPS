@@ -12,8 +12,16 @@ OnToggleVanish : $(
 
 # Opens the input box for the name change.
 OnChangeName : (
-    ${talk.OnChangeName}
-    \![open,inputbox,OnNameChanged,--timeout=-1]
+    \t\*\![enter,nouserbreakmode]
+    ${talk.OnChangeName}\n\n[half]
+    "\f[italic,true]Current names: \n"
+    $(setstr @nametotal $(size username);
+      loop ${@nametotal} $(echo $username[${@i}]\n; inc @i)
+    )\f[italic,default]\n[half]
+    \![*]\q[Replace Current Name,OnChangeName.start,replace]\n
+    \![*]\q[Add New Name,OnChangeName.start,add]\n
+    $(if $[ $(size user.they) > 1] $(echo \![*]\q[Delete A Name,OnDeleteName.start,delete]\n) )
+    \n[half]\![*]\q[Quit Menu,OnQuit,0]
 )
 
 # Changes the user's name after performing a few checks on it.
@@ -22,7 +30,7 @@ OnNameChanged : $(
     setstr @sentName $(Reference 0);
     # Storing a copy to break down further.
     setstr @namecheck ${@sentName};
-    # Standardizing the name. Removes spaces, periods, dashes and underscores.
+    # Standardizing the name to check against. Removes spaces, periods, dashes and underscores.
     setstr @namecheck $(tolower ${@namecheck});
     setstr @namecheck $(gsub ${@namecheck} " " "");
     setstr @namecheck $(gsub ${@namecheck} "." "");
@@ -35,11 +43,15 @@ OnNameChanged : $(
     # If the username is false, '0', 'false', or no input whatsoever, set the username to the User's name in SSP's preferences.
     if $[ !${@namecheck} ] $( setstr username ${tempUser}; return ${talk.NoName} );
     # If the name is the same as the Ghost or their Kero
-    if $[ ${@namecheck} == $(tolower ${ghostSelf}) || ${@namecheck} == $(tolower ${ghostSakura}) || ${@namecheck} == $(tolower ${ghostKero}) ] $( return ${talk.SelfName}\![open,inputbox,OnNameChanged,--timeout=-1] );
+    if $[ ${@namecheck} == $(tolower ${ghostSelf}) || ${@namecheck} == $(tolower ${ghostSakura}) || ${@namecheck} == $(tolower ${ghostKero}) ] $( return \t\*\![enter,nouserbreakmode]${talk.SelfName}\![open,inputbox,OnNameChanged,--timeout=-1]\n\n[half]\![*]\q[Quit Menu,OnQuit,0] );
+    # If the name is on the blacklist
+    if $[ $(find blacklist ${@namecheck}) ] $( return \t\*\![enter,nouserbreakmode]${talk.BadName}\![open,inputbox,OnNameChanged,--timeout=-1]\n\n[half]\![*]\q[Quit Menu,OnQuit,0] )
     # If none of the above conditions apply, the name is valid.
     setstr username ${@sentName};
     echo ${talk.OnNameChanged};
 )
+
+blacklist : heckity
 
 # The starting menu for changing pronouns.
 OnChangePronouns : (
@@ -56,7 +68,7 @@ OnChangePronouns : (
     \![*]\q[Replace Current Set,OnChangePronouns.start,replace]\n
     \![*]\q[Add New Set,OnChangePronouns.start,add]\n
     $(if $[ $(size user.they) > 1] $(echo \![*]\q[Delete A Set,OnDeletePronouns.start,delete]\n) )
-    \![*]Toggle Mixed Sets ":" \q[$(if $[${ForceSet} != 0] $(echo ON) else $(echo OFF)),OnTogglePronouns]\n
+    \![*]Use Mixed Sets ":" \q[$(if $[${ForceSet} != 0] $(echo OFF) else $(echo ON)),OnTogglePronouns]\n
     \![*]\q[Test a Set,OnTestPronouns]\n
     \n[half]
     \![*]\q[Quit Menu,OnQuit,0]

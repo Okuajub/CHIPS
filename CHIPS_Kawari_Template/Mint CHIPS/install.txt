@@ -1,4 +1,0 @@
-charset,UTF-8
-type,ghost
-name,CHIPS Template
-directory,CHIPS_Template
