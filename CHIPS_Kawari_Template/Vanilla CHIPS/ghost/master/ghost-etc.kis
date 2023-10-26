@@ -3,6 +3,8 @@
 #--
 # There's many events which are not necessarily needed for Ghost functioning, and this is the file that holds them, here.
 # Also an ideal place for optional file snippets to go.
+# If you can't think of anything for your character to say with these, don't worry about it.
+# They've been made neutral on purpose so they can be left alone.
 
 #--
 # Network Events
@@ -15,7 +17,7 @@
 talk.OnUpdateBegin    : "\0\s[0]Updating "$(Reference 0)"..."
 # Reference 0 is the number of new files.
 talk.OnUpdateReady    : "\0\s[0]"$(Reference 0)" new files."
-# On successful update
+# On successful update.
 talk.OnUpdateComplete : "\0\s[0]Successfully updated."
 # Reference 0 is the reason for failure, such as '404' or 'md5 mismatch'.
 talk.OnUpdateFailure  : "\0\s[0]The update failed. '"$(Reference 0)"' is the reason."

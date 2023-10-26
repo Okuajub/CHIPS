@@ -1,3 +1,10 @@
+#--
+# Functions Dictionary
+#--
+# This file holds all of the user-made functions used in CHIPS.
+# Some are written by others, some are written by me. Details on each can be found below.
+
+
 # GetWordRandom
 # Taken from the Kawari documentation.
 # Call a random word from an entry without duplicates.
@@ -69,7 +76,7 @@ function SP $(
 )
 =end
 
-# Cap
+# cap
 # Short for Capitalize
 # Takes one argument, the word to be capitalized.
 # Returns the capitalized word.

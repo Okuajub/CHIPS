@@ -3,6 +3,7 @@
 #--
 # This little file holds all of the mouse related actions. Here's a few examples to get you started. 
 # 0 refers to the Sakura, while 1 refers to the Kero, and so on.
+# "Hotspots", or collisions, are areas on the Ghost that can have specific entries tied to them by specifying them. The collision coordinates are set in the shell coding.
 
 #These actions happen when double clicking the Ghost. When a hotspot/collision is not specified, it opens the menu.
 MouseDoubleClick0     : ${OnSakuraMenu}
@@ -29,7 +30,7 @@ MouseDoubleClick1Face : "\1\s[15]Oh, uhm, are my glasses dirty or something?"
 # Petting occurs when moving the mouse over collision areas.
 # In CHIPS, it also occurs when the mousewheel is scrolled over these areas as an accessibility feature. Scrolling requires less precise movements.
 # Petting is probably one of the most consistent feature in Ghosts, in my experience. 
-# That doesn't mean you need to have it (one of my favorite Ghosts, Faeia and Tahir, doesn't include petting at all), just that users may expect it. Hence it being included.
+# That doesn't mean you need to have it (one of my favorite Ghosts doesn't include petting at all), just that users may expect it. Hence it being included.
 
 # Waiting time for petting response. You can adjust this if you feel it is too long or too short.
 strokeLimit : 50

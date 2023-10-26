@@ -2,11 +2,11 @@
 # Mouse Dictionary
 #--
 # These are mouse cursor actions people can take with your Ghost.
+# They'll activate when a specific motion, gesture, or clicking pattern is done to the Ghost.
 
 # When double-clicking the Ghost.
 OnMouseDoubleClick : $(
-	entry
-	MouseDoubleClick${System.Request.Reference3}${System.Request.Reference4}
+	entry MouseDoubleClick${System.Request.Reference3}${System.Request.Reference4}
 	${MouseDoubleClick${System.Request.Reference3}}
 )
 

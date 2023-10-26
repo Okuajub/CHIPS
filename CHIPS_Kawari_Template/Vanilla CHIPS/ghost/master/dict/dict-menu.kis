@@ -32,13 +32,11 @@ blacklist : heckity, hecker
 OnChangeName.start : $(
     setstr @mode $(Reference 0);
     if $[ ${@mode} = 'replace' ] $(
-        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]
-        ${talk.OnReplaceName}
+        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]${talk.OnReplaceName}
         \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
     );
     if $[ ${@mode} = 'add' ] $(
-        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]
-        ${talk.OnAddName}
+        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]${talk.OnAddName}
         \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
     );
 )

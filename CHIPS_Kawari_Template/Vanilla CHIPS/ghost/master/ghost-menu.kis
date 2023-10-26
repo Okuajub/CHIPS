@@ -264,7 +264,7 @@ OnIntroduceYAYA : (
 
 OnIntroduceKosui : (
     "\1\t\*\s[10]\b2Kosui is the debugging terminal packaged with Kawari.\w2 It's not as intimidating as it might seem.\w8 "
-    "Kosui is used to find errors and test your code. It can output log files, or (with the right code) log directly to the terminal.\w8 "
+    "Kosui is used to find errors and test your code. It can output log files, or (with the right code) log directly to the terminal.\n\n[half]\w8 "
     "You can learn more about Kosui's operations in the Kosui Manual in Kawari's documentation."
     \n\n[half]
     \![*]\q[Back,OnDebugMenu]
@@ -293,18 +293,9 @@ OnShowData : $(
 # This entry can be used to test code on demand. Very helpful for longer and more complex SakuraScript or KIS.
 OnTestVariable : (
     "\1\s[10]Testing!\n\n[half]"
-    \q[saysomething,script:
-    "hellooooa "
-    "lorem ipsum dolor amet"
-    '"I\'m"'
-    "${sentence}"
-    "${sentence}"
-    ]
-    \n\n[half]\q[saysomething2,script:'${sentence}']
-    '\q[Close balloon,script:\e]\nNesting is also possible.\n\q[No. 1,"script:\q[No. 2,script:There isn"'\'\'"t a 3.]"]'
 )
 
-# This won't work if you don't have Kosui in your ghost\master folder.
+# This won't work if you don't have Kosui in your ghost\master folder. Also not terribly useful since Kosui doesn't recognize that it's in the Ghost's folder when opened.
 OnOpenKosui : (
     "\1\s[10]\![open,file,kosui.exe]Sure thing. Kosui, coming up."
 )
