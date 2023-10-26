@@ -9,7 +9,7 @@ option,DisableNoDefineSurfaces
 
 //You can create groups of different surfaces. The group name will preface the surface nickname in the code, so I suggest you make it short. 
 //The scope is which character these belong to, with 0 being the main character/Sakura, 1 being the side character/Kero, 3 + being other arbitrary characters (called with the \p SakuraScript tag). 
-//Finally, after that, each line has the surface's number (as defined in furfaces.txt) and the nickname you'd like to set for it.
+//Finally, after that, each line has the surface's number (as defined in surfaces.txt) and the nickname you'd like to set for it.
 
 group,Saku
 {
@@ -45,7 +45,7 @@ scope,1
 19,Bored
 }
 
-//You can also disable certain surfaces from appearing by using the disabled group.
+//You can also disable certain surfaces from appearing by using the '__disabled' group.
 //It functions just like any other group, so you can go ahead and write any parts you don't wish to be visible in the Surface Test here. I put a random non-existant surface in as an example.
 
 //group,__disabled

@@ -1,9 +1,11 @@
 #--
 # Bootend
 #--
-# This is the area that holds the dialogues related to booting and closing the ghost (and similar events). If you're starting here, I highly recommend you actually start with 'ghost-aitalk' instead.
+# This is the area that holds the dialogues related to booting and closing the ghost (and similar events). 
+# If you're starting here, I highly recommend you actually start with 'ghost-aitalk' instead.
 # This file is fairly brief, but you could expand it much more. Setting opening and closing dialogues for certain times of day, for example.
-# Also, this is a handy place to mention that if you don't want a response to certain events, you can delete most variants and still have the Ghost function. 
+# Also, this is a handy place to mention that if you don't want to write a lot of responses to events, you can delete the variants.
+# E.G. you could delete any event that names a specific Ghost.
 
 talk.OnFirstBoot   : (
     "\1\s[10]\0\s[0]\t\w4Hey.\1\s[10]\w8\w8Welcome to the CHIPS Kawari Template! You'll want to introduce your ghost here.\w4 "

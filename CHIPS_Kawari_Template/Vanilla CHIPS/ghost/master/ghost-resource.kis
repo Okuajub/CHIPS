@@ -1,7 +1,8 @@
 #--
 # Resources
 #--
-# You can read more about resources here: https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_resource.html
+# Resources are information your Ghost draws upon to create the right click menu and a couple other things.
+# There's a large variety of resources, and You can read more about them here: https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_resource.html
 
 #--
 # Network Update URL
@@ -9,7 +10,7 @@
 # This is the link you'll use to update your Ghost. The link here is just a placeholder, since updating a Ghost in progress could wipe your work.
 # Don't forget to change this in descript.txt as well!
 # If you are in devmode, the Ghost will automatically check a dummy URL instead, too.
-homeurl : "https://URLtoNowhere.gov/"
+homeurl : "https://dummy.url/"
 
 #--
 # Recommended Sites
@@ -19,12 +20,9 @@ homeurl : "https://URLtoNowhere.gov/"
 
 resource.sakura.portalsites : $(urllist
 	"Okuajub's Netspace" 
-	"https://okuajub-netspace.neocities.org" 
+	"https://okuajub-netspace.neocities.org/ukagaka" 
 	"https://okuajub-netspace.neocities.org/eva_button.png"
 	"-" "-" "-"
-	"Okuajub's pcPets"
-	"https://github.com/Okuajub/pcPets/tree/main/Ukagakas"
-	"-"
 	"CHIPS Github"
 	"https://github.com/Okuajub/CHIPS/"
 	"-"

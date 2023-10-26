@@ -12,22 +12,47 @@ OnToggleVanish : $(
 
 # Opens the input box for the name change.
 OnChangeName : (
+    $(if $[ $(size username) > 1] $(setstr @names "names") else $(setstr @names "name") )
     \t\*\![enter,nouserbreakmode]
     ${talk.OnChangeName}\n\n[half]
-    "\f[italic,true]Current names: \n"
+    "\f[italic,true]Current "${@names}": \n"
     $(setstr @nametotal $(size username);
       loop ${@nametotal} $(echo $username[${@i}]\n; inc @i)
     )\f[italic,default]\n[half]
-    \![*]\q[Replace Current Name,OnChangeName.start,replace]\n
+    \![*]\q[Replace Current $(cap ${@names}),OnChangeName.start,replace]\n
     \![*]\q[Add New Name,OnChangeName.start,add]\n
-    $(if $[ $(size user.they) > 1] $(echo \![*]\q[Delete A Name,OnDeleteName.start,delete]\n) )
+    $(if $[ $(size username) > 1] $(echo \![*]\q[Delete A Name,OnDeleteName.start,delete]\n) )
     \n[half]\![*]\q[Quit Menu,OnQuit,0]
 )
 
-# Changes the user's name after performing a few checks on it.
-OnNameChanged : $(
+# An optional blacklist. Add your blacklisted words uncapitalized and with no spaces.
+blacklist : heckity, hecker
+
+# Begins the name change process.
+OnChangeName.start : $(
+    setstr @mode $(Reference 0);
+    if $[ ${@mode} = 'replace' ] $(
+        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]
+        ${talk.OnReplaceName}
+        \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    );
+    if $[ ${@mode} = 'add' ] $(
+        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]
+        ${talk.OnAddName}
+        \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    );
+)
+
+# Performs a few checks on the sent name.
+OnChangeName.check : $(
+    # Stores the mode
+    setstr @mode $(Reference 2);
     # Stores the originally sent name.
     setstr @sentName $(Reference 0);
+    # Removes illegal characters as that could get messy.
+    setstr @sentName $(gsub ${@sentName} "," "");
+    setstr @sentName $(gsub ${@sentName} "'" "");
+    setstr @sentName $(gsub ${@sentName} '"' "");
     # Storing a copy to break down further.
     setstr @namecheck ${@sentName};
     # Standardizing the name to check against. Removes spaces, periods, dashes and underscores.
@@ -39,19 +64,62 @@ OnNameChanged : $(
 
     # Performing a series of checks to make sure it's valid.
     # If the username is the same as the one before, do nothing.
-    if $[ ${@sentName} = ${username} ] $( return ${talk.UnchangedName} );
-    # If the username is false, '0', 'false', or no input whatsoever, set the username to the User's name in SSP's preferences.
-    if $[ !${@namecheck} ] $( setstr username ${tempUser}; return ${talk.NoName} );
+    if $[ ${@sentName} == ${username} && ${@mode} != 'replace'] $( return ${talk.UnchangedName} );
+    # If the username is false, '0', 'false', or no input whatsoever, set the sentName to the User's name in SSP's preferences.
+    if $[ !${@namecheck} ] $( setstr @sentName ${tempname}; setstr @namecheck ${tempname} );
     # If the name is the same as the Ghost or their Kero
-    if $[ ${@namecheck} == $(tolower ${ghostSelf}) || ${@namecheck} == $(tolower ${ghostSakura}) || ${@namecheck} == $(tolower ${ghostKero}) ] $( return \t\*\![enter,nouserbreakmode]${talk.SelfName}\![open,inputbox,OnNameChanged,--timeout=-1]\n\n[half]\![*]\q[Quit Menu,OnQuit,0] );
+    if $[ ${@namecheck} == $( tolower ${ghostSelf}) || ${@namecheck} == $(tolower ${ghostSakura}) || ${@namecheck} == $(tolower ${ghostKero}) ] $( return "\t\*\![enter,nouserbreakmode]"${talk.SelfName}"\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]\n\n[half]\![*]\q[Quit Menu,OnQuit,0]" );
     # If the name is on the blacklist
-    if $[ $(find blacklist ${@namecheck}) ] $( return \t\*\![enter,nouserbreakmode]${talk.BadName}\![open,inputbox,OnNameChanged,--timeout=-1]\n\n[half]\![*]\q[Quit Menu,OnQuit,0] )
-    # If none of the above conditions apply, the name is valid.
-    setstr username ${@sentName};
+    if $[ $(find blacklist ${@namecheck}) != -1 ] $( return "\t\*\![enter,nouserbreakmode]"${talk.BadName}"\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]\n\n[half]\![*]\q[Quit Menu,OnQuit,0]" );
+    # If none of the above conditions apply, the name is valid. Continue to confirmation.
+    echo "\![raise,OnChangeName.confirm,"${@sentName}","${@mode}"]";
+)
+
+OnChangeName.confirm : (
+    $(setstr @mode $(Reference 1))
+    $(setstr @sentName $(Reference 0))
+    ${talk.OnConfirmName}\n\n[half]
+    \![*]\q[Yes,OnChangeName.end,${@sentName},${@mode}]\n
+    \![*]\q[No,OnChangeName.start,${@mode}]
+    \n\n[half]\![*]\q[Quit,OnQuit,0]
+
+)
+
+OnChangeName.end : $(
+    setstr @mode $(Reference 1);
+    setstr @sentName $(Reference 0);
+    if $[ ${@mode} == 'add' ] $( adddict username ${@sentName} );
+    if $[ ${@mode} == 'replace' ] $( setstr username ${@sentName} );
     echo ${talk.OnNameChanged};
 )
 
-blacklist : heckity
+OnDeleteName.start : (
+    ${talk.OnDeleteName}\n\n[half]
+    $(
+      setstr @nametotal $(size username);
+      loop ${@nametotal} $(
+        echo \q[$username[${@i}],OnDeleteName.confirm,${@i}]\n; 
+        inc @i
+      );
+    )
+    \n\n[half]\![*]\q[Quit,OnQuit,0]
+)
+
+OnDeleteName.confirm : (
+    ${talk.ConfirmNameDelete}\n\n[half]
+    \![*]\q[Yes,OnDeleteName.end,$(Reference 0)]\n
+    \![*]\q[No,OnDeleteName.start]
+    \n\n[half]\![*]\q[Quit,OnQuit,0]
+    
+)
+
+OnDeleteName.end : (
+    $(
+    setstr @i $(Reference 0);
+    clear username[${@i}];
+    )
+    ${talk.OnNameDeleted}
+)
 
 # The starting menu for changing pronouns.
 OnChangePronouns : (

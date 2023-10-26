@@ -141,8 +141,8 @@ OnTranslate : $(
 #--
 
 # This happens on ALL booting.
-OnInitialize : $(
-	${InitBoot};
+OnInitialize : (
+	${SaveLoad}
 )
 # This happens on ALL closing.
 OnDestroy : $(
@@ -153,8 +153,8 @@ OnDestroy : $(
 # This is most useful for things that are vital to functioning, have unique default values, or are entries added after an update.
 # To add an entry to be kept across saves, add it to 'savedataParam' in dict-functions.
 # This will not overwrite the user's data unless that data was not present in the first place. (So long as you use the $[ $(length ${entry}) < 1 ] truth evaluation.)
-InitBoot : $(
-	${SaveLoad};
+# While this is kept with the booting functions for organizational purposes, it is actually called in OnNotifyUserInfo.
+OnInitializeVars : $(
 	# Sets the user's name to the name in SSP's preferences.
 	if $[ $(length ${username}) < 1 ] $(setstr username ${tempUser});
 	# Second check, for if the first doesn't work for some reason.
@@ -210,7 +210,7 @@ their    : $(OnUpdatePronoun their)
 theirs   : $(OnUpdatePronoun theirs)
 themself : $(OnUpdatePronoun themself)
 
-
+# This happens the first time a user boots the Ghost.
 OnFirstBoot : $(
 	SaveData;
 	if $[$(Reference 0) == 0] ${talk.OnFirstBoot}
@@ -286,6 +286,7 @@ OnSecondChange : $(
 # Using this as their AI talk event also allows old specification (e.g. Kinoko's talk request) to work.
 OnAITalk : $(
 	setstr lastTalk ${sentence};
+	if $[ ${lastTalk} = ''] $(return ${OnAITalk});
 	echo ${lastTalk};
 )
 
@@ -296,7 +297,7 @@ OnAITalk : $(
 
 # If the user is in devmode, set the URL to a dummy URL. Otherwise, use the normal URL.
 resource.homeurl : $(
-	if $[${devmode} = 1] "https://dummyURL/"
+	if $[${devmode} = 1] "https://dummy.url/"
 	else ${homeurl}
 )
 
@@ -386,8 +387,8 @@ OnHeadlinesenseFailure, OnRSSFailure : $(
 # Silent events
 
 notify.OnNotifyUserInfo : $(
-	if $[$(length Reference 0 > 0)] $(setstr tempUser $(Reference 0));
-	if $[$(length ${username} = "")] $(setstr username ${tempUser});
+	echo ${SaveLoad};
+	if $[$(length $(Reference 0) > 0)] $(setstr tempUser $(Reference 0));
 	setstr userfull $(Reference 1);
 	setstr birthdate $(Reference 2);
 	setstr usergender $(Reference 3);
@@ -396,6 +397,7 @@ notify.OnNotifyUserInfo : $(
 		else if $[ ${usergender} = "male" ] $(copytree pronounsMasc user)
 		else $(copytree pronounsNeut user);
 	);
+	echo ${OnInitializeVars};
 )
 
 notify.OnNotifySelfInfo : $(

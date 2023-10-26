@@ -1,7 +1,7 @@
 version,1
 
 //IMPORTANT:
-//The illustrations provided are intended to be replaced. Please do not redistribute them without permission.
+//The illustrations provided are intended to be replaced. They are for example purposes only. Please do not redistribute them without permission.
 
 //--
 //Surfaces.txt
@@ -9,7 +9,14 @@ version,1
 //This is the coding for the appearance of your Ghost.
 //Surface coding is created in a language called "SERIKO". There's information on all the thing you can do in UkaDoc here: https://ssp.shillest.net/ukadoc/manual/descript_shell_surfaces.html
 //But if you just want to replace the art and move on, don't worry! I've set this up so it's not hard at all to do so.
-//Alternatively, you could replace this entire 'shell' folder with what's called a 'freeshell'. If you're willing to go through machine translation (or wander blindly), the Japanese freeshell wiki https://wikiwiki.jp/feeshell/ (yes, it's 'feeshell', lol!) has a plentiful selection of free art, many of these art packs coming with pre-written code, for you to use!
+//Alternatively, you could replace this entire 'shell' folder with what's called a 'freeshell'. If you're willing to go through machine translation, the Japanese freeshell wiki, https://wikiwiki.jp/feeshell/ (yes, it's 'feeshell'!), has a plentiful selection of free art. Many of these art packs coming with pre-written code for you to use!
+//If you are going to use your own art, keep reading. If you're going to use a freeshell, follow its instructions.
+
+//--Creating images
+//You can replace the images in the shell folder with practically anything. But, there are a few things to keep in mind.
+//If you use pure white on your Ghost (#fff), color the top left pixel/corner of the image an odd color not used elsewhere on your Ghost. This top left pixel controls the transparency of your Ghost, and by default pure white will be come transparent.
+//Make your images the same size. While you can adjust the positioning of your Ghost's surfaces per pixel, making them all the same size will make your life easier.
+//Draw images that your characters will use the most. Sentinel and Chip are fairly humorous and rib eachother, so I make good use of their smiling, shocked, worried and embarassed surfaces. You should keep in mind what emotions your own characters will often express!
 
 //--The Sakura (Main Character)
 //
@@ -17,7 +24,7 @@ version,1
 //surface0 is the default pose. It will have the most animations, usually, but to make this easy to use I have only included two: Blinking and talking. If you don't understand the code, please read it carefully and look at the corrosponding .pngs in the shell\master folder.
 //If you don't care about the animations, and would just like to replace the images and move on, go ahead and comment out any line starting with 'animation'.
 //You can create a comment by writing two backslashes, like at the beginning of this sentence.
-//With that commented out, you can replace the images with whatever PNGs you'd like. Just make sure the file names are the same!
+//With them commented out, you can delete the images used for animation if you would like, or replace them with something else.
 
 surface0
 {
@@ -71,13 +78,13 @@ surface1
 element0,overlay,surface1.png,0,0
 }
 //surface0 is the default Sakura surface, and surface10 is the default Kero surface.
-//To give you an idea of what poses one might use for humanoid characters, I drew the traditional 9 poses used in older Ghosts.
+//To give you an idea of what expressions one might use for humanoid characters, I drew the traditional 9 expressions used in older Ghosts.
 //But you can have as few or as little as you'd like.
 surface2
 {
 element0,overlay,surface2.png,0,0
 }
-//You might consider adding comments like these to denote what emotion a surface is.
+//You might consider adding comments to denote what emotion a surface is.
 surface3
 {
 element0,overlay,surface3.png,0,0

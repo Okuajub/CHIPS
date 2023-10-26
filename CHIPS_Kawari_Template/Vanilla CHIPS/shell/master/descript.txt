@@ -1,6 +1,6 @@
 ﻿//--descript.txt
 //This is the descript.txt for your Ghost. It describes important info about the shell to your baseware, so the baseware can recognize it and run it properly.
-//You can find the Ukadoc page for it here: https://ukagakadreamteam.github.io/ukadoc/manual/descript_shell.html
+//You can find the Ukadoc documentation page for it here: https://ukagakadreamteam.github.io/ukadoc/manual/descript_shell.html
 
 //--General Info
 //If you filled out the descript.txt for your Ghost already, this should look similar. These following lines define information about the shell and it's creator. You don't have to touch the first two lines, and if this is the default shell for your Ghost, you don't have to touch the third either. Remember to replace my information with your name and your website (if you have one).

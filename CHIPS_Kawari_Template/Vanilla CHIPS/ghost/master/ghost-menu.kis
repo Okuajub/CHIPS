@@ -4,7 +4,6 @@
 # Most English Ghosts have a double click menu to perform some function, interact with the Ghost, or do something else specific.
 # Every double-click menu is unique! I've left the Sakura's menu pretty simple, but added a little extra to the Kero so you can see what something unique might look like.
 # Now, the SakuraScript tags can get pretty dense here. It's a little easier to parse if you understand that '\![*]\q' starts every menu option. You can change the first phrase in the brackets to whatever you'd like,
-# \n and \n\n[half] are linebreaks. They make visibility in the menu a bit better.
 # If you don't want any menus at all, go back to 'ghost-mouse.kis' and erase the 'MouseDoubleClick0' and 'MouseDoubleClick1' lines. You can then safely erase everything in this file, too.
 
 # You can write any dialogue you want for them to say when you first open the menu here.
@@ -69,10 +68,17 @@ OnConfigMenu : (
     \![*]\q[Back,OnSakuraMenu]
 )
 
-# These talks are used as reactions to config choices.
+#-- Name Change Talk
+# These talks are used as reactions to name choices.
 
-# This is what your Ghost will say when selecting the change name option.
+# This is what your Ghost will say when selecting the name config.
 talk.OnChangeName : "\0\s[0]Alright. What would you like me to call you?"
+# This is what your Ghost will say when selecting the add name option.
+talk.OnAddName : "\0\s[0]Can do. What would you like to be called as well?"
+# This is what your Ghost will say when selecting the replace name option.
+talk.OnReplaceName : "\0\s[0]Got it. What would you like me to call you instead?"
+# This is what your Ghost will say when selecting the delete name option.
+talk.OnDeleteName : "\0\s[0]Can do. What name shouldn't I call you anymore?"
 
 # A response for if the name was the same as the name they already had.
 talk.UnchangedName : "\0\s[0]Hm. That's the same as before. But alright."
@@ -80,10 +86,22 @@ talk.UnchangedName : "\0\s[0]Hm. That's the same as before. But alright."
 talk.NoName : "\0\s[0]I'll just go with "${username}", then."
 # A response for if the User inputs a name which is the same as the characters' names.
 talk.SelfName : "\0\s[0]That could get confusing. You got a nickname or something?"
-# A response for if the User inputs a name which is in the blacklist.
+# A response for if the User inputs a name which is in the blacklist. You can edit the blacklist in dict-menu.kis.
 talk.BadName : "\0\s[0]I'm not sure if I want to say that. What else you got?"
-# A response for if the new username cleared all checks.
-talk.OnNameChanged : "\0\s[0]"${username}", huh? Got it."
+# A response for if the new username was confirmed. $(Reference 0) is the inputted name name.
+
+# This is what your Ghost will say to confirm if the user's name is correct. $(Reference 0) is the inputted name name.
+talk.OnConfirmName : "\0\s[0]So, is "$(Reference 0)" correct?"
+# This is what the Ghost will say after the name has been changed.
+talk.OnNameChanged : "\0\s[0]"$(Reference 0)", huh? Got it."
+
+# This is what the Ghost will say to confirm if the user wants to delete a name. $(Reference 0) is the name to be deleted.
+talk.ConfirmNameDelete : "\0\s[0]So, you don't want to be called "$username[$(Reference 0)]"?"
+# This is what the Ghost will say when the name has been deleted.
+talk.OnNameDeleted : "\0\s[0]Got it. I won't call you that name anymore."
+
+#-- Pronouns Change Talk
+# These talks are used when configuring the pronoun change options.
 
 # This is what your Ghost will say when selecting the change pronouns option.
 talk.OnChangePronouns : "\0\s[0]Can do. What's right, then?"

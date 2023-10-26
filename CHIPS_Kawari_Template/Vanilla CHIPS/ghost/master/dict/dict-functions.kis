@@ -102,7 +102,7 @@ userbackupfile : profile\dict-bakdata.txt
 # The function that writes the save file.
 =kis
 function SaveData $(
-	.xargs savedataParam .save ${usersavefile};                 
+	xargs savedataParam save ${usersavefile};                 
 )
 =end
 
@@ -118,10 +118,10 @@ savedataParam (
 
 # Loads the save file after backing up the user's old data to the backup file.
 SaveLoad : $(
-	logprint "Load at "$(.date %s);
-    .xargs savedataParam .save ${userbackupfile};
-	foreach @i savedataParam $(.inc @entrynum $(.size ${@i}));
-	if $[ ! ${@entrynum} ] $(
-		.load  ${usersavefile};
+	logprint "Load at "$(date %s);
+    xargs savedataParam save ${userbackupfile};
+	foreach @i savedataParam $(inc @entrynum $(size ${@i}));
+	if $[ !${@entrynum} ] $(
+		load ${usersavefile};
 	);
 )

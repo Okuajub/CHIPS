@@ -17,7 +17,8 @@
 # It can refer to a single dictionary file, such as this file, or all dictionary files for a given Ghost.
 # While it's good to know these terms, it's unlikely they will come up while writing. They're most useful in explaining the coding side of things.
 
-# Here's an example entry. Entry names can't use spaces, but underscores make a good substitute.
+# Here's an example entry. Entry names can't use spaces, but underscores make a good substitute. 
+# Entry names are also case sensitive, so keep that in mind.
 
 animals_1 : cat
 
@@ -39,14 +40,18 @@ quote_1 : "Hey! Are you listening to me? C'mon, step it up!"
 
 # Without our double quotes, that sentence's apostrophes and commas would cause errors.
 # But, an apostrophe or double quote without its pair can cause odd behavior or syntax errors by breaking up the string literal.
-# Because of this, if the same type is used multiple times, it won't be parsed correctly. There are some situations where you'd want to, like quoting someone.
-# To get around this, backslashes tell the computer which of the same type to ignore. Using backslashes to indicate which apostrophes or double quotes to ignore is called "escaping" them.
+# Because of this, if the same type is used multiple times, it won't be parsed correctly. 
+# There are some situations where you'd want to, like quoting someone.
+# To get around this, backslashes tell the computer which of the same type to ignore. 
+# Using backslashes to indicate which apostrophes or double quotes to ignore is called "escaping" them.
 
 quote_2 : 'Isn\'t it "Alas, poor Yorick"? Not whatever you said.'
 quote_3 : "I remember, you said \"I'll take care of it.\" when we talked last week."
 
-# We can also write on multiple lines if a dialogue begins to get long. To do this, we use parentheses to denote a code block. Blocks are parsed from top to bottom.
-# With code blocks, it's also important for readability to indent your lines properly. For each time we use multiple lines inside parentheses, we should indent with tab once.
+# We can also write on multiple lines if a dialogue begins to get long. 
+# To do this, we use parentheses to denote a code block. Blocks are parsed from top to bottom.
+# With code blocks, it's also important for readability to indent your lines properly. 
+# For each time we use multiple lines inside parentheses, we should indent with tab once.
 
 block_1 : (
 	"This line will be read first."
@@ -59,24 +64,35 @@ block_2 : ("This is the first line."
 "This is the second line."
 "This is the third line.")
 
-# Both work, and it's up to personal preference. Just be consistent in how you use it. We'll be using the first type in our examples for consistency.
+# Both work, and it's up to personal preference. Just be consistent in how you use it. 
+# We'll be using the first type in our examples for consistency.
 
-# Writing dialogue continues to build on this simple format. Ghosts use their own unique language of tags called "SakuraScript" in dialogue to perform various actions.
-# We'll briefly touch on SakuraScript, however if you would like to learn more in-depth uses of it, please check [link] and [link]. 
+# Writing dialogue continues to build on this simple format.
+# Ghosts use their own unique language of tags called "SakuraScript" in dialogue to perform various actions.
+# We'll briefly touch on SakuraScript, however if you would like to learn more in-depth uses of it, please check:
+# https://ukagakadreamteam.github.io/ukadoc/manual/list_sakura_script.html The SakuraScript documentation translated to English
+# https://okuajub-netspace.neocities.org/CHIPS_write_sakura My external guide to SakuraScript
 
 #-- SakuraScript
 # SakuraScript is actually not part of Kawari. It's a set of standardized tags that the baseware (such as SSP) parses and acts on. 
-# These tags can do things such as format text, move the Ghost, play sounds, and more. But for now, we will focus on the most common tags.
+# These tags can do things such as format text, move the Ghost, play sounds, and more. 
+# But for now, we will focus on the most common tags.
 
 # The tags \0 and \1 control focus on your characters, being the Sakura and Kero respectively. 
 # The focus changes which character says a given dialogue, and some tags only affect the character in focus.
-# The \s[x] tag, where x is a number, controls which surface a character uses. Surface numbering depends on the shell, and can be viewed in the developer palette of SSP under Surface Test.
-# These tags are often put together, because you need to switch focus to a character to change their surface. With these tags added, a dialogue entry will look something like this.
+# The \s[x] tag, where x is a number, controls which surface a character uses. 
+# Surface numbering depends on the shell, and can be viewed in the developer palette of SSP under Surface Test.
+# These tags are often put together, because you need to switch focus to a character to change their surface. 
+# With these tags added, a dialogue entry will look something like this.
 
 tags_1 : "\0\s[0]Hey. This is the main character.\1\s[10]I'm the side character."
 
-# With multiple characters, clarity of who is talking and in what order is important. The tag \n is used to add in a line break, which can be used to format your dialogue for clarity.
-# \n also has a modifier of \n[half], which creates space equal to half a line break. \n with \n[half] make good spacing for dialogue, so you will often see them together as \n\n[half].
+# With multiple characters, clarity of who is talking and in what order is important. 
+# The tag \n is used to add in a line break, which can be used to format dialogue for clarity.
+# \n also has a modifier of \n[half], which creates space equal to half a line break. 
+# \n with \n[half] is a traditional spacing for dialogue, so they are commonly seen together as \n\n[half]. 
+# Two \n tags, \n\n, will also give dialogue plenty of space as you see fit. 
+# Whether you choose \n\n[half] or \n\n is up to personal preference! (CHIPS uses \n\n[half] as it is easier for me to read.)
 # Combining this into a code block, you can make your code more readable to you as well.
 
 tags_2 : (
@@ -87,19 +103,24 @@ tags_2 : (
 	"\0\s[0]\n\n[half]Especially in back-and-forth conversations."
 )
 
-# With those tags down, we've learned a majority of the tags used in Ghosts by volume. There are a couple more which will be useful for writers, but not necessary by any means.
-# \w is a tag to tell the Ghost to wait and pause what they're saying. \w uses an integer to calculate how long to wait, from 1-8. It uses the number multiplied by 50 milliseconds.
-# \w1 is 50ms, \w8 is 400ms. The tag \_w[x] can be used to more finely control the wait period, as x represents milliseconds. Its upper limit is much larger, too. 
+# With those tags down, we've learned a majority of the tags used in Ghosts by volume. 
+# There are a couple more which will be useful for writers, but not necessary by any means.
+
+# \w is a tag to tell the Ghost to wait and pause what they're saying. 
+# \w uses an integer to calculate how long to wait, an integer of 1-9. It uses the number multiplied by 50 milliseconds.
+# \w1 is 50ms, \w8 is 400ms. The tag \_w[*] can be used to more finely control the wait period, as * represents milliseconds. Its upper limit is much larger, too. 
 # \_w[400] is 400ms, \_w[1000] is 1000ms, or one second. These can be used to control the cadence of what a Ghost is saying. 
-# It can also make dialogue feel more natural, as rarely do people talk continuously at the same pace. Where you use \w or \_w[x] is up to your discretion.
+# It can also make dialogue feel more natural, as rarely do people talk continuously at the same pace. Where you use \w or \_w[*] is up to your discretion.
 
 tags_3 : "\1\s[10]I know who the murderer is.\_w[2000] It was\w4.\w4.\w4. Mr. Plum,\w2 in the kitchen,\w2 with a candlestick.\0\s[0]Sorry,\w2 that's not it."
 
-# \f is a tag that lets one apply more rigorous formatting. It has a lot of variants, so we will only cover a few. The complete list can be found here: [link]
+# \f is a tag that lets one apply more rigorous formatting. It has a lot of variants, so we will only cover a few. The complete list can be found here:
+# https://ukagakadreamteam.github.io/ukadoc/manual/list_sakura_script.html#_f_align,%E5%AF%84%E3%81%9B%E3%82%8B%E5%81%B4_
 # Italics, bolding, strike-throughs, sub/superscript, and underlining are all options that can be turned on with \f[(style),(parameter)]. 
-# The parameter indicates if it should turn it on or off.
+# The parameter indicates if it should turn it on, off, or set it to the balloon's default.
 # To turn on italics, for example, it would be \f[italic,true]. To return to the balloon's default, \f[italic,default] would be used. 
-# 'false' is also a parameter, but in most cases it is functionally the same as 'default'.
+# 'false' is the parameter to turn an effect completely off. However, some balloons use these effects for style purposes. 
+# So, 'default' should be used unless you want to turn off an effect on all balloons.
 # Remember to add the tag to end formatting, as it will format all characters in a definition until dictated otherwise. That includes across the Sakura and Kero!
 
 tags_4 : (
@@ -109,9 +130,10 @@ tags_4 : (
 )
 
 # Now, these last two are more relevant for if you peek inside other Ghosts for reference.
-# The tag \i[x] is very similar to \s[x], except it activates a surface's animation instead of changing a whole surface. 
-#These animations can vary greatly, from changing arm positions to making a character jump, and more.
-# These animations are part of the shell, and are numbered just as uniquely as surfaces are. CHIPS does not, by default, include any of these animation types to keep the shell simple.
+# The tag \i[*] is very similar to \s[*], except it activates a surface's animation instead of changing a whole surface. 
+# These animations can vary greatly, from changing arm positions to making a character jump, and more.
+# These animations are part of the shell, and are numbered just as uniquely as surfaces are. 
+# CHIPS does not, by default, include any animations normally used in this way, although any animation can be called with \i[*].
 
 # The tag \e is a tag you may see commonly in older Ghosts, as in the past it was necessary to end every dialogue with. 
 # \e stops the current event and script, and any script written after it won't be run.
@@ -138,6 +160,7 @@ sentence : "\1\s[10]I think "${pets1}" are totally better than "${pets2}"."
 # Entries like these are what really allow Ghosts to be more varied and life-like, when used well.
 # You can make entries for a ton of things. They don't just have to be single words, as seen! You can construct some pretty elaborate conversations with them.
 # They're the main draw of Kawari and are supposed to make writing ghosts fun and easy. Play around with them, see what unique things you can come up with.
+# If you would like to learn more, I suggest taking a look at https://okuajub-netspace.neocities.org/CHIPS_code_basics.html
 
 #--
 # CHIPS Specific
@@ -183,9 +206,14 @@ sentence : (
 # That's all I wanted to cover in this file, and you should have a lot of tools in your arsenal, now. I've written some examples of less bland dialogues here.
 # Play and have fun when writing dialogue!
 
+#-- Example dialogue
+# 
+
 sentence : "\0\s[5]You can replace our lines with whatever you'd like."
 
 sentence : "\1\s[19]Have you tried turning it off and on again?"
+
+sentence : "\1\s[13]My hovercraft is full of eels."
 
 sentence : (
     "\0\s[8]Chip, have you heard of a person called 'Melinda the Mental Marvel'?\w8\w8"
