@@ -1,0 +1,134 @@
+#--
+# Functions Dictionary
+#--
+# This file holds all of the user-made functions used in CHIPS.
+# Some are written by others, some are written by me. Details on each can be found below.
+
+
+# GetWordRandom
+# Taken from the Kawari documentation.
+# Call a random word from an entry without duplicates.
+# 1st argument : entry name
+# Return values : words in the entry
+# Remarks : occupies the entry "entryname.buffer
+=kis
+function GetWordRandom $(
+    if $[ $(size @arg) != 2] $(return);
+    if $[ $(size $@arg[1].buffer) == 0 ] $(copy $@arg[1] $@arg[1].buffer);
+
+    setstr @pos $(rand $(size $@arg[1].buffer));
+    get $@arg[1].buffer[${@pos}];
+    clear $@arg[1].buffer[${@pos}];
+);
+=end
+
+# Nonoverlap
+# Taken from the Kawari documentation.
+# Make an entry to call the specified entry without duplicating words.
+# 1st argument : entry name
+# Return values : none
+# Remarks : "entry name.backup", "entry name.backup.buffer".
+# Occupy an entry
+=kis
+function Nonoverlap $(
+    if $[ $(size $@arg[1].backup) == 0 ] $(copy $@arg[1] $@arg[1].backup);
+    set $@arg[1] "$(GetWordRandom "$@arg[1]".backup)";
+    writeprotect $@arg[1];
+    writeprotect $@arg[1].backup; 
+);
+=end
+
+# Reference
+# Taken from the Kawari documentation.
+# Simplifies reference syntax.
+# Returns nothing if there is no argument.
+# Gets the first word of System.Request.Reference? entry.
+=kis
+function Reference $(
+    if $[ $(size @arg) <= 1 ] $(return);
+    get System.Request.Reference$@arg[1][0];
+);
+=end
+
+# OnUpdatePronoun, SP
+# These two functions work in tandem to create subject-pronoun-verb agreement.
+
+# OnUpdatePronoun
+# Stores the singular or plural value of the specified pronoun.
+# Returns the specified pronoun.
+=kis
+function OnUpdatePronoun $(
+    if $[${ForceSet} != 0] $(setstr @lastPronoun $user.$@arg[1][${currentPronoun}]) else $(setstr @lastPronoun ${user.$@arg[1]});
+	setstr @index $( find user.$@arg[1] ${@lastPronoun} );
+	setstr lastSP $user.singularplural[${@index}];
+	echo ${@lastPronoun};
+)
+=end
+
+# SP
+# Stands for "Singular/Plural", shortened to be used frequently.
+# Takes two arguments, the first being the singular version of a word and the second being the plural version of a word.
+# Returns the appropriate version according to OnUpdatePronoun's last used pronoun.
+=kis
+function SP $(
+    if $[${lastSP} = '1'] $( echo $@arg[2] )
+    else $( echo $@arg[1] )
+)
+=end
+
+# cap
+# Short for Capitalize
+# Takes one argument, the word to be capitalized.
+# Returns the capitalized word.
+=kis
+function cap $(
+    setstr @word $@arg[1];
+    setstr @cap $(toupper $(char_at ${@word} 0) );
+    setstr @word $(sub ${@word} $(char_at ${@word} 0) ${@cap});
+    echo ${@word}
+)
+=end
+
+# IsExist
+# Not to be confused with the file management function "isexist".
+# Checks if an entry contains any characters. Useful for checking if an entry exists repeatedly.
+# Returns true/false
+=kis
+function IsExist $(
+    return $[$(length ${$@arg[1]}) > 0]
+)
+=end
+
+# usersavefile, userbackupfile, SaveData, savedataParam, SaveLoad
+# The following functions all work together to save data. Based up OpenKEEPS, but heavily simplified.
+
+# Filenames for the user's data.
+usersavefile : profile\dict-savedata.txt
+userbackupfile : profile\dict-bakdata.txt
+
+# The function that writes the save file.
+=kis
+function SaveData $(
+	xargs savedataParam save ${usersavefile};                 
+)
+=end
+
+# Variables to be saved. If you add any that need to be kept over boots, please remember to put them here.
+# 'devmode' is an entry to engage development mode. To engage it, put '$(setstr devmode 1)' in the script input.
+savedataParam (
+	talkinterval, 
+    tempUser, userfull, username, 
+    birthdate, usergender, ForceSet,
+    user.they, user.them, user.their, user.theirs, user.themself, user.singularplural,
+    devmode
+)
+
+# Loads the save file after backing up the user's old data to the backup file.
+SaveLoad : $(
+	logprint "Load at "$(date %s);
+    xargs savedataParam save ${userbackupfile};
+	foreach @i savedataParam $(inc @entrynum $(size ${@i}));
+	if $[ !${@entrynum} ] $(
+		load ${usersavefile};
+	);
+)

@@ -1,0 +1,221 @@
+#--
+# Menus
+#--
+# Most English Ghosts have a double click menu to perform some function, interact with the Ghost, or do something else specific.
+# Every double-click menu is unique! I've left the Sakura's menu pretty simple, but added a little extra to the Kero so you can see what something unique might look like.
+# Now, the SakuraScript tags can get pretty dense here. It's a little easier to parse if you understand that '\![*]\q' starts every menu option. You can change the first phrase in the brackets to whatever you'd like,
+# If you don't want any menus at all, go back to 'ghost-mouse.kis' and erase the 'MouseDoubleClick0' and 'MouseDoubleClick1' lines. You can then safely erase everything in this file, too.
+
+# You can write any dialogue you want for them to say when you first open the menu here.
+SakuMenuTalk : "\0\s[0]Hm?","\0\s[0]Need something?","\0\s[0]Opening the menu."
+
+OnSakuraMenu : (
+    # You can safely ignore this line. It just remembers what dialogue the user saw when changing the talk interval.
+    $( if $[ $(Reference 0) != 1 ] $(setstr MenuDialogue ${SakuMenuTalk}\w4 ) else if $[ $( match ${MenuDialogue} "\_q" ) = -1 ] $(setstr MenuDialogue \_q${MenuDialogue}\_q ) )
+
+    # The menu starts. Autoscroll disable is to prevent the menu from getting set to the bottom should the User not having a large enough balloon.
+    # If you want to add any new menu options for the Sakura, this is there you would do so.
+    \t\*\b2${MenuDialogue}\_q\![set,autoscroll,disable]
+    \n\n[half]
+    \![*]\q[Say Something,OnAITalk]
+    $( if $[ ${lastTalk} ] (\n\![*]\q[Repeat Yourself,OnLastTalk]) )
+    \n\n[half]
+    \![*]\q[Config Menu,OnConfigMenu]
+    \n\n[half]
+    \![*]\q[Quit Menu,OnQuit,0]
+    \n\n
+
+    # Talkrate Assignment
+    $(setstr @interval ${talkinterval})
+    $( if $[ ${@interval} = 'Never' ] $(setstr @form "") else if $[ ${@interval} > 59 ] $( setstr @interval $[ ${@interval} / 60 ]; setstr @form minutes ) else $( setstr @form seconds ) )
+    $(if $[${@interval} == 1] $(setstr @form minute))
+
+    # Talkrate Display
+    "\f[italic,true]Talkrate:" ${@interval} ${@form}\n\f[italic,default]
+    \![*]\q[30s,OnAssignTalkRate,30] \![*]\q[1m,OnAssignTalkRate,60] \![*]\q[3m,OnAssignTalkRate,180]
+    "\![*]\q[5m,OnAssignTalkRate,300] \![*]\q[10m,OnAssignTalkRate,600] \![*]\q[15m,OnAssignTalkRate,900] \![*]\q[Never,OnAssignTalkRate,Never]"
+    \n\n[half]
+
+    # Retrieves info about the present time
+    $(setstr @weekday $(if $[$(date %w) = 0] "Sun" else if $[$(date %w) = 1] "Mon" else if $[$(date %w) = 2] "Tues" else if $[$(date %w) = 3] "Weds" else if $[$(date %w) = 4] "Thurs" else if $[$(date %w) = 5] "Fri" else if $[$(date %w) = 6] "Sat"))
+    $(setstr @hour $(date %H); setstr @minute $(date %M))
+
+    # Displays the time
+    \f[italic,true]${@weekday}", %month/%day, "${@hour}":"${@minute}\f[italic,default]
+)
+
+#--
+# Config Menu
+#--
+# This menu handles configuration options, like changing the user's name and pronouns. 
+# If you have other configurable systems you want to code, this is a good place to put them.
+
+# Same function as the Sakura Menu Talk - You can write anything you want here without messing up the menu, if you want to leave it as is.
+ConfigMenuTalk : "\0\s[0]Configuration, huh?"
+
+OnConfigMenu : (
+    \t\*\b2${ConfigMenuTalk}\w4\_q\![set,autoscroll,disable]
+    \n\n[half]
+    \![*]\q[Change Name,OnChangeName]
+    \n
+    \![*]\q[Change Pronouns,OnChangePronouns]
+    \n
+    \![*]"Uninstall: "\q[$( if $[${vanishFlag} = 1] $(echo "ON") else $(echo "OFF") ),OnToggleVanish]
+    \n\n[half]
+    \![*]\q[Back,OnSakuraMenu]
+)
+
+#-- Name Change Talk
+# These talks are used as reactions to name choices.
+
+talk.OnChangeName : "\0\s[0]Alright. What would you like me to call you?"
+
+talk.OnAddName : "\0\s[0]Can do. What would you like to be called as well?"
+
+talk.OnReplaceName : "\0\s[0]Got it. What would you like me to call you instead?"
+
+talk.OnDeleteName : "\0\s[0]Can do. What name shouldn't I call you anymore?"
+
+talk.UnchangedName : "\0\s[0]Hm. That's the same as before. But alright."
+
+talk.NoName : "\0\s[0]I'll just go with "${username}", then."
+
+talk.SelfName : "\0\s[0]That could get confusing. You got a nickname or something?"
+
+talk.BadName : "\0\s[0]I'm not sure if I want to say that. What else you got?"
+
+talk.OnConfirmName : "\0\s[0]So, is "$(Reference 0)" correct?"
+
+talk.OnNameChanged : "\0\s[0]"$(Reference 0)", huh? Got it."
+
+# Reference 0 is the index of the name to be deleted:
+talk.ConfirmNameDelete : "\0\s[0]So, you don't want to be called "$username[$(Reference 0)]"?"
+
+talk.OnNameDeleted : "\0\s[0]Got it. I won't call you that name anymore."
+
+#-- Pronouns Change Talk
+# These talks are used when configuring the pronoun change options.
+
+talk.OnChangePronouns : "\0\s[0]Can do. What's right, then?"
+
+talk.OnChoosePronouns : "\0\s[0]Which of these would you like to proceed with?"
+
+talk.OnPronounsChanged : "\0\s[0]Thanks. I've got it down now."
+
+talk.OnDeletePronouns : "\0\s[0]Which one shouldn't I use?"
+
+talk.OnPronounsDeleted : "\0\s[0]Alright. I'll remember not to use those."
+
+# When inputting custom pronouns
+# You can change this as you'd like, but I do suggest giving an example of the pronoun for the ease of the user.
+talk.Pronouns1 : "\0\s[0]What pronoun would you use instead of 'he', 'she', or 'they'?"
+
+talk.Pronouns2 : "\0\s[0]And what pronoun would you use instead of 'him', 'her', or 'them'?"
+
+talk.Pronouns3 : "\0\s[0]How about 'his', 'her', or 'their'?"
+
+talk.Pronouns4 : "\0\s[0]What pronoun would you use instead of 'his', 'hers', or 'theirs'?"
+
+talk.Pronouns5 : "\0\s[0]Last one. What pronoun would you use instead of 'himself', 'herself', or 'themself'?"
+
+talk.Pronouns6 : "\0\s[0]Alright. Last question. Is this set singular or plural? '"${temp.they}" are tired.' is an example of these being used in the plural."
+
+
+talk.OnConfirmPronouns : "\0\s[0]So, is "${temp.they}/${temp.them}/${temp.their}/${temp.theirs}/${temp.themself}" correct?"
+
+talk.OnExitPronouns : "\0\s[0]No problem."
+
+# When a user tests their pronouns. If you add another, remember to use the '$user.they[${i}]' format, or else it won't print right.
+talk.OnTestPronouns : (
+    "I heard that "${username}" went to the animal shelter recently. "$(cap $user.they[${i}])" saw a bunch of cute animals that "$user.they[${i}]" wanted to be "$user.theirs[${i}]". "
+    $(cap $user.their[${i}])" face lit up looking at them. At least, that's what I heard about "$user.them[${i}]". I hope "$user.they[${i}] $(SP 'is' 'are') "taking care of "$user.themself[${i}]"."
+)
+
+OnAssignTalkRate : (
+    $( setstr talkinterval $(Reference 0); set @dialogue $(Reference 1) )
+    "\![raise,OnSakuraMenu,1]"
+)
+
+OnQuit : $(
+    if $[$(Reference 0) == 0] \![close,inputbox,__SYSTEM_ALL_INPUT__]${SakuraQuit}
+    else \![close,inputbox,__SYSTEM_ALL_INPUT__]${KeroQuit}
+)
+
+# This is used for more than just quitting the menu. It's also used when quitting out of creating custom pronouns, so be mindful of that.
+SakuraQuit : "\0\s[0]Mhm.", "\0\s[0]Sure."
+
+# You can ignore this one. Its only purpose is to repeat what the Ghost last said when used, such as the repeat option in the Sakura Menu.
+OnLastTalk : ${lastTalk}
+
+
+
+#--
+# Kero Menu
+#--
+# A Kero's menu is often used for extra features or information not provided by the Sakura.
+# If you don't have a Kero, you can leave this alone or remove it. 
+
+KeroMenuTalk : "\1\s[15]What's up?","\1\s[15]What can I do for you, "${username}"?"
+
+KeroQuit : "\1\s[10]Thanks for checking in!", "\1\s[16]Talk to you later!"
+
+OnKeroMenu : (
+    \1\t\*\b2${KeroMenuTalk}\w4\_q\![set,autoscroll,disable]
+    \n\n[half]
+    \![*]\q[Tell me about Yourselves,OnIntroduceSelf]
+    # 'devmode' is an entry to engage development mode. To engage it, put '$(setstr devmode 1)' in the script input.
+    $(if $[${devmode} = 1] $(echo \n\n[half]\![*]\q[Debug Menu,OnDebugMenu]))
+    \n\n[half]
+    \![*]\q[Quit Menu,OnQuit,1]
+)
+
+OnIntroduceSelf : (
+    "\1\t\*\s[10]\b2Well sure! "
+    "\1\s[10]Sentinel and I were brought out here to help you learn about Kawari, and making Ghosts. This is kind of a part-time job for us at the moment.\w8\n"
+    "I'm CHIPtest. All capital 'CHIP', lowercase 'test'. But most people just call me Chip.\w8\w4 "
+    "\1\s[15]I'm a computer programmer, and I really like Ukagaka! I also enjoy playing rhythm games and learning Japanese!\w8\w4 "
+    "\1\s[16]And, the tough guy over there is my romantic partner, Sentinel.\w8\w4\n\n[half]"
+
+    "\0\s[0]Hey.\w8\w8\n\n[half]"
+
+    "\1\s[10]He's more of the outdoorsy type, and tends to take a more reserved role social situations. \w8\w8"
+    "\1\s[15]We met at work, and honestly I didn't even notice that he wasn't an outgoing person. I just kept coming back to talk to him, oblivious.\w8\n\n[half]"
+
+    "\0\s[0]It's not like you were bothering me.\w8\w8\n\n[half]"
+
+    "\1\s[12]Oh, I hope I didn't imply that you were!- Or that I was- I mean...\w2\n\n[half]"
+
+    "\0\s[0]That \w3is something I always liked about you. Heart on your sleeve type."
+
+    "\1\s[11]Well... \w4\s[15]Thanks.\w8 "
+    \n\n[half]
+    \![*]\q[Back,OnKeroMenu]
+)
+
+# Having a debug menu can be helpful as you can hide it from the user as needed.
+OnDebugMenu : (
+    "\1\t\*\b2\s[12]\b2Uh oh, something go wrong? This menu's here to handle hold debugging functions.\s[10] Alright. Here's the debug options.\n\n[half]"\w4\_q\![set,autoscroll,disable]
+    \![*]\q[Show All Saved Entries,OnShowData]
+    \n
+    \![*]\q[Test Variable,OnTestVariable]
+    \n
+    \n[half]
+    \![*]\q[Open Kosui Debugger,OnOpenKosui]
+    \n\n[half]
+    \![*]\q[Quit Menu,OnQuit,1]
+)
+
+# Shows the current user data. Note: When more than 1 value is saved to one entry, it will randomly pick from said entry, as any entry call would.
+OnShowData : $(
+    foreach @entries savedataParam $( echo "\b2"${@entries}": "; echo ${${@entries}}"\n" )
+)
+
+# This entry can be used to test code on demand.
+OnTestVariable : (
+    "\1\s[10]Testing!\n\n[half]"
+)
+
+# This won't work if you don't have Kosui in your ghost\master folder.
+OnOpenKosui : (
+    "\1\s[10]\![open,file,kosui.exe]Sure thing. Kosui, coming up."
+)

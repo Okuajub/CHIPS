@@ -1,0 +1,52 @@
+#--
+# AI TALK / SENTENCE
+#--
+# This is the dialogue pool file for your Ghost. It should also be the first file you start with if you've not written a Ghost before.
+
+#-- Example dialogue
+#
+
+sentence : "\0\s[5]You can replace our lines with whatever you'd like."
+
+sentence : "\1\s[19]Have you tried turning it off and on again?"
+
+sentence : "\1\s[13]My hovercraft is full of eels."
+
+sentence : (
+    "\0\s[8]Chip, have you heard of a person called 'Melinda the Mental Marvel'?\w8\w8"
+    "\1\s[19]No, why?\w8"
+    "\0\s[0]\n\n[half]Oh, nothing.. You just remind me of this kid I met once. Chip McCallahan."
+    "\1\s[13]\n\n[half]Oh, \f[italic,true]him\f[italic,default]? No way! I \f[italic,true]test\f[italic,false] chips, not collect them to get into some lame club.\w8"
+    "\0\s[0]\n\n[half]Bummer."
+    "\1\s[19]\n\n[half]\f[size,9]Chip's Challenge... Huh!\f[size,default]"
+)
+
+media : "'The End of Evangelion'", "'Pacific Rim'", "'Robin Hood'", "'Aliens'", "'Citizen Kane'", "'John Wick'", "'Johnny Mnemonic'", "'Metal Gear Solid 4: Guns of the Patriots'"
+media : "'Uncharted'", "'Bram Stoker's Dracula'", "'Resident Evil'"
+
+mediaCritiques : "I thought the pacing was too slow.", "The music was so bland. I don't get why it's praised all the time.", "It was totally just a jab at the fans.", "It looked so cheap!"
+mediaCritiques : "Genuinely unpleasant to watch. Couldn't some of the effects budget gone to the writing instead?", "The main character didn't have any chemistry at all."
+
+mediaDefense   : "Oh, come on, it wasn't \f[italic,true]that\f[italic,default] bad.", "How can you say that, when the subtext was so good?", "Clearly you just don't understand it."
+mediaDefense   : "I think that the music really sells it. C'mon, I'll set up a home theater and you can see it! Or, hear it.", "Oh, that's not fair. It's totally subjective."
+
+sentence : (
+    "\1\s[18]So, Sentinel, what'd you think of "${media}"?\n\n[half]"
+    "\0\s[8]Hmm. I liked it. But.. "${mediaCritiques}"\n\n[half]"
+    "\1\s[13]"${mediaDefense}
+    "\0\s[6]Suit yourself."
+)
+
+# Here's the hour roll-over event. It's in the 24-hour format. Be aware it doesn't always go off exactly on the hour. If you don't want it, just erase it or comment it.
+talk.OnHourTimeSignal : $(setstr @minute $(date %M)) "\0\s[0]It's %hour:"${@minute}"."
+
+#--
+# IMPORTANT, DO NOT DELETE
+#--
+# STOP! ! ! Do not write any dialogue past this piece of code! If you do, it won't be called!! 
+# This piece of code calls on a function called "Nonoverlap" which makes sure that none of your Ghost's dialogue repeats before the others are called.
+# You can write as much as you'd like BEFORE THIS POINT. But any dialogue written afterward is *not* added to the Nonoverlap processed version of this entry! It's covered by the 'writeprotect' command.
+# ...Which makes the entry unable to be edited after this point. It's at the *end* of this dictonary for a reason!
+=kis
+Nonoverlap sentence;
+=end

@@ -1,0 +1,56 @@
+#--
+# Resources
+#--
+# Resources are information your Ghost draws upon to create the right click menu and a couple other things.
+# There's a large variety of resources, and you can read more about them here: https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_resource.html
+
+#-- Network Update URL
+# This is the link you'll use to update your Ghost. Don't forget to change this in descript.txt as well!
+# If you are in devmode, the Ghost will automatically check a dummy URL instead.
+homeurl : "https://dummy.url/"
+
+#--
+# Recommended Sites
+#--
+# These sites show up in the right click menu under 'Portal' and 'Recommendations'.
+# You can set a banner image in the third URL (as shown in the link to my Neocities). Three dashes creates a divider in the menu.
+
+resource.sakura.portalsites : $(urllist
+	"Okuajub's Netspace" 
+	"https://okuajub-netspace.neocities.org/ukagaka" 
+	"https://okuajub-netspace.neocities.org/eva_button.png"
+	"-" "-" "-"
+	"CHIPS Github"
+	"https://github.com/Okuajub/CHIPS/"
+	"-"
+)
+
+resource.sakura.recommendsites : $(urllist
+	"Kawari Landing Page (JP)"
+	"https://kawari.github.io/"
+	"-" 
+	"Kawari Documentation (EN)"
+	"https://okuajub-netspace.neocities.org/Kawari/"
+	"-"
+	"-" "-" "-"
+	"SakuraScript Documentation (EN)"
+	"https://ukagakadreamteam.github.io/ukadoc/manual/list_sakura_script.html"
+	"-"
+	"SHIORI Event Documentation (EN)"
+	"https://ukagakadreamteam.github.io/ukadoc/manual/list_shiori_event.html"
+	"-"
+)
+
+# You can also add recommended sites for the Kero, and further characters, as so:
+# resource.kero.recommendsites : $(urllist
+# 	"Site Title"
+# 	"https://siteurl.dummy/"
+# 	"-"
+# )
+
+# For a third character:
+# resource.char2.recommendsites : $(urllist
+# 	"Site Title"
+# 	"https://siteurl.dummy/"
+# 	"-"
+# )

@@ -1,7 +1,6 @@
 //descript.txt holds information about the Ghost and is sent to your baseware.
 
 //These name entries will be how your Ghost is titled in SSP, and how the code recognizes your characters.
-//I suggest making the Sakura/Kero names something simple, as it makes writing code for them easier.
 name,CHIPS Template
 sakura.name,Sentinel
 kero.name,CHIPtest

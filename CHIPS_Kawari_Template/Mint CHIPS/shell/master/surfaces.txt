@@ -1,0 +1,200 @@
+version,1
+
+//IMPORTANT:
+//The illustrations provided are intended to be replaced. They are for example purposes only. Please do not redistribute them without permission.
+
+//--
+//Surfaces.txt
+//--
+//This is the coding for the appearance of your Ghost.
+//Surface coding is created in a language called "SERIKO". There's information on all the thing you can do in UkaDoc here: https://ssp.shillest.net/ukadoc/manual/descript_shell_surfaces.html
+//But if you just want to replace the art and move on, don't worry! I've set this up so it's not hard at all to do so.
+//Alternatively, you could replace this entire 'shell' folder with what's called a 'freeshell'. If you're willing to go through machine translation, the Japanese freeshell wiki, https://wikiwiki.jp/feeshell/ (yes, it's 'feeshell'!), has a plentiful selection of free art. Many of these art packs coming with pre-written code for you to use!
+//If you are going to use your own art, keep reading. If you're going to use a freeshell, follow its instructions.
+
+//--Creating images
+//You can replace the images in the shell folder with practically anything. But, there are a few things to keep in mind.
+//If you use pure white on your Ghost (#fff), color the top left pixel/corner of the image an odd color not used elsewhere on your Ghost. This top left pixel controls the transparency of your Ghost, and by default pure white will be come transparent.
+//Make your images the same size. While you can adjust the positioning of your Ghost's surfaces per pixel, making them all the same size will make your life easier.
+//Draw images that your characters will use the most. Sentinel and Chip are fairly humorous and rib eachother, so I make good use of their smiling, shocked, worried and embarassed surfaces. You should keep in mind what emotions your own characters will often express!
+
+//--The Sakura (Main Character)
+//
+
+//surface0 is the default pose. It will have the most animations, usually, but to make this easy to use I have only included two: Blinking and talking. If you don't understand the code, please read it carefully and look at the corrosponding .pngs in the shell\master folder.
+//If you don't care about the animations, and would just like to replace the images and move on, go ahead and comment out any line starting with 'animation'.
+//You can create a comment by writing two backslashes, like at the beginning of this sentence.
+//With them commented out, you can delete the images used for animation if you would like, or replace them with something else.
+
+surface0
+{
+
+//--Collisions
+//Collisions are what allow the user to touch and prod and interact with the Ghost's shell. They're coordinates describing a box on the Ghost and a name for that box. When the user does certain actions within that box (such as clicking, using the scrollwheel), the program will send that information to the Ghost and they'll respond accordingly.
+//Here, the Sakura has three collisions: Head, Face and Bust. (Sorry, I just find the bust collision very funny with this shell.) 
+//You can name these whatever you want, and make as many of them as you want, but you will have to change the code in the Ghost to match! You can also remove any of them, or all of them by simply deleting the line.
+
+collision0,236,67,360,121,Head
+collision1,251,114,334,203,Face
+collision2,217,223,356,350,Bust
+
+//This puts down the base image, which is surface0.
+element0,overlay,surface0.png,0,0
+
+//--Blinking animation
+//Because this is the first animation, I will explain it.
+//The first line tells the program what this is. To translate from code to plain language: 'animation10' "The 10th animation". "which has an interval of", "randomly choose every second", "with a 1 in 4 chance to play".
+//If that does not make sense, that is OK. This shell is designed to have the images replaced. Just change the collisions above and replace the images and it will be alright.
+//The next line is saying: "The 10th animation". "First image is", "Overlaid and clipped to the character", "it is surface1002", "it will be held for 50 miliseconds", "0 offset on the X", "0 offset on the Y". 
+//With that information, you should be able to infer what the other 2 patterns are.
+
+animation10.interval,random,4
+animation10.pattern0,overlayfast,1002,50,0,0
+animation10.pattern1,overlayfast,1001,100,0,0
+animation10.pattern2,overlay,-1,30,0,0
+
+//--Talking Animation
+
+animation1.interval,talk,4
+animation1.pattern0,alternativestart,[2.3.4]
+
+animation2.interval,never
+animation2.pattern0,overlay,1102,100,0,0
+animation2.pattern1,overlay,1101,130,0,0
+animation2.pattern2,overlay,-1,100,0,0
+
+animation3.interval,never
+animation3.pattern0,overlay,1101,140,0,0
+animation3.pattern1,overlay,-1,100,0,0
+
+animation4.interval,never
+animation4.pattern0,overlay,1102,140,0,0
+animation4.pattern1,overlay,-1,100,0,0
+}
+//The following surfaces are very simple, with no animations at all.
+//A surface definition can be very simple! And, you can have a functional Ghost with only two surfaces: surface0 and surface10.
+surface1
+{
+element0,overlay,surface1.png,0,0
+}
+//surface0 is the default Sakura surface, and surface10 is the default Kero surface.
+//To give you an idea of what expressions one might use for humanoid characters, I drew the traditional 9 expressions used in older Ghosts.
+//But you can have as few or as little as you'd like.
+surface2
+{
+element0,overlay,surface2.png,0,0
+}
+//You might consider adding comments to denote what emotion a surface is.
+surface3
+{
+element0,overlay,surface3.png,0,0
+}
+//There's also surfacetable.txt which defines the names of surfaces in the developer menu.
+surface4
+{
+element0,overlay,surface4.png,0,0
+}
+
+surface5
+{
+element0,overlay,surface5.png,0,0
+}
+
+surface6
+{
+element0,overlay,surface6.png,0,0
+}
+
+surface7
+{
+element0,overlay,surface7.png,0,0
+}
+
+surface8
+{
+element0,overlay,surface8.png,0,0
+}
+
+surface9
+{
+element0,overlay,surface9.png,0,0
+}
+
+//--The Kero (Side Character)
+//Coding for both the Sakura and Kero is the same, just different numbers!
+
+surface10
+{
+collision0,121,20,246,70,Head
+collision1,174,61,238,133,Face
+
+element0,overlay,surface10.png,0,0
+
+//Blinking
+animation10.interval,random,4
+animation10.pattern0,overlayfast,2002,50,0,0
+animation10.pattern1,overlayfast,2001,100,0,0
+animation10.pattern2,overlay,-1,30,0,0
+
+//Talking
+animation11.interval,talk,4
+animation11.pattern0,alternativestart,[12.13.14]
+
+animation12.interval,never
+animation12.pattern0,overlay,2102,100,0,0
+animation12.pattern1,overlay,2101,130,0,0
+animation12.pattern2,overlay,-1,100,0,0
+
+animation13.interval,never
+animation13.pattern0,overlay,2101,140,0,0
+animation13.pattern1,overlay,-1,100,0,0
+
+animation14.interval,never
+animation14.pattern0,overlay,2102,140,0,0
+animation14.pattern1,overlay,-1,100,0,0
+}
+
+surface11
+{
+element0,overlay,surface11.png,0,0
+}
+
+surface12
+{
+element0,overlay,surface12.png,0,0
+}
+
+surface13
+{
+element0,overlay,surface13.png,0,0
+}
+
+surface14
+{
+element0,overlay,surface14.png,0,0
+}
+
+surface15
+{
+element0,overlay,surface15.png,0,0
+}
+
+surface16
+{
+element0,overlay,surface16.png,0,0
+}
+
+surface17
+{
+element0,overlay,surface17.png,0,0
+}
+
+surface18
+{
+element0,overlay,surface18.png,0,0
+}
+
+surface19
+{
+element0,overlay,surface19.png,0,0
+}

@@ -1,0 +1,291 @@
+#--
+# Menu Dictionary
+#--
+# This file handles the back-end of the menus. Many long functions coming up.
+
+# Toggles whether the Ghost can be uninstalled or not.
+OnToggleVanish : $(
+    if $[${vanishFlag} = "1"] $(setstr vanishFlag "0")
+    else $(setstr vanishFlag "1");
+    echo "\![raise,OnConfigMenu]"
+)
+
+# Opens the input box for the name change.
+OnChangeName : (
+    $(if $[ $(size username) > 1] $(setstr @names "names") else $(setstr @names "name") )
+    \t\*\![enter,nouserbreakmode]
+    ${talk.OnChangeName}\n\n[half]
+    "\f[italic,true]Current "${@names}": \n"
+    $(setstr @nametotal $(size username);
+      loop ${@nametotal} $(echo $username[${@i}]\n; inc @i)
+    )\f[italic,default]\n[half]
+    \![*]\q[Replace Current $(cap ${@names}),OnChangeName.start,replace]\n
+    \![*]\q[Add New Name,OnChangeName.start,add]\n
+    $(if $[ $(size username) > 1] $(echo \![*]\q[Delete A Name,OnDeleteName.start,delete]\n) )
+    \n[half]\![*]\q[Quit Menu,OnQuit,0]
+)
+
+# An optional blacklist. Add your blacklisted words uncapitalized and with no spaces.
+blacklist : heckity, hecker
+
+# Begins the name change process.
+OnChangeName.start : $(
+    setstr @mode $(Reference 0);
+    if $[ ${@mode} = 'replace' ] $(
+        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]${talk.OnReplaceName}
+        \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    );
+    if $[ ${@mode} = 'add' ] $(
+        echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]${talk.OnAddName}
+        \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    );
+)
+
+# Performs a few checks on the sent name.
+OnChangeName.check : $(
+    # Stores the mode
+    setstr @mode $(Reference 2);
+    # Stores the originally sent name.
+    setstr @sentName $(Reference 0);
+    # Removes illegal characters as that could get messy.
+    setstr @sentName $(gsub ${@sentName} "," "");
+    setstr @sentName $(gsub ${@sentName} "'" "");
+    setstr @sentName $(gsub ${@sentName} '"' "");
+    # Storing a copy to break down further.
+    setstr @namecheck ${@sentName};
+    # Standardizing the name to check against. Removes spaces, periods, dashes and underscores.
+    setstr @namecheck $(tolower ${@namecheck});
+    setstr @namecheck $(gsub ${@namecheck} " " "");
+    setstr @namecheck $(gsub ${@namecheck} "." "");
+    setstr @namecheck $(gsub ${@namecheck} "-" "");
+    setstr @namecheck $(gsub ${@namecheck} "_" "");
+
+    # Performing a series of checks to make sure it's valid.
+    # If the username is the same as the one before, do nothing.
+    if $[ ${@sentName} == ${username} && ${@mode} != 'replace'] $( return ${talk.UnchangedName} );
+    # If the username is false, '0', 'false', or no input whatsoever, set the sentName to the User's name in SSP's preferences.
+    if $[ !${@namecheck} ] $( setstr @sentName ${tempname}; setstr @namecheck ${tempname} );
+    # If the name is the same as the Ghost or their Kero
+    if $[ ${@namecheck} == $( tolower ${ghostSelf}) || ${@namecheck} == $(tolower ${ghostSakura}) || ${@namecheck} == $(tolower ${ghostKero}) ] $( return "\t\*\![enter,nouserbreakmode]"${talk.SelfName}"\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]\n\n[half]\![*]\q[Quit Menu,OnQuit,0]" );
+    # If the name is on the blacklist
+    if $[ $(find blacklist ${@namecheck}) != -1 ] $( return "\t\*\![enter,nouserbreakmode]"${talk.BadName}"\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]\n\n[half]\![*]\q[Quit Menu,OnQuit,0]" );
+    # If none of the above conditions apply, the name is valid. Continue to confirmation.
+    echo "\![raise,OnChangeName.confirm,"${@sentName}","${@mode}"]";
+)
+
+OnChangeName.confirm : (
+    $(setstr @mode $(Reference 1))
+    $(setstr @sentName $(Reference 0))
+    ${talk.OnConfirmName}\n\n[half]
+    \![*]\q[Yes,OnChangeName.end,${@sentName},${@mode}]\n
+    \![*]\q[No,OnChangeName.start,${@mode}]
+    \n\n[half]\![*]\q[Quit,OnQuit,0]
+
+)
+
+OnChangeName.end : $(
+    setstr @mode $(Reference 1);
+    setstr @sentName $(Reference 0);
+    if $[ ${@mode} == 'add' ] $( adddict username ${@sentName} );
+    if $[ ${@mode} == 'replace' ] $( setstr username ${@sentName} );
+    echo ${talk.OnNameChanged};
+)
+
+OnDeleteName.start : (
+    ${talk.OnDeleteName}\n\n[half]
+    $(
+      setstr @nametotal $(size username);
+      loop ${@nametotal} $(
+        echo \q[$username[${@i}],OnDeleteName.confirm,${@i}]\n; 
+        inc @i
+      );
+    )
+    \n\n[half]\![*]\q[Quit,OnQuit,0]
+)
+
+OnDeleteName.confirm : (
+    ${talk.ConfirmNameDelete}\n\n[half]
+    \![*]\q[Yes,OnDeleteName.end,$(Reference 0)]\n
+    \![*]\q[No,OnDeleteName.start]
+    \n\n[half]\![*]\q[Quit,OnQuit,0]
+    
+)
+
+OnDeleteName.end : (
+    $(
+    setstr @i $(Reference 0);
+    clear username[${@i}];
+    )
+    ${talk.OnNameDeleted}
+)
+
+# The starting menu for changing pronouns.
+OnChangePronouns : (
+    \b2${talk.OnChangePronouns}\w4\_q\![set,autoscroll,disable]\n\n[half]
+    "\f[italic,true]Current Pronouns:\n"
+    # Display pronouns
+    $(setstr @pntotal $(size user.they);
+        loop ${@pntotal} $(
+         echo $user.they[${@i}]/$user.them[${@i}]/$user.their[${@i}]/$user.theirs[${@i}]/$user.themself[${@i}]\n;
+         inc @i;
+        )
+    )
+    \f[italic,default]\n\n[half]
+    \![*]\q[Replace Current Set,OnChangePronouns.start,replace]\n
+    \![*]\q[Add New Set,OnChangePronouns.start,add]\n
+    $(if $[ $(size user.they) > 1] $(echo \![*]\q[Delete A Set,OnDeletePronouns.start,delete]\n) )
+    \![*]Use Mixed Sets ":" \q[$(if $[${ForceSet} != 0] $(echo OFF) else $(echo ON)),OnTogglePronouns]\n
+    \![*]\q[Test a Set,OnTestPronouns]\n
+    \n[half]
+    \![*]\q[Quit Menu,OnQuit,0]
+)
+
+# The starting menu for choosing pronouns.
+OnChangePronouns.start : (
+    $( setstr @mode $(Reference 0) )
+    \b2\t\*${talk.OnChoosePronouns}\_q\![set,autoscroll,disable]\n\n[half]
+    \![*]\q[She/Her,OnChangePronouns.end,she,${@mode}]\n
+    \![*]\q[He/Him,OnChangePronouns.end,he,${@mode}]\n
+    \![*]\q[They/Them,OnChangePronouns.end,they,${@mode}]\n
+    \![*]\q[It/Its,OnChangePronouns.end,it,${@mode}]\n
+    \![*]\q[Name Only,OnChangePronouns.end,name,${@mode}]\n
+    # If you'd like to add your own default pronoun set, add a set in 'dict-event.kis', add a line here with '\![*]\q[yourset,OnChangePronouns.end,yourset,${@mode}]\n', and add a check in OnChangePronouns.end.
+    \![*]\q[Custom,OnTheyPronouns,${@mode}]\n
+    \n\n[half]
+    \![*]\q[Quit Menu,OnQuit,0]
+)
+
+# The end of changing pronouns from the default options.
+OnChangePronouns.end : $(
+    setstr @type $(Reference 0);
+    setstr @mode $(Reference 1);
+
+    if $[${@mode} = "replace"] $(cleartree user);
+
+    if $[ ${@type} = "he" ] $(copytree pronounsMasc user)
+    else if $[ ${@type} = "she"] $(copytree pronounsFem user)
+    else if $[ ${@type} = "they"] $(copytree pronounsNeut user)
+    else if $[ ${@type} = "it"] $(copytree pronounsIt user)
+    else if $[ ${@type} = "name"] $(copytree pronounsName user)
+    else $(echo "If you encounter this dialogue, it's a bug. Please report it to the creator of this Ghost.");
+
+    echo ${talk.OnPronounsChanged}
+)
+
+# Beginning of a series of 
+OnTheyPronouns : (
+    # Stores whether they're replacing or being added in a global entry so we don't have to keep passing it through.
+    $(setstr pronounflag $(Reference 0) )
+    \t\*\![enter,nouserbreakmode]\![open,inputbox,OnThemPronouns,--timeout=-1]
+    ${talk.Pronouns1}
+    \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    #"What pronoun would you use in place of 'he', 'she', or 'they'?"
+    
+)
+
+OnThemPronouns : (
+    $( setstr temp.they $(Reference 0) )
+    \t\![enter,nouserbreakmode]\![open,inputbox,OnTheirPronouns,--timeout=-1]
+    ${talk.Pronouns2}
+    \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    #"And what pronoun would you use in place of 'him', 'her', or 'them'?"   
+)
+
+OnTheirPronouns : (
+    $( setstr temp.them $(Reference 0) )
+    \t\*\![enter,nouserbreakmode]\![open,inputbox,OnTheirsPronouns,--timeout=-1]
+    ${talk.Pronouns3}
+    \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    #"How about 'his', 'her', or 'their'?"
+)
+
+OnTheirsPronouns : (
+    $( setstr temp.their $(Reference 0) )
+    \t\*\![enter,nouserbreakmode]\![open,inputbox,OnThemselfPronouns,--timeout=-1]
+    ${talk.Pronouns4}
+    \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    #"What pronoun would you use in place of 'his', 'hers', or 'theirs'?"
+
+)
+
+OnThemselfPronouns : (
+    $( setstr temp.theirs $(Reference 0) )
+    \t\*\![enter,nouserbreakmode]\![open,inputbox,OnSingularPluralPronouns,--timeout=-1]
+    ${talk.Pronouns5}
+    \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
+    #"What pronoun would you use in place of 'himself', 'herself', or 'themself'?"
+)
+
+OnSingularPluralPronouns : (
+    $( setstr temp.themself $(Reference 0) )
+    \t\*\![enter,nouserbreakmode]
+    ${talk.Pronouns6}
+    \n[half]
+    \n\![*]\q[Singular,OnConfirmPronouns,0]
+    \n\![*]\q[Plural,OnConfirmPronouns,1]
+    \n[half]
+    \n\![*]\q[Quit Menu,OnQuit,0]
+    #"\0\s[0]Alright. Last question. Is this set singular or plural? '"${temp.they}" are tired.' is an example of these being used in the plural."
+)
+
+OnConfirmPronouns : (
+    # Stores the pronoun flag in a temporary entry again and clears the pronoun flag because it's not needed anymore.
+    $( setstr temp.singularplural $(Reference 0); setstr @mode ${pronounflag}; clear pronounflag )
+    "\t\*"${talk.OnConfirmPronouns}\_q\![set,autoscroll,disable]"\n\n[half]"
+    "\![*]\q[That's right,OnChangePronouns.endcustom,"${@mode}"]\n"
+    "\![*]\q[Start Over,OnTheyPronouns,"${@mode}"]\n"
+    "\![*]\q[Nevermind,OnExitPronouns]\n"
+)
+
+OnChangePronouns.endcustom : (
+    $( setstr @mode $(Reference 0) ) 
+    $( if $[${@mode} == "add"] $(copytree temp user; cleartree temp) 
+    else if $[${@mode} == "replace"] $(cleartree user; copytree temp user; cleartree temp) )
+    ${talk.OnPronounsChanged}
+)
+
+OnDeletePronouns.start : (
+    ${talk.OnDeletePronouns}\n\n[half]
+    $(setstr @pntotal $(size user.they); setstr @i '0';
+        loop ${@pntotal} $(
+         echo \![*]\q[$user.they[${@i}]/$user.them[${@i}]/$user.their[${@i}]/$user.theirs[${@i}]/$user.themself[${@i}],OnPronounsDeleted,${@i}]\n;
+         inc @i;
+        )
+    )
+    \n[half]\![*]\q[Quit Menu,OnQuit,0]
+)
+
+OnPronounsDeleted : $(
+    setstr @i $(Reference 0);
+    clear user.they[${@i}]; clear user.them[${@i}]; clear user.their[${@i}]; clear user.theirs[${@i}]; clear user.themself[${@i}]; clear user.singularplural[${@i}];
+    echo ${talk.OnPronounsDeleted};
+)
+
+OnExitPronouns : $(
+    cleartree temp;
+    echo ${talk.OnExitPronouns}
+)
+
+OnTogglePronouns : $(
+    if $[${ForceSet} != 0] $(setstr ForceSet "0")
+    else $(setstr ForceSet "1");
+    echo \![raise,OnChangePronouns]
+)
+
+OnTestPronouns : (
+    "Which set would you like to test?\n\n[half]"
+    $(setstr @pntotal $(size user.they); setstr @i '0';
+        loop ${@pntotal} $(
+         echo \![*]\q[$user.they[${@i}]/$user.them[${@i}]/$user.their[${@i}]/$user.theirs[${@i}]/$user.themself[${@i}],OnTestSet,${@i}]\n;
+         inc @i;
+        )
+    )
+    \n[half]\![*]\q[Quit Menu,OnQuit,0]
+)
+
+OnTestSet : $(
+    setstr i $(Reference 0);
+    setstr lastSP $user.singularplural[${i}];
+    echo ${talk.OnTestPronouns};
+    clear i;
+)

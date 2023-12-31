@@ -1,0 +1,71 @@
+#--
+# Bootend
+#--
+# This is the area that holds the dialogues related to booting and closing the ghost (and similar events). 
+
+# When the Ghost is booted after being installed.
+talk.OnFirstBoot   : (
+    "\1\s[10]\0\s[0]\t\w4Hey.\1\s[10]\w8\w8Welcome to the CHIPS Kawari Template! You'll want to introduce your ghost here.\w4 "
+    "We'll handle getting the User's name and pronouns and all that, if you want to use them.\w4\w4\n\n[half]"
+    "If this is your first time using this template, please open up the template readme!\n"
+    "If this is the first Ghost you're planning on developing, please turn on Developer Options in the SSP Preferences.\n\n[half]\*"
+    "\![*]\q[Open Template Readme,script:"\![open,file,../../CHIPS_Readme.txt\]" ]\n"
+    "\![*]\q[Open SSP Preferences,script:"\![open,configurationdialog,setup\]" ]\n"
+    "\![*]\q[Open Both,script:"\![open,configurationdialog,setup\]\![open,file,../../CHIPS_Readme.txt\]" ]\n"
+    "\![*]\q[No thanks,script:\e]"
+)
+talk.OnReinstall   : "\1\s[10]\0\s[0]Reinstalling?"
+talk.OnLotsInstall : "\0\s[0]\1\s[13]You sure are reinstalling us a lot."
+
+# When switching to another Ghost
+# You can specify a specific Ghost by specifying the Sakura name (as in descript.txt) and if the switch was manual or automatic.
+# If you want specific dialogue for the User manually reloading them, use the reload entry.
+talk.OnGhostChanging : "\1\s[10]\0\s[0]Switching to another Ghost?\1\s[15]Say hi for me!"
+
+talk.OnGhostChangingSnakemanual : "\1\s[10]\0\s[0]Snake and Otacon, huh?\1\s[13]I've heard Snake's a real mercenary. Be careful!"
+
+talk.OnGhostReloading : "\1\s[10]\0\s[0]Reloading us?\1\s[13]Hopefully we're working alright."
+
+# When the Ghost is called by or changed to from another Ghost.
+# Just like GhostChanging, you can specify if the Ghost is a specific character.
+# And, for if the user reloaded them.
+talk.OnGhostChanged      : "\1\s[10]\0\s[0]Hey,\w4 it's me.\e"
+
+talk.OnGhostChangedSnake : "\1\s[10]Hey, you know, those guys look a bit like us.\0\s[0]I don't see the resemblance."
+
+talk.OnGhostChangedAngel : "\0\s[0]\1\s[15]Oh, hey, are you new to SSP? Or just learning some new tips? Good luck either way!"
+
+talk.OnGhostReloaded     : "\1\s[10]\0\s[0]Reloaded. Everything right now?"
+
+talk.OnGhostCalling      : "\1\s[10]Welcome," $(Reference 0)"!\0\s[0]\w4Hey."
+
+# When the Ghost's shell is changed.
+# Additional responses are called by the shell name. Case sensitive.
+talk.OnShellChanged       : "\1\s[10]\0\s[0]Huh, a new look."
+
+talk.OnShellChangedMaster : "\0\s[0]\1\s[13]Ah, back to normal!"
+
+talk.OnShellChangedBasic  : (
+    "\0\s[0]\1\s[10]Ah, we're really simple, now!\0\s[0]I have a dressup, too."
+    "\1\s[10]\n\n[half]There's code that replaces invalid surface calls with surface0, so if I turn into Sentinel, that's because a surface that doesn't exist was called."
+)
+
+# When the Ghost is unminimized.
+talk.OnWindowStateRestore : \1\s[10]\0\s[0]Feels good to be out in the open again.
+
+# When the Ghost is booted.
+talk.OnBoot : "\0\s[0]\1\s[10]Hey."
+
+talk.OnBoot : "\0\s[0]\1\s[15]Hey, again!"
+
+talk.OnBoot : "\1\s[10]\0\s[0]Just another day in a war without end.\_w[500]\n\n[half]On your desktop again?"
+
+# When the Ghost is closed.
+talk.OnClose : "\0\s[0]Be seeing you."
+
+talk.OnClose : "\1\s[10]\0\s[0]Another time."
+
+talk.OnClose : "\1\s[10]\0\s[0]Time to wrap things up."
+
+talk.OnClose : "\1\s[10]\0\s[0]Leaving so soon? \_w[500]See you."
+

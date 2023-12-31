@@ -1,0 +1,54 @@
+//This file is used to label surfaces (and their parts) in the Surface Test. Surface Test is a window in the Developer Panel used to view surfaces without having to wait for them to come up naturally or type in the surface or animation number constantly. If you're not planning on using the Surface Test window often, you can safely ignore this file.
+
+
+//You can ignore this. The only important information is the option makes it so surfaces not defined in surfaces.txt don't show up in the Surface Table.
+charset,UTF-8
+version,1
+option,DisableNoDefineSurfaces
+
+
+//You can create groups of different surfaces. The group name will preface the surface nickname in the code, so I suggest you make it short. 
+//The scope is which character these belong to, with 0 being the main character/Sakura, 1 being the side character/Kero, 3 + being other arbitrary characters (called with the \p SakuraScript tag). 
+//Finally, after that, each line has the surface's number (as defined in surfaces.txt) and the nickname you'd like to set for it.
+
+group,Saku
+{
+scope,0
+
+0,Default
+1,Embarassed
+2,Shocked
+3,Worried
+4,Sad
+5,Happy
+6,Content
+7,Angry
+8,Thinking
+9,Bored
+}
+
+//You can set multiple groups if you'd like.
+
+group,Kero
+{
+scope,1
+
+10,Default
+11,Embarassed
+12,Shocked
+13,Worried
+14,Sad
+15,Happy
+16,Content
+17,Angry
+18,Thinking
+19,Bored
+}
+
+//You can also disable certain surfaces from appearing by using the '__disabled' group.
+//It functions just like any other group, so you can go ahead and write any parts you don't wish to be visible in the Surface Test here. I put a random non-existant surface in as an example.
+
+//group,__disabled
+//{
+//1800,armAnim1
+//}

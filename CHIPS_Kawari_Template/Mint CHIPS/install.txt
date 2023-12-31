@@ -1,0 +1,8 @@
+//This file tells the baseware how to install your Ghost. You don't need to edit either of these.
+charset,UTF-8
+type,ghost
+
+//Change the name to the name you'd like them to have when being selected in the menu. 
+name,CHIPS Template
+//Change the directory name to the name of the folder you'd like them to install to.
+directory,CHIPS_Template

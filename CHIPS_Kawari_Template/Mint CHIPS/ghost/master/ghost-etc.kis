@@ -1,0 +1,43 @@
+#--
+# Miscelleaneous Events
+#--
+# There's many events which are not necessarily needed for Ghost functioning, and this is the file that holds them, here.
+# Also an ideal place for optional file snippets to go.
+
+#--
+# Network Events
+#--
+# This dialogue occurs when events connect to the network to gather information from the web. 
+# Some events which do this are checking your email, and fixing the clock.
+
+# These dialogues occur for Network updates, where your Ghost finds update files from the web.
+# Reference 0 is the name of your Ghost. You don't have to use it, though.
+talk.OnUpdateBegin    : "\0\s[0]Updating "$(Reference 0)"..."
+# Reference 0 is the number of new files.
+talk.OnUpdateReady    : "\0\s[0]"$(Reference 0)" new files."
+# On successful update.
+talk.OnUpdateComplete : "\0\s[0]Successfully updated."
+# Reference 0 is the reason for failure, such as '404' or 'md5 mismatch'.
+talk.OnUpdateFailure  : "\0\s[0]The update failed. '"$(Reference 0)"' is the reason."
+
+# These play for the NTP Time Sync, which fixes the User's clock.
+# Reference 0 is the server name.
+talk.OnSNTPBegin   : "\0\s[0]Connecting to "$(Reference 0)"..."
+talk.OnSNTPCorrect : "\0\s[0]The clock's been corrected."
+talk.OnSNTPFailure : "\0\s[0]Failed to connect to "$(Reference 0)"."
+
+# Email
+# Reference 0 is the account/server name.
+talk.OnBIFFBegin    : "\0\s[0]Connecting to "$(Reference 0)"..."
+talk.OnBIFFComplete : $(
+    #Reference 0 is the number of new emails. You can add reactions to certain email amounts by adding another 'else if', too.
+    if $[$(Reference 0) == 0] "\0\s[0]There are no new emails." 
+    else if $[$(Reference 0) = 1] "\0\s[0]There is 1 email." 
+    else "\0\s[0]There are "$(Reference 0)" emails."
+)
+# The first reference, Reference 2, is the name of the account/server they were connecting to. Reference 0 is the reason for failure.
+talk.OnBIFFFailure  : "\0\s[0]Failed to connect to "$(Reference 2)". The reason was '"$(Reference 0)"'."
+
+# Headlines and RSS - These entries are for responding to the Headline and RSS options.
+talk.OnNewsBegin : "\0\s[0]Checking the feed of "$(Reference 0)"..."
+talk.OnNewsFailure : "\0\s[0]Failed to check the feed. The reason was '"$(Reference 0)"'."
