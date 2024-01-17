@@ -1,4 +1,7 @@
-version,1
+descript
+{
+  version,1
+}
 
 //IMPORTANT:
 //The illustrations provided are intended to be replaced. They are for example purposes only. Please do not redistribute them without permission.
@@ -20,8 +23,7 @@ collision1,251,114,334,203,Face
 collision2,217,223,356,350,Bust
 
 //--Elements
-
-element0,overlay,surface0.png,0,0
+//element0,overlay,surface999.png,0,0
 
 //--Blinking animation
 
@@ -47,51 +49,6 @@ animation3.pattern1,overlay,-1,100,0,0
 animation4.interval,never
 animation4.pattern0,overlay,1102,140,0,0
 animation4.pattern1,overlay,-1,100,0,0
-}
-
-surface1
-{
-element0,overlay,surface1.png,0,0
-}
-
-surface2
-{
-element0,overlay,surface2.png,0,0
-}
-
-surface3
-{
-element0,overlay,surface3.png,0,0
-}
-
-surface4
-{
-element0,overlay,surface4.png,0,0
-}
-
-surface5
-{
-element0,overlay,surface5.png,0,0
-}
-
-surface6
-{
-element0,overlay,surface6.png,0,0
-}
-
-surface7
-{
-element0,overlay,surface7.png,0,0
-}
-
-surface8
-{
-element0,overlay,surface8.png,0,0
-}
-
-surface9
-{
-element0,overlay,surface9.png,0,0
 }
 
 //--The Kero (Side Character)
@@ -125,49 +82,4 @@ animation13.pattern1,overlay,-1,100,0,0
 animation14.interval,never
 animation14.pattern0,overlay,2102,140,0,0
 animation14.pattern1,overlay,-1,100,0,0
-}
-
-surface11
-{
-element0,overlay,surface11.png,0,0
-}
-
-surface12
-{
-element0,overlay,surface12.png,0,0
-}
-
-surface13
-{
-element0,overlay,surface13.png,0,0
-}
-
-surface14
-{
-element0,overlay,surface14.png,0,0
-}
-
-surface15
-{
-element0,overlay,surface15.png,0,0
-}
-
-surface16
-{
-element0,overlay,surface16.png,0,0
-}
-
-surface17
-{
-element0,overlay,surface17.png,0,0
-}
-
-surface18
-{
-element0,overlay,surface18.png,0,0
-}
-
-surface19
-{
-element0,overlay,surface19.png,0,0
 }

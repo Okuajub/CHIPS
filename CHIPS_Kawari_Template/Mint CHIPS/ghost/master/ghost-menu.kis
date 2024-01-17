@@ -11,7 +11,7 @@ SakuMenuTalk : "\0\s[0]Hm?","\0\s[0]Need something?","\0\s[0]Opening the menu."
 
 OnSakuraMenu : (
     # You can safely ignore this line. It just remembers what dialogue the user saw when changing the talk interval.
-    $( if $[ $(Reference 0) != 1 ] $(setstr MenuDialogue ${SakuMenuTalk}\w4 ) else if $[ $( match ${MenuDialogue} "\_q" ) = -1 ] $(setstr MenuDialogue \_q${MenuDialogue}\_q ) )
+    $( if $[ $(Reference 0) != 1 ] $(setstr MenuDialogue ${SakuMenuTalk}\w4 ) else if $[ $( match ${MenuDialogue} "\_q" ) == -1 ] $(setstr MenuDialogue \_q${MenuDialogue}\_q ) )
 
     # The menu starts. Autoscroll disable is to prevent the menu from getting set to the bottom should the User not having a large enough balloon.
     # If you want to add any new menu options for the Sakura, this is there you would do so.
@@ -27,7 +27,7 @@ OnSakuraMenu : (
 
     # Talkrate Assignment
     $(setstr @interval ${talkinterval})
-    $( if $[ ${@interval} = 'Never' ] $(setstr @form "") else if $[ ${@interval} > 59 ] $( setstr @interval $[ ${@interval} / 60 ]; setstr @form minutes ) else $( setstr @form seconds ) )
+    $( if $[ ${@interval} == 'Never' ] $(setstr @form "") else if $[ ${@interval} > 59 ] $( setstr @interval $[ ${@interval} / 60 ]; setstr @form minutes ) else $( setstr @form seconds ) )
     $(if $[${@interval} == 1] $(setstr @form minute))
 
     # Talkrate Display
@@ -37,7 +37,7 @@ OnSakuraMenu : (
     \n\n[half]
 
     # Retrieves info about the present time
-    $(setstr @weekday $(if $[$(date %w) = 0] "Sun" else if $[$(date %w) = 1] "Mon" else if $[$(date %w) = 2] "Tues" else if $[$(date %w) = 3] "Weds" else if $[$(date %w) = 4] "Thurs" else if $[$(date %w) = 5] "Fri" else if $[$(date %w) = 6] "Sat"))
+    $(setstr @weekday $(if $[$(date %w) == 0] "Sun" else if $[$(date %w) == 1] "Mon" else if $[$(date %w) == 2] "Tues" else if $[$(date %w) == 3] "Weds" else if $[$(date %w) == 4] "Thurs" else if $[$(date %w) == 5] "Fri" else if $[$(date %w) == 6] "Sat"))
     $(setstr @hour $(date %H); setstr @minute $(date %M))
 
     # Displays the time
@@ -60,7 +60,7 @@ OnConfigMenu : (
     \n
     \![*]\q[Change Pronouns,OnChangePronouns]
     \n
-    \![*]"Uninstall: "\q[$( if $[${vanishFlag} = 1] $(echo "ON") else $(echo "OFF") ),OnToggleVanish]
+    \![*]"Uninstall: "\q[$( if $[${vanishFlag} == 1] $(echo "ON") else $(echo "OFF") ),OnToggleVanish]
     \n\n[half]
     \![*]\q[Back,OnSakuraMenu]
 )
@@ -164,7 +164,7 @@ OnKeroMenu : (
     \n\n[half]
     \![*]\q[Tell me about Yourselves,OnIntroduceSelf]
     # 'devmode' is an entry to engage development mode. To engage it, put '$(setstr devmode 1)' in the script input.
-    $(if $[${devmode} = 1] $(echo \n\n[half]\![*]\q[Debug Menu,OnDebugMenu]))
+    $(if $[${devmode} == 1] $(echo \n\n[half]\![*]\q[Debug Menu,OnDebugMenu]))
     \n\n[half]
     \![*]\q[Quit Menu,OnQuit,1]
 )

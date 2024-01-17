@@ -1,4 +1,7 @@
-version,1
+descript
+{
+  version,1
+}
 
 //IMPORTANT:
 //The illustrations provided are intended to be replaced. They are for example purposes only. Please do not redistribute them without permission.
@@ -22,10 +25,12 @@ version,1
 //
 
 //surface0 is the default pose. It will have the most animations, usually, but to make this easy to use I have only included two: Blinking and talking. If you don't understand the code, please read it carefully and look at the corrosponding .pngs in the shell\master folder.
-//If you don't care about the animations, and would just like to replace the images and move on, go ahead and comment out any line starting with 'animation'.
+//If you don't care about the animations, and would just like to replace the images and move on, go ahead and comment out (or delete) any line starting with 'animation'.
 //You can create a comment by writing two backslashes, like at the beginning of this sentence.
 //With them commented out, you can delete the images used for animation if you would like, or replace them with something else.
 
+//A surface definition can be used to give the baseware more specific instructions for each surface.
+//This is the definition for surface0. You don't need to define your surfaces unless you want to add onto them.
 surface0
 {
 
@@ -37,9 +42,6 @@ surface0
 collision0,236,67,360,121,Head
 collision1,251,114,334,203,Face
 collision2,217,223,356,350,Bust
-
-//This puts down the base image, which is surface0.
-element0,overlay,surface0.png,0,0
 
 //--Blinking animation
 //Because this is the first animation, I will explain it.
@@ -71,54 +73,11 @@ animation4.interval,never
 animation4.pattern0,overlay,1102,140,0,0
 animation4.pattern1,overlay,-1,100,0,0
 }
-//The following surfaces are very simple, with no animations at all.
-//A surface definition can be very simple! And, you can have a functional Ghost with only two surfaces: surface0 and surface10.
-surface1
-{
-element0,overlay,surface1.png,0,0
-}
 //surface0 is the default Sakura surface, and surface10 is the default Kero surface.
 //To give you an idea of what expressions one might use for humanoid characters, I drew the traditional 9 expressions used in older Ghosts.
 //But you can have as few or as little as you'd like.
-surface2
-{
-element0,overlay,surface2.png,0,0
-}
-//You might consider adding comments to denote what emotion a surface is.
-surface3
-{
-element0,overlay,surface3.png,0,0
-}
+//You might consider adding comments to denote what emotion/action a surface is.
 //There's also surfacetable.txt which defines the names of surfaces in the developer menu.
-surface4
-{
-element0,overlay,surface4.png,0,0
-}
-
-surface5
-{
-element0,overlay,surface5.png,0,0
-}
-
-surface6
-{
-element0,overlay,surface6.png,0,0
-}
-
-surface7
-{
-element0,overlay,surface7.png,0,0
-}
-
-surface8
-{
-element0,overlay,surface8.png,0,0
-}
-
-surface9
-{
-element0,overlay,surface9.png,0,0
-}
 
 //--The Kero (Side Character)
 //Coding for both the Sakura and Kero is the same, just different numbers!
@@ -127,8 +86,6 @@ surface10
 {
 collision0,121,20,246,70,Head
 collision1,174,61,238,133,Face
-
-element0,overlay,surface10.png,0,0
 
 //Blinking
 animation10.interval,random,4
@@ -152,49 +109,4 @@ animation13.pattern1,overlay,-1,100,0,0
 animation14.interval,never
 animation14.pattern0,overlay,2102,140,0,0
 animation14.pattern1,overlay,-1,100,0,0
-}
-
-surface11
-{
-element0,overlay,surface11.png,0,0
-}
-
-surface12
-{
-element0,overlay,surface12.png,0,0
-}
-
-surface13
-{
-element0,overlay,surface13.png,0,0
-}
-
-surface14
-{
-element0,overlay,surface14.png,0,0
-}
-
-surface15
-{
-element0,overlay,surface15.png,0,0
-}
-
-surface16
-{
-element0,overlay,surface16.png,0,0
-}
-
-surface17
-{
-element0,overlay,surface17.png,0,0
-}
-
-surface18
-{
-element0,overlay,surface18.png,0,0
-}
-
-surface19
-{
-element0,overlay,surface19.png,0,0
 }

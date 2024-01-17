@@ -1,4 +1,7 @@
-version,1
+descript
+{
+  version,1
+}
 
 //--
 //Surfaces.txt
@@ -13,10 +16,6 @@ version,1
 surface0
 {
 
-
-//This puts down the base image, which is surface0.
-element0,overlay,surface0.png,0,0
-
 //A dressup is actually an animation, defined with the interval 'bind'. Be aware that you'll have to define each dressup you create, in both here and surfaces.txt, or else it won't show up in the menu.
 animation0.interval,bind
 animation0.pattern0,bind,100,0,0
@@ -27,5 +26,5 @@ animation0.pattern0,bind,100,0,0
 
 surface10
 {
-element0,overlay,surface10.png,0,0
+//Put any dress-ups/animations here.
 }

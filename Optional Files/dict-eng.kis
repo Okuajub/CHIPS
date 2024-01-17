@@ -19,10 +19,10 @@ talk.Overlapping   : "\0\s[0]We're overlapping."
 OnSecondChange : $(
     if ${System.Request.Reference3} $(
         # If you don't want them to comment on being offscreen, delete the next two lines.
-        if $[${screenFlag} = 0 && $(Reference 1) = 1]  ${talk.HeldOffscreen}\w[1000]\w[1000]\w[1000]\n\n[half]${talk.Offscreen}\e
-        else if $[${screenFlag} = 1 && $(Reference 1) = 0] $(setstr screenFlag 0; echo ${talk.Onscreen}\e)
+        if $[${screenFlag} = 0 && $(Reference 1) == 1]  ${talk.HeldOffscreen}\w[1000]\w[1000]\w[1000]\n\n[half]${talk.Offscreen}\e
+        else if $[${screenFlag} == 1 && $(Reference 1) == 0] $(setstr screenFlag 0; echo ${talk.Onscreen}\e)
         # If you don't want them to notice overlapping, delete this next line. If you don't want offscreen talk, but do want overlapping, delete the two lines above and delete the word "else" from the next line.
-        else if $[$(Reference 2) = 1] ${talk.Overlapping}
+        else if $[$(Reference 2) == 1] ${talk.Overlapping}
         else $(
             inc talkcounter;
             if $[ ${talkcounter} >= ${talkinterval} ] $(
@@ -35,7 +35,7 @@ OnSecondChange : $(
 
 # If you want them to keep talking about being offscreen instead of normal dialogue, replace OnAITalk with this.
 OnAITalk : $(
-    if $[screenFlag = 1] ${talk.Offscreen}
+    if $[screenFlag == 1] ${talk.Offscreen}
     else $(
         setstr lastTalk ${sentence};
         echo ${lastTalk};
@@ -77,9 +77,9 @@ talk.OpenPreferences : "\0\s[0]Opening the SSP preferences.\1\s[10]You can set u
 
 # Little entry to handle these even smaller entries, because creating separate entries for each of these would be nonsensical.
 OnOpenFunc : $(
-    if $[$(Reference 0) = 1] ${talk.OpenCalendar}"\![open,calendar]";
-    if $[$(Reference 0) = 2] "\![biff]\e";
-    if $[$(Reference 0) = 3] ${talk.OpenPreferences}"\![open,configurationdialog]";
+    if $[$(Reference 0) == 1] ${talk.OpenCalendar}"\![open,calendar]";
+    if $[$(Reference 0) == 2] "\![biff]\e";
+    if $[$(Reference 0) == 3] ${talk.OpenPreferences}"\![open,configurationdialog]";
 )
 
 OnNotifyOSInfo : $(

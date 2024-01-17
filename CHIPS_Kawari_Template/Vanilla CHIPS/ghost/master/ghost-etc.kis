@@ -34,7 +34,7 @@ talk.OnBIFFBegin    : "\0\s[0]Connecting to "$(Reference 0)"..."
 talk.OnBIFFComplete : $(
     #Reference 0 is the number of new emails. You can add reactions to certain email amounts by adding another 'else if', too.
     if $[$(Reference 0) == 0] "\0\s[0]There are no new emails." 
-    else if $[$(Reference 0) = 1] "\0\s[0]There is 1 email." 
+    else if $[$(Reference 0) == 1] "\0\s[0]There is 1 email." 
     else "\0\s[0]There are "$(Reference 0)" emails."
 )
 # The first reference, Reference 2, is the name of the account/server they were connecting to. Reference 0 is the reason for failure.

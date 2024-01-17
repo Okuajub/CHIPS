@@ -71,7 +71,7 @@ function OnUpdatePronoun $(
 # Returns the appropriate version according to OnUpdatePronoun's last used pronoun.
 =kis
 function SP $(
-    if $[${lastSP} = '1'] $( echo $@arg[2] )
+    if $[${lastSP} == '1'] $( echo $@arg[2] )
     else $( echo $@arg[1] )
 )
 =end

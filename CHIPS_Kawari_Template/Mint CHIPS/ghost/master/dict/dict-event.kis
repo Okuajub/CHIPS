@@ -115,7 +115,7 @@ OnTranslate : $(
 	# If it isn't valid, as in not present in ValidSurfaces, replace it. ValidSurfaces is found in NotifyShellInfo.
 	foreach @element @surface $(
 		setstr @isvalid $(find ValidSurfaces ${@element}); 
-		if $[ ${@isvalid} = -1 && ${@element} >= 0 ] $(
+		if $[ ${@isvalid} == -1 && ${@element} >= 0 ] $(
 			setstr @talk $( gsub ${@talk} "\s["${@element}"]" "\s[0]" );
 		);
 	);
@@ -160,11 +160,11 @@ OnInitializeVars : $(
 	# Second check, for if the first doesn't work for some reason.
 	if $[ $(length ${username}) < 1 ] $(setstr username "User");
 	# Sets a default value for singular/plural pronouns.
-	if $[ $(length ${lastSP}) = 0 ] $(setstr lastSP '0');
+	if $[ $(length ${lastSP}) == 0 ] $(setstr lastSP '0');
 	# Sets a default value for if pronouns should be mixed or not.
-	if $[ $(length ${ForceSet}) = 0 ] $(setstr ForceSet '0');
+	if $[ $(length ${ForceSet}) == 0 ] $(setstr ForceSet '0');
 	# Sets a talk interval if there is none.
-    if $[ $(length ${talkinterval}) = 0 ] $(setstr talkinterval '300');
+    if $[ $(length ${talkinterval}) == 0 ] $(setstr talkinterval '300');
 	setstr vanishFlag '0';
 )
 
@@ -286,7 +286,7 @@ OnSecondChange : $(
 # Using this as their AI talk event also allows old specification (e.g. Kinoko's talk request) to work.
 OnAITalk : $(
 	setstr lastTalk ${sentence};
-	if $[ ${lastTalk} = ''] $(return ${OnAITalk});
+	if $[ ${lastTalk} == ''] $(return ${OnAITalk});
 	echo ${lastTalk};
 )
 
@@ -297,7 +297,7 @@ OnAITalk : $(
 
 # If the user is in devmode, set the URL to a dummy URL. Otherwise, use the normal URL.
 resource.homeurl : $(
-	if $[${devmode} = 1] "https://dummy.url/"
+	if $[${devmode} == 1] "https://dummy.url/"
 	else ${homeurl}
 )
 
@@ -363,7 +363,7 @@ OnBIFFComplete, OnBIFFComplete2 : $(
 	if $[$(length ${talk.OnBIFFComplete} > 0)] ${talk.OnBIFFComplete}
 	else $(
 		if $[$(Reference 0) == 0] "\0\s[0]There are no new emails." 
-		else if $[$(Reference 0) = 1] "\0\s[0]There is 1 email." 
+		else if $[$(Reference 0) == 1] "\0\s[0]There is 1 email." 
 		else "\0\s[0]There are "$(Reference 0)" emails."
 	)
 )
@@ -393,8 +393,8 @@ notify.OnNotifyUserInfo : $(
 	setstr birthdate $(Reference 2);
 	setstr usergender $(Reference 3);
 	if $[ $(length ${user.they}) < 1 || $(length ${user.them}) < 1 || $(length ${user.their}) < 1 || $(length ${user.theirs}) < 1 || $(length ${user.themself}) < 1 || $(length ${user.singularplural}) < 1 ] $(
-		if $[ ${usergender} = "female" ] $(copytree pronounsFem user)
-		else if $[ ${usergender} = "male" ] $(copytree pronounsMasc user)
+		if $[ ${usergender} == "female" ] $(copytree pronounsFem user)
+		else if $[ ${usergender} == "male" ] $(copytree pronounsMasc user)
 		else $(copytree pronounsNeut user);
 	);
 	echo ${OnInitializeVars};
@@ -433,8 +433,8 @@ notify.OnNotifyShellInfo : $(
 # 	if $[$(substr(${@event_name} 0 2)) != 'On'] $(set @event_name On_${@event_name});
 # 	setstr @result 0;
 # 	if $[$(tolower(${@SecurityLevel})) == 'external'] $(set @event_name 'ExternalEvent.'${@event_name});
-# 	set @result $(if $[$(IsExist ${@event_name}) = "false"] "0"; else "1");
-# 	if $[!${@result}] $(set @result $(if $[$(IsExist 'SHIORI3EV.'${@event_name}) = "false"] "0"; else "1"));
+# 	set @result $(if $[$(IsExist ${@event_name}) == "false"] "0"; else "1");
+# 	if $[!${@result}] $(set @result $(if $[$(IsExist 'SHIORI3EV.'${@event_name}) == "false"] "0"; else "1"));
 # 	return X_SSTP_PassThru-Result: ${@result}$(chr 13; chr 10);
 # )
 
@@ -446,9 +446,9 @@ notify.OnNotifyShellInfo : $(
 #	cleartree ShioriEcho
 #	setstr shioriEcho0 $(Reference 0);
 #	setstr shioriEcho0 reference.raw[0];
-#	if $[${shioriEcho0} = 'reload'] $(set ReloadFromTerminal 1; ${OnReloadShiori});
-#	if $[${shioriEcho0} = 'errorlog'] $(loglevel error warning; logfile debug.log; load kawarirc.kis; set ShioriEcho.Result "Please check your ghost\master folder for the debug log.");
-#	if $[${shioriEcho0} = 'exit'] $(set ShioriEcho.Status 'End');
+#	if $[${shioriEcho0} == 'reload'] $(set ReloadFromTerminal 1; ${OnReloadShiori});
+#	if $[${shioriEcho0} == 'errorlog'] $(loglevel error warning; logfile debug.log; load kawarirc.kis; set ShioriEcho.Result "Please check your ghost\master folder for the debug log.");
+#	if $[${shioriEcho0} == 'exit'] $(set ShioriEcho.Status 'End');
 #	echo ${X-SSTP-PassThru-Result};
 #
 #)

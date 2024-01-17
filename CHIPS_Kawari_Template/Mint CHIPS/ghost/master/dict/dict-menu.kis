@@ -5,7 +5,7 @@
 
 # Toggles whether the Ghost can be uninstalled or not.
 OnToggleVanish : $(
-    if $[${vanishFlag} = "1"] $(setstr vanishFlag "0")
+    if $[${vanishFlag} == "1"] $(setstr vanishFlag "0")
     else $(setstr vanishFlag "1");
     echo "\![raise,OnConfigMenu]"
 )
@@ -31,11 +31,11 @@ blacklist : heckity, hecker
 # Begins the name change process.
 OnChangeName.start : $(
     setstr @mode $(Reference 0);
-    if $[ ${@mode} = 'replace' ] $(
+    if $[ ${@mode} == 'replace' ] $(
         echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]${talk.OnReplaceName}
         \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
     );
-    if $[ ${@mode} = 'add' ] $(
+    if $[ ${@mode} == 'add' ] $(
         echo \t\*\![enter,nouserbreakmode]\![open,inputbox,OnChangeName.check,--timeout=-1,--reference=${@mode}]${talk.OnAddName}
         \n\n[half]\![*]\q[Quit Menu,OnQuit,0]
     );
@@ -160,13 +160,13 @@ OnChangePronouns.end : $(
     setstr @type $(Reference 0);
     setstr @mode $(Reference 1);
 
-    if $[${@mode} = "replace"] $(cleartree user);
+    if $[${@mode} == "replace"] $(cleartree user);
 
-    if $[ ${@type} = "he" ] $(copytree pronounsMasc user)
-    else if $[ ${@type} = "she"] $(copytree pronounsFem user)
-    else if $[ ${@type} = "they"] $(copytree pronounsNeut user)
-    else if $[ ${@type} = "it"] $(copytree pronounsIt user)
-    else if $[ ${@type} = "name"] $(copytree pronounsName user)
+    if $[ ${@type} == "he" ] $(copytree pronounsMasc user)
+    else if $[ ${@type} == "she"] $(copytree pronounsFem user)
+    else if $[ ${@type} == "they"] $(copytree pronounsNeut user)
+    else if $[ ${@type} == "it"] $(copytree pronounsIt user)
+    else if $[ ${@type} == "name"] $(copytree pronounsName user)
     else $(echo "If you encounter this dialogue, it's a bug. Please report it to the creator of this Ghost.");
 
     echo ${talk.OnPronounsChanged}
