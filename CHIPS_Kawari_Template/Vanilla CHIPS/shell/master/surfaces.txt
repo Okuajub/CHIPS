@@ -17,9 +17,9 @@ descript
 
 //--Creating images
 //You can replace the images in the shell folder with practically anything. But, there are a few things to keep in mind.
-//If you use pure white on your Ghost (#fff), color the top left pixel/corner of the image an odd color not used elsewhere on your Ghost. This top left pixel controls the transparency of your Ghost, and by default pure white will be come transparent.
 //Make your images the same size. While you can adjust the positioning of your Ghost's surfaces per pixel, making them all the same size will make your life easier.
 //Draw images that your characters will use the most. Sentinel and Chip are fairly humorous and rib eachother, so I make good use of their smiling, shocked, worried and embarassed surfaces. You should keep in mind what emotions your own characters will often express!
+//Surfaces can be different actions, too, not just expressions. Consider if you want your Ghost to be able to hold something, or sing, or what have you.
 
 //--The Sakura (Main Character)
 //
