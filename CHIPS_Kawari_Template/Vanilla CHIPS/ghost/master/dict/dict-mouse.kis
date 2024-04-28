@@ -7,7 +7,7 @@
 # When double-clicking the Ghost.
 OnMouseDoubleClick : $(
 	entry MouseDoubleClick${System.Request.Reference3}${System.Request.Reference4}
-	${MouseDoubleClick${System.Request.Reference3}}
+	${MouseDoubleClick${System.Request.Reference3}};
 )
 
 # Pets the appropriate character. Mousewheel option included for accessibility
@@ -26,13 +26,16 @@ OnMouseLeaveAll : $(
 )
 
 # Key presses
-OnKeyPress: $(
+OnKeyPress : $(
 	entry sys.key.${System.Request.Reference0};
 )
-sys.key.r: $(
+sys.key.r  : (
 	echo ${lastTalk}
 )
 # This is the first entry I wrote in Kawari- to make them talk on command...
-sys.key.t: $(
+sys.key.t  : (
 	echo ${OnAITalk}
+)
+sys.key.f1 : (
+	"\![open,readme]\e"
 )

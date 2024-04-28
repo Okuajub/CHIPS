@@ -19,6 +19,8 @@ talk.OnUpdateBegin    : "\0\s[0]Updating "$(Reference 0)"..."
 talk.OnUpdateReady    : "\0\s[0]"$(Reference 0)" new files."
 # On successful update.
 talk.OnUpdateComplete : "\0\s[0]Successfully updated."
+# When the Ghost is up to date
+talk.OnUpdateNone     : "\0\s[0]No new files."
 # Reference 0 is the reason for failure, such as '404' or 'md5 mismatch'.
 talk.OnUpdateFailure  : "\0\s[0]The update failed. '"$(Reference 0)"' is the reason."
 

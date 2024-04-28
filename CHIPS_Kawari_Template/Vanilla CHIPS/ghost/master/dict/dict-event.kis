@@ -314,8 +314,14 @@ OnUpdateReady    : $(
 	else "\0\s[0]"$(Reference 0)" new files.";
 )
 OnUpdateComplete : $(
-	if $[$(length ${talk.OnUpdateComplete} > 0)] ${talk.OnUpdateComplete}
-	else "\0\s[0]Successfully updated.";
+	if $[ $(Reference 0) == "changed" ] $(
+		if $[$(length ${talk.OnUpdateComplete} > 0)] ${talk.OnUpdateComplete}
+		else "\0\s[0]Successfully updated.";
+	)
+	else if $[ $(Reference 0) == "none" ] $(
+		if $[$(length ${talk.OnUpdateNone} > 0)] ${talk.OnUpdateNone}
+		else "\0\s[0]No new files.";
+	)
 )
 OnUpdateFailure  : $(
 	if $[$(length ${talk.OnUpdateFailure} > 0)] ${talk.OnUpdateFailure}
