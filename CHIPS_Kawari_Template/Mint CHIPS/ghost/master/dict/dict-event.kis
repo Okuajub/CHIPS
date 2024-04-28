@@ -314,8 +314,14 @@ OnUpdateReady    : $(
 	else "\0\s[0]"$(Reference 0)" new files.";
 )
 OnUpdateComplete : $(
-	if $[$(length ${talk.OnUpdateComplete} > 0)] ${talk.OnUpdateComplete}
-	else "\0\s[0]Successfully updated.";
+	if $[ $(Reference 0) == "changed" ] $(
+		if $[$(length ${talk.OnUpdateComplete} > 0)] ${talk.OnUpdateComplete}
+		else "\0\s[0]Successfully updated.";
+	)
+	else if $[ $(Reference 0) == "none" ] $(
+		if $[$(length ${talk.OnUpdateNone} > 0)] ${talk.OnUpdateNone}
+		else "\0\s[0]No new files.";
+	)
 )
 OnUpdateFailure  : $(
 	if $[$(length ${talk.OnUpdateFailure} > 0)] ${talk.OnUpdateFailure}
@@ -413,50 +419,6 @@ notify.OnNotifyShellInfo : $(
 	setstr @reference2 $(Reference 2);
 	split ValidSurfaces ${@reference2} ",";
 )
-
-#--
-# Ghost Terminal (https://github.com/ukatech/ghost_terminal)
-#--
-# This code is here to support a program created by Steve Green (AKA steve02081504)
-# CURRENTLY NONFUNCTIONAL - Kosui is a terminal created for Kawari ghosts that works with all of them. Please use it.
-# Please see the Ghost Terminal documentation for details.
-# 
-# I was creating this code, unwittingly, while a certain bug in my programming was preventing many events from returning responses. As such, it's not been tested.
-# I may revisit this, in time, however at the moment Kosui serves an extremely similar purpose and so I've not gone back to pursue this.
-
-# This code was referenced from Taromati 2 and YAYA source code.
-
-# Has_Event : $(
-# 	set @event_name $(Reference 0);
-# 	set @SecurityLevel $(Reference 1);
-# 	if $[!$(IsExist ${@SecurityLevel})] $(set @SecurityLevel ${System.SecurityLevel});
-# 	if $[$(substr(${@event_name} 0 2)) != 'On'] $(set @event_name On_${@event_name});
-# 	setstr @result 0;
-# 	if $[$(tolower(${@SecurityLevel})) == 'external'] $(set @event_name 'ExternalEvent.'${@event_name});
-# 	set @result $(if $[$(IsExist ${@event_name}) == "false"] "0"; else "1");
-# 	if $[!${@result}] $(set @result $(if $[$(IsExist 'SHIORI3EV.'${@event_name}) == "false"] "0"; else "1"));
-# 	return X_SSTP_PassThru-Result: ${@result}$(chr 13; chr 10);
-# )
-
-# ExternalEvent.On_Has_Event : (
-# 	${On_Has_Event}
-# )
-
-#ShioriEcho : $(
-#	cleartree ShioriEcho
-#	setstr shioriEcho0 $(Reference 0);
-#	setstr shioriEcho0 reference.raw[0];
-#	if $[${shioriEcho0} == 'reload'] $(set ReloadFromTerminal 1; ${OnReloadShiori});
-#	if $[${shioriEcho0} == 'errorlog'] $(loglevel error warning; logfile debug.log; load kawarirc.kis; set ShioriEcho.Result "Please check your ghost\master folder for the debug log.");
-#	if $[${shioriEcho0} == 'exit'] $(set ShioriEcho.Status 'End');
-#	echo ${X-SSTP-PassThru-Result};
-#
-#)
-
-#ShioriEcho.Begin : $(
-#	set X-SSTP-PassThru-Title "CHIPS-based Kawari Ghost";
-#	set X-SSTP-PassThru-CustomLoginInfo "Welcome. This Ghost is based on the CHIPS Kawari Template. Good luck debugging!";
-#)
 
 #--
 # Other

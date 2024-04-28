@@ -58,8 +58,6 @@ surface10
 collision0,121,20,246,70,Head
 collision1,174,61,238,133,Face
 
-element0,overlay,surface10.png,0,0
-
 //Blinking
 animation10.interval,random,4
 animation10.pattern0,overlayfast,2002,50,0,0

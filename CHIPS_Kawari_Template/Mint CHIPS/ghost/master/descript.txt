@@ -5,8 +5,9 @@ name,CHIPS Template
 sakura.name,Sentinel
 kero.name,CHIPtest
 
-//This is your credit, you should put your own name and site here.
+//This is your credit, you should put your own name and site here. craftmanw is for names with non-alphanumeric characters, but fill out both whether your name is alphanumeric or not.
 craftman,username
+craftmanw,username
 craftmanurl,https://dummy.url/
 
 //This is the URL the Ghost checks for updates with when closed (such as through the explorer).
