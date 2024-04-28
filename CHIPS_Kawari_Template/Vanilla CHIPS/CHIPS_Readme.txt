@@ -4,7 +4,7 @@
 Please note: The included character illustrations are not intended for redistribution and should be replaced with your own images. They are for example purposes only.
 
 #-- Introduction
-Hello! This is the CHIPS Kawari Template, version '1.0.0'.
+Hello! This is the CHIPS Kawari Template, version '1.0.1'.
 
 If you are new to Ghosts, welcome!
 Ghosts are desktop agents, originally aimed at keeping the user company by conversing with a secondary character or the user themself. Ghosts speak in speech bubbles, also known as Balloons.
