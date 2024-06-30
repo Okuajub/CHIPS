@@ -20,7 +20,7 @@ surface0
 
 collision0,236,67,360,121,Head
 collision1,251,114,334,203,Face
-collision2,217,223,356,350,Bust
+collision2,220,261,351,339,Bust
 
 //--Elements
 //element0,overlay,surface999.png,0,0
