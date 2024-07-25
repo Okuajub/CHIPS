@@ -30,11 +30,11 @@ OnKeyPress : $(
 	entry sys.key.${System.Request.Reference0};
 )
 sys.key.r  : (
-	echo ${lastTalk}
+	${lastTalk}
 )
 # This is the first entry I wrote in Kawari- to make them talk on command...
 sys.key.t  : (
-	echo ${OnAITalk}
+	${OnAITalk}
 )
 sys.key.f1 : (
 	"\![open,readme]\e"
