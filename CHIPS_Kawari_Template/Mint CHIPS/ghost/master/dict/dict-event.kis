@@ -269,8 +269,7 @@ OnMinuteChange : $(
 	SaveData;
 )
 
-# These three entries go together. They handle the random talk, in tandem.
-
+# Counter of seconds between random talks
 talkcounter : 0
 
 OnSecondChange : $(
@@ -283,10 +282,20 @@ OnSecondChange : $(
     );
 )
 
-# Using this as their AI talk event also allows old specification (e.g. Kinoko's talk request) to work.
+# This entry counts the amount loops OnAITalk has gone through to find a valid dialogue.
+loopcount : 0
+
+# This entry limits how many loops OnAITalk will go through to find a valid dialogue.
+looplimit : 1000
+
+# Using OnAITalk as their AI talk event allows old specification (e.g. Kinoko's talk request) to work.
 OnAITalk : $(
 	setstr lastTalk ${sentence};
-	if $[ ${lastTalk} == ''] $(return ${OnAITalk});
+	while $[ ${lastTalk} == '' && ${loopcount} <= ${looplimit} ] $(
+		setstr lastTalk ${sentence};
+		set loopcount $[ ${loopcount} + 1 ];
+		if $[ ${loopcount} >= ${looplimit} ] $(set talkcounter 0; set loopcount 0; break)
+	);
 	echo ${lastTalk};
 )
 
