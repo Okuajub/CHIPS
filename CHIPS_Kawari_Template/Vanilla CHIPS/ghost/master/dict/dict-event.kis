@@ -269,8 +269,7 @@ OnMinuteChange : $(
 	SaveData;
 )
 
-# These three entries go together. They handle the random talk, in tandem.
-
+# Counter of seconds between random talks
 talkcounter : 0
 
 OnSecondChange : $(
@@ -283,10 +282,25 @@ OnSecondChange : $(
     );
 )
 
-# Using this as their AI talk event also allows old specification (e.g. Kinoko's talk request) to work.
+# Due to a quirk of if statements in the sentence entry, empty strings are considered valid dialogues.
+# To fix this, the sentence entry is called repeatedly until a valid dialogue is found.
+# However, if the sentence entry doesn't exist or consists only of empty strings, it would loop forever.
+# This entry counts how many loops it's been.
+loopcount : 0
+
+# I've set the loop limit to a conservative 1,000 since I think that's more than reasonable.
+# But if you're running into issues with not enough loops to find a non-empty string, you can try to raise it.
+# This entry limits how many loops OnAITalk will go through to find a valid dialogue.
+looplimit : 1000
+
+# Using OnAITalk as their AI talk event allows old specification (e.g. Kinoko's talk request) to work.
 OnAITalk : $(
 	setstr lastTalk ${sentence};
-	if $[ ${lastTalk} == ''] $(return ${OnAITalk});
+	while $[ ${lastTalk} == '' && ${loopcount} <= ${looplimit} ] $(
+		setstr lastTalk ${sentence};
+		set loopcount $[ ${loopcount} + 1 ];
+		if $[ ${loopcount} >= ${looplimit} ] $(set talkcounter 0; set loopcount 0; break)
+	);
 	echo ${lastTalk};
 )
 
